@@ -14,8 +14,9 @@
 
 	export default {
 		mounted () {
-			if(sessionStorage.getItem('navTitle'))
-				this.curTitle = sessionStorage.getItem('navTitle');
+			// if(sessionStorage.getItem('navTitle'))
+			// 	this.curTitle = sessionStorage.getItem('navTitle');
+			this.curTitle = this.$route.name;
 		},
 		data () {
 			return {
@@ -38,16 +39,16 @@
 		},
 		methods: {
 			cur_title: function(title) {
-				this.curTitle = title;
-				sessionStorage.setItem('navTitle', this.curTitle);
+				// this.curTitle = title;
+				// sessionStorage.setItem('navTitle', this.curTitle);
 				switch (title) { 
-					case '首页': this.$router.push('/') 
+					case '首页': this.$router.push('/user/home') 
 					break
 					case '歌手': this.$router.push('/user/artist') 
 					break
-					case '专辑': this.$router.push('/user/albumdetail') 
+					case '专辑': this.$router.push('/user/album') 
 					break
-					case '排行榜': this.$router.push('/') 
+					case '排行榜': this.$router.push('/user/rank') 
 					break
 				}
 
