@@ -2,100 +2,106 @@
   <div class="wrapper">
     <v-head></v-head>
     <v-nav></v-nav>
-    <div class="album" :data="album">
+    <div id="albumdetail" :data="album">
       <el-row :gutter="50">
-      <el-col :span="4" :offset="4">
-        <div>
-          <img align=right style="margin-top:30px" src='album.image'>
-        </div>
-      </el-col>
-      <el-col :span="8">
-        <div>
-          <p class="font_albumName">{{album.name}}</p>
-          <i class="el-icon-service"></i>
-          <a herf="" class="font_albumArtist"  style="color:black;cursor:pointer" onmouseover="this.style.color='#00AE20';" onmouseout="this.style.color='black';">{{album.artist}}</a>
+        <el-col :span="4" :offset="4">
           <div>
-            <p class="font_other">流派:{{album.style}}</p>
-            <p class="font_other">发行时间:{{album.time}}</p>
+            <img align=right style="margin-top:30px" src='album.image'>
           </div>
-          <el-button type="primary" icon="el-icon-caret-right" style="background-color:#31C27C" v-on:click="playAllSong">播放全部</el-button>
-          <el-button v-if="album.isCollected" icon="el-icon-star-on" v-on:click="cancelCollect">已收藏</el-button>
-          <el-button v-else icon="el-icon-star-off" v-on:click="collect">收藏</el-button>
-          <el-dropdown trigger="click" id="dropdown" @command="handleAlbumCommand">
-            <el-button icon="el-icon-plus" v-on:click="getPlaylistList">添加到<i class="el-icon-arrow-down el-icon--right"></i>
-            </el-button>
-            <el-dropdown-menu slot="dropdown" :data="playlistList">
-              <el-dropdown-item command="playqueue">播放队列</el-dropdown-item>
-              <el-dropdown-item disabled divided>我喜欢</el-dropdown-item>
-              <el-dropdown-item v-for="playlist in playlistList" :key="playlist.ID" :command='{type:"playlist",params:playlist.ID}'>{{playlist.name}}</el-dropdown-item>
-              <el-dropdown-item command="newplaylist" divided>添加到新歌单</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-        </div>
-      </el-col>
-    </el-row>
-    <el-row :gutter="50">
-      <el-col :span="13" :offset="4">
-        <div>
-          <el-table :data="songList" style="width: 100%" stripe="true" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">
-            <el-table-column type="index" label=" " :index="indexMethod"></el-table-column>
-            <el-table-column label="歌曲">
-              <template slot-scope="scope">
-                <a herf="" style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.name}}</a>
-              </template>
-            </el-table-column>
-            <el-table-column label=" ">
-              <template slot-scope="scope">
-                <span v-if="scope.row.Flag"> <el-button icon="el-icon-caret-right" circle v-on:click="playSong(scope.row)"></el-button> </span>
-                <span v-if="scope.row.Flag"> 
-                  <el-dropdown trigger="click" placement="bottom-start" @visible-change="handle(scope.row,$event)" @command="handleSongCommand">
-                    <el-button icon="el-icon-plus" circle></el-button>
-                    <el-dropdown-menu slot="dropdown" :data="playlistList">
-                      <el-dropdown-item command="playqueue">播放队列</el-dropdown-item>
-                      <el-dropdown-item disabled divided>我喜欢</el-dropdown-item>
-                      <el-dropdown-item v-for="playlist in playlistList" :key="playlist.ID" :command='{type:"playlist",params:playlist.ID}'>{{playlist.name}}</el-dropdown-item>
-                      <el-dropdown-item command="newplaylist" divided>添加到新歌单</el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
-                </span>
-                <el-dialog title="创建歌单" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
-                  <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
-                    <el-form-item label="歌单名称" prop="name">
-                      <el-input v-model="ruleForm.name" placeholder="请输入歌单名称"></el-input>
-                    </el-form-item>
-                    <el-form-item label="歌单简介" prop="des">
-                      <el-input type="textarea" v-model="ruleForm.des" placeholder="请输入歌单简介"></el-input>
-                    </el-form-item>
-                    <el-form-item>
-                      <el-button type="primary" @click="submitForm('ruleForm')">完成</el-button>
-                      <el-button @click="dialogVisible=false">取消</el-button>
-                    </el-form-item>
-                  </el-form>
-                </el-dialog>
-                <span v-if="scope.row.Flag"> <el-button icon="el-icon-download" circle v-on:click="downloadSong(scope.row)"></el-button> </span>
-              </template>
-            </el-table-column>
-            <el-table-column label="歌手">
-              <template slot-scope="scope">
-                <a herf="" style="color:black;cursor:pointer:" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.artist}}</a>
-              </template>
-            </el-table-column>
-            <el-table-column prop="time" label="时长">
-            </el-table-column>
-          </el-table>
-        </div>
-      </el-col>
-      <el-col :span="4">
-        <div>
-          <p class="font_albumDes">简介</p>
-          <p style="display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 4;overflow: hidden;" class="font_other">{{album.des}}</p>
-          <el-popover placement="left" title="专辑简介" trigger="click">
-            <p class="font_other">{{album.des}}</p>
-            <el-button type="text" slot="reference" style="color:black" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">[更多]</el-button>
-          </el-popover>
-        </div>
-      </el-col>
-    </el-row>
+        </el-col>
+        <el-col :span="8">
+          <div>
+            <p class="font_albumName">{{album.name}}</p>
+            <i class="el-icon-service"></i>
+            <a herf="" class="font_albumArtist"  style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{album.artist}}</a>
+            <div>
+              <p class="font_other">流派:{{album.style}}</p>
+              <p class="font_other">发行时间:{{album.time}}</p>
+            </div>
+            <el-button type="primary" icon="el-icon-caret-right" style="background-color:#31C27C" onmouseover="this.style.backgroundColor='#2CAF6F';" onmouseout="this.style.backgroundColor='#31C27C';" v-on:click="playAllSong">播放全部</el-button>
+            <el-button v-if="album.isCollected" icon="el-icon-star-on" v-on:click="cancelCollect">已收藏</el-button>
+            <el-button v-else icon="el-icon-star-off" v-on:click="collect">收藏</el-button>
+            <el-dropdown trigger="click" id="dropdown" @command="handleAlbumCommand">
+              <el-button icon="el-icon-plus" v-on:click="getPlaylistList">添加到<i class="el-icon-arrow-down el-icon--right"></i>
+              </el-button>
+              <el-dropdown-menu slot="dropdown" :data="playlistList">
+                <el-dropdown-item command="playqueue">播放队列</el-dropdown-item>
+                <div v-if="state">
+                  <el-dropdown-item disabled divided>我喜欢</el-dropdown-item>
+                  <el-dropdown-item v-for="playlist in playlistList" :key="playlist.ID" :command='{type:"playlist",params:playlist.ID}'>{{playlist.name}}</el-dropdown-item>
+                  <el-dropdown-item command="newplaylist" divided>添加到新歌单</el-dropdown-item>
+                </div>
+                <el-dropdown-item v-else command="login" divided>登录后添加到歌单</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </div>
+        </el-col>
+      </el-row>
+      <el-row :gutter="50">
+        <el-col :span="12" :offset="4">
+          <div>
+            <el-table :data="songList" style="width: 100%" stripe="true" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">
+              <el-table-column type="index" label=" " :index="indexMethod"></el-table-column>
+              <el-table-column label="歌曲">
+                <template slot-scope="scope">
+                  <a herf="" style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.name}}</a>
+                </template>
+              </el-table-column>
+              <el-table-column label=" ">
+                <template slot-scope="scope">
+                  <span v-if="scope.row.Flag"> <el-button icon="el-icon-caret-right" circle v-on:click="playSong(scope.row)"></el-button> </span>
+                  <span v-if="scope.row.Flag"> 
+                    <el-dropdown trigger="click" placement="bottom-start" @visible-change="handle(scope.row,$event)" @command="handleSongCommand">
+                      <el-button icon="el-icon-plus" circle></el-button>
+                      <el-dropdown-menu slot="dropdown" :data="playlistList">
+                        <el-dropdown-item command="playqueue">播放队列</el-dropdown-item>
+                        <div v-if="state">
+                          <el-dropdown-item disabled divided>我喜欢</el-dropdown-item>
+                          <el-dropdown-item v-for="playlist in playlistList" :key="playlist.ID" :command='{type:"playlist",param1:playlist.ID,param2:scope.row}'>{{playlist.name}}</el-dropdown-item>
+                          <el-dropdown-item command="newplaylist" divided>添加到新歌单</el-dropdown-item>
+                        </div>
+                        <el-dropdown-item v-else command="login" divided>登录后添加到歌单</el-dropdown-item>
+                      </el-dropdown-menu>
+                    </el-dropdown>
+                  </span>
+                  <el-dialog title="创建歌单" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
+                    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
+                      <el-form-item label="歌单名称" prop="name">
+                        <el-input v-model="ruleForm.name" placeholder="请输入歌单名称"></el-input>
+                      </el-form-item>
+                      <el-form-item label="歌单简介" prop="des">
+                        <el-input type="textarea" v-model="ruleForm.des" placeholder="请输入歌单简介"></el-input>
+                      </el-form-item>
+                      <el-form-item>
+                        <el-button type="primary" @click="submitForm('ruleForm')">完成</el-button>
+                        <el-button @click="dialogVisible=false">取消</el-button>
+                      </el-form-item>
+                    </el-form>
+                  </el-dialog>
+                  <span v-if="scope.row.Flag"> <el-button icon="el-icon-download" circle v-on:click="downloadSong(scope.row)"></el-button> </span>
+                </template>
+              </el-table-column>
+              <el-table-column label="歌手">
+                <template slot-scope="scope">
+                  <a herf="" style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.artist}}</a>
+                </template>
+              </el-table-column>
+              <el-table-column prop="time" label="时长">
+              </el-table-column>
+            </el-table>
+          </div>
+        </el-col>
+        <el-col :span="4">
+          <div>
+            <p class="font_albumDes">简介</p>
+            <p style="display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 4;overflow: hidden;" class="font_other">{{album.des}}</p>
+            <el-popover placement="left" title="专辑简介" trigger="click">
+              <p class="font_other">{{album.des}}</p>
+              <el-button type="text" slot="reference" style="color:black" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">[更多]</el-button>
+            </el-popover>
+          </div>
+        </el-col>
+      </el-row>
     </div>
     <v-foot></v-foot>
   </div>
@@ -105,9 +111,9 @@
   import vHead from '../common/header.vue'
   import vNav from '../common/navigation.vue'
   import vFoot from '../common/footer.vue'
-
+  
   export default {
-    components: {
+     components: {
       vHead,
       vNav,
       vFoot
@@ -129,6 +135,7 @@
           ]
         },
         userID:'',
+        state:true,
         album:{
           ID:'001',
           name:'心之科学',
@@ -300,100 +307,108 @@
           row.isopen=event;
         },
         playAllSong:function(){
-
-        },
-        collect:function(albumID){
-          this.album.isCollected=true;
-        },
-        cancelCollect:function(albumID){ 
-          this.album.isCollected=false;
-        },
-        handleAlbumCommand:function(command){
-          if(command=="newplaylist"){
-            this.dialogVisible=true;
-          }
-          else if(command=="playqueue"){
-
-          }
-          else{
-
-          }
-          console.log(command);
-        },
-        playSong:function(row){
-
-        },
-        handleSongCommand:function(command){
-          if(command=="newplaylist"){
-            this.dialogVisible=true;
-          }
-          else if(command=="playqueue"){
-
-          }
-          else{
-
-          }
-          console.log(command);
-        },
-        submitForm:function(formname){
-         this.$refs[formname].validate((valid) => {
-          if (valid) {
-            alert('submit!');
-            this.dialogVisible=false;
-            this.$refs[formname].resetFields();
-          } else {
-            alert('error submit!!');
-            return false;
-          }
-        });
-       },
-       downloadSong:function(row){
-
-       },
-       getAlbumInfo:function(albumID){
-
-       },
-       getPlaylistList:function(userID){
-
-       },
-     },
-     mounted:function(){
-
-      this.getAlbumInfo(this.album.ID);
-      this.getPlaylistList(this.userID);
-    }
-  };
+//传递所有歌曲ID给player.vue
+},
+collect:function(albumID){
+  this.album.isCollected=true;
+//提交专辑id，返回true/false
+},
+cancelCollect:function(albumID){ 
+  this.album.isCollected=false;
+//提交专辑id，返回true/false
+},
+handleAlbumCommand:function(command){
+  if(command=="login"){
+    window.location.href='/';
+  }
+  if(command=="newplaylist"){
+    this.dialogVisible=true;
+  }
+  else if(command=="playqueue"){
+//传递所有歌曲ID给player.vue
+}
+else{
+//提交专辑ID和歌单ID，返回false则用户会话超时
+console.log(command.params);
+}
+},
+playSong:function(row){
+//传递歌曲ID给player.vue
+},
+handleSongCommand:function(command){
+  if(command=="login"){
+    window.location.href='/';
+  }
+  else if(command=="newplaylist"){
+    this.dialogVisible=true;
+  }
+  else if(command=="playqueue"){
+//传递歌曲ID给player.vue
+}
+else{
+//提交歌曲ID和歌单ID，返回false则用户会话超时
+console.log(command.param1);
+console.log(command.param2.ID)
+}
+},
+submitForm:function(formname){
+//提交playlist对象，包括歌单名称和简介，返回-1用户会话超时
+this.$refs[formname].validate((valid) => {
+  if (valid) {
+    alert('submit!');
+    this.dialogVisible=false;
+    this.$refs[formname].resetFields();
+  } else {
+    alert('error submit!!');
+    return false;
+  }
+});
+},
+downloadSong:function(row){
+//提交歌曲ID，无返回
+},
+getAlbumInfo:function(albumID){
+//提交专辑ID，获得专辑信息和歌曲列表
+},
+getPlaylistList:function(){
+//无提交，返回歌单列表
+},
+},
+mounted:function(){
+  this.getAlbumInfo(this.album.ID);
+  this.getPlaylistList(this.userID);
+}
+}
 </script>
-
 <style>
-  .spHeight td{
-    height:65px;
-  }
-  .el-popover{
-    width:550px;
-    height:400px;
-    word-wrap: break-word; 
-    word-break: normal; 
-    overflow-x:hidden;
-    overflow-y:scroll;
-  }
-  .font_albumName{
-    font-family:"Microsoft YaHei";
-    font-size:xx-large;
-  }
-  .font_albumArtist{
-    font-family:"Hiragino Sans GB";
-    font-size:x-large;
-  }
-  .font_albumDes{
-    font-family:"Hiragino Sans GB";
-    font-size:x-large;
-  }
-  .font_other{
-    font-family:"Hiragino Sans GB";
-    font-size:Medium;
-  }
-  .album {
-    padding: 30px;
-  }
+#app{
+  padding: 30px;
+}
+.spHeight td{
+  height:65px;
+}
+.el-popover{
+  width:550px;
+  height:400px;
+  word-wrap: break-word; 
+  word-break: normal; 
+  overflow-x:hidden;
+  overflow-y:scroll;
+}
+.font_albumName{
+  font-family:"Microsoft YaHei";
+  font-size:xx-large;
+}
+.font_albumArtist{
+  font-family:"Hiragino Sans GB";
+  font-size:x-large;
+}
+.font_albumDes{
+  font-family:"Hiragino Sans GB";
+  font-size:x-large;
+}
+.font_other{
+  font-family:"Hiragino Sans GB";
+  font-size:Medium;
+}
 </style>
