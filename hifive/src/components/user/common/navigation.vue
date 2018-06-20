@@ -43,7 +43,7 @@
 				switch (title) { 
 					case '首页': this.$router.push('/') 
 					break
-					case '歌手': this.$router.push('/') 
+					case '歌手': this.$router.push('/user/artist') 
 					break
 					case '专辑': this.$router.push('/user/albumdetail') 
 					break
