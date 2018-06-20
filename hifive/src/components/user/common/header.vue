@@ -17,9 +17,11 @@
 
 	export default {
 		mounted () {
-			if(sessionStorage.getItem('curTitle'))
-				// this.curTitle = this.$route.name;
-				this.curTitle = sessionStorage.getItem('curTitle');
+			// if(sessionStorage.getItem('curTitle'))
+			// 	this.curTitle = sessionStorage.getItem('curTitle');
+			this.curTitle = this.$route.name;
+			if(this.curTitle != '我的音乐')
+				this.curTitle = '音乐馆';
 		},
 		data () {
 			return {
@@ -40,7 +42,7 @@
 			},
 			cur_title: function(title) {
 				this.curTitle = title;
-				sessionStorage.setItem('curTitle', this.curTitle);
+				// sessionStorage.setItem('curTitle', this.curTitle);
 				switch (title) { 
 					case '音乐馆': this.$router.push('/') 
 					break
