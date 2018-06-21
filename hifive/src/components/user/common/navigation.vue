@@ -59,7 +59,6 @@
 
 <style>
 	.navigator {
-		border-bottom: 1px solid #E6E6E6;
 		margin: 0 100px;
 	}
 	.menu_2 {

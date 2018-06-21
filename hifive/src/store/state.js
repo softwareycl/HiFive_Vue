@@ -16,7 +16,10 @@ const state = {
   abc: '123',
   audioelement:{
 
-  }
+  },
+  search: {
+    name: 'o.o.o'
+  },
 }
 
 export default state
