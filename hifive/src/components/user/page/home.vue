@@ -1,0 +1,699 @@
+<template>
+	<div id="home">
+		<div data="songList">
+			<el-row>
+				<p align=center class="font_Menu">新歌首发</p>
+			</el-row>
+			<el-row :gutter="100">
+				<el-col :span="2" offset="4">
+					<el-button icon="el-icon-caret-right"  v-on:click="playAllSong">播放全部</el-button>
+
+				</el-col>
+				<el-col :span=6 offset="4">
+					<el-tabs @tab-click="switch1" style="width:250px;">
+                        <el-tab-pane label="内地" name="first"></el-tab-pane>
+                        <el-tab-pane label="港台" name="second"></el-tab-pane>
+                        <el-tab-pane label="日韩" name="third"></el-tab-pane>
+                        <el-tab-pane label="欧美" name="fourth"></el-tab-pane>
+                    </el-tabs>
+				</el-col>
+			</el-row>
+			<el-carousel :autoplay=false indicator-position="outside" arrow="hover" height="400px" trigger="click">
+				<el-carousel-item v-for="page in 4" :key="page">
+					<el-row :gutter="50" v-for="(i, index) in 3" :key="i" style="margin-top:20px;">
+						<el-col :span="5" v-for="(j, index) in 3" :key="j" :offset="index > 0 ? 0 : 4">
+							<el-card :body-style="{ padding: '0px'}" shadow="never" style="width: 400px;height: 100px;">
+								<div style="height:100%;width:100%">
+									<el-row :gutter="40">  
+										<el-col :span="6">
+											<img src="../../../assets/icon.jpg" style="height:100px;width:100px;">
+										</el-col>  
+										<el-col :span="12">
+											<div style="margin-top:25px;">
+												<a herf="" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='#333333';" class="font_name">{{songList[9*(page-1)+3*i+j].name}}</a>
+											</div>
+											<div>
+												<a herf="" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='#9C9C9C';" class="font_other">{{songList[9*(page-1)+3*i+j].artist}}</a>
+											</div>
+										</el-col>  
+										<el-col :span="4"><p class="font_time" style="color:#9C9C9C;margin-top:40px;">{{songList[9*(page-1)+3*i+j].time}}</p></el-col>  
+									</el-row>   
+								</div>   
+							</el-card>
+						</el-col>
+					</el-row>
+				</el-carousel-item>
+			</el-carousel>
+		</div>
+		<div data="albumList" style="margin-top:30px;">
+			<el-row>
+				<p align=center class="font_Menu">新碟首发</p>
+			</el-row>
+			<el-row :gutter="100">
+				<el-col :span=6 offset="10">
+					<el-tabs @tab-click="switch1" style="width:250px;">
+                        <el-tab-pane label="内地" name="first"></el-tab-pane>
+                        <el-tab-pane label="港台" name="second"></el-tab-pane>
+                        <el-tab-pane label="日韩" name="third"></el-tab-pane>
+                        <el-tab-pane label="欧美" name="fourth"></el-tab-pane>
+                    </el-tabs>
+				</el-col>
+			</el-row>
+			<el-carousel :autoplay=false indicator-position="outside" arrow="hover" height="600px" trigger="click">
+				<el-carousel-item v-for="page in 4" :key="page">
+					<el-row :gutter="60" v-for="(i, index) in 2" :key="i" style="margin-top:20px;">
+						<el-col :span="3" v-for="(j, index) in 5" :key="j" :offset="index > 0 ? 0 : 4">
+							<el-card :body-style="{ padding: '0px'}" shadow="never" style="width: 220px;height: 270px;">
+								<div style="height:100%;width:100%">  
+									<el-row>  
+										<img src="../../../assets/icon.jpg" style="height:220px;width:220px;">
+									</el-row>
+									<el-row>
+										<div>
+											<a herf="" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='#333333';" class="font_name">{{albumList[10*(page-1)+5*i+j].name}}</a>
+										</div>
+										<div>
+											<a herf="" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='#9C9C9C';" class="font_other">{{albumList[10*(page-1)+5*i+j].artist}}</a>
+										</div>
+									</el-row> 
+								</div>   
+							</el-card>
+						</el-col>
+					</el-row>
+				</el-carousel-item>
+			</el-carousel>
+		</div>
+        <div>
+        </div>
+	</div>
+</template>
+
+<script>
+export default {
+    data(){
+        return{
+        	songList: [{
+        		ID:'1',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'2',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'3',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'4',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'5',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'6',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'7',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'8',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'9',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'10',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'11',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'12',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'13',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'14',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'15',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'1',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'2',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'3',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'4',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'5',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'6',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'7',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'8',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'9',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'10',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'11',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'12',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'13',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'14',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'15',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'1',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'2',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'3',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'4',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'5',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'6',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'7',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'8',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'9',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'10',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'11',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'12',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'13',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'14',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	},{
+        		ID:'15',
+        		name:'心之科学',
+        		artistID:'',
+        		artist:'容祖儿',
+        		time:'03:55',
+        		Flag:false,
+        		isopen:false
+        	}],
+        	albumList:[{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},{
+        		ID:'001',
+                name:'心之科学',
+                artist:'容祖儿',
+        	},]
+        }
+
+    },
+    methods:{
+        switch1(tab, event) {
+        console.log(tab, event);
+        },
+        switch2(tab, event) {
+        console.log(tab, event);
+        },
+    }
+}
+</script>
+
+<style>
+ .font_Menu{
+  font-family:"Microsoft YaHei";
+  font-size:xx-large;
+}
+.font_name{
+  font-family:"Hiragino Sans GB";
+  font-size:small;
+  color:#333333;
+  cursor:pointer;
+}
+.font_time{
+  font-family:"Hiragino Sans GB";
+  font-size:small;
+  color:#9C9C9C; 
+}
+.font_other{
+  font-family:"Hiragino Sans GB";
+  font-size:small;
+  color:#9C9C9C;
+  cursor:pointer;
+}
+
+
+</style>
