@@ -1,14 +1,12 @@
 <template>
-	<el-container>
-		<el-header style="height:auto">
-			<v-head></v-head>
-			<v-nav></v-nav>
-		</el-header>
-		<el-main style="min-height:400px;">Main</el-main>
-		<el-footer>
-			<v-foot></v-foot>
-		</el-footer>
-	</el-container>
+	<div class="wrapper">
+		<v-head></v-head>
+		<v-nav></v-nav>
+		<div class="main">
+			<p @click='search' style="text-align:center;">search</p>
+		</div>
+		<v-foot></v-foot>
+	</div>
 </template>
 
 <script>
@@ -28,16 +26,15 @@
 			}
 		},
 		methods: {
-
+			search: function() {
+				this.$router.push('/user/search')
+			}
 		}
 	};
 </script>
 
 <style>
-	el-header {
-		margin: 0px 50px;
-	}
-	el-footer {
-		margin: 0;
+	.main {
+		min-height: 380px;
 	}
 </style>

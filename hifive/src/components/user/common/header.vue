@@ -9,6 +9,11 @@
 			</li>
 
 		</ul>
+		<div class="search">
+			<el-input size="medium" placeholder="搜索歌手、歌曲、专辑" v-model="input" @keyup.enter.native="onSearch">
+				<el-button slot="append" icon="el-icon-search" @click='onSearch'></el-button>
+			</el-input>
+		</div>
 		<div style="clear: both;"></div>
 	</div>
 </template>
@@ -61,7 +66,7 @@
 	}
 	.header {
 		border-bottom: 1px solid #E6E6E6;
-		margin: 0 100px;
+		margin: 0 200px;
 	}
 	.icon {
 		margin-right: 30px;
@@ -72,7 +77,7 @@
 		width: 145px;
 		height: 80px;
 	}
-	.icon,.menu_1 {
+	.icon,.menu_1,.search {
 		float: left;
 	}
 	.menu_1 {
@@ -94,5 +99,9 @@
 	.list_color {
 		background-color: #31C27C;
 		color: #FFFFFF !important;
+	}
+	.search {
+		margin-top: 25px;
+		margin-left: 100px;
 	}
 </style>
