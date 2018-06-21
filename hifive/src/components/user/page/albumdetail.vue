@@ -38,7 +38,7 @@
         </el-col>
       </el-row>
       <el-row :gutter="50">
-        <el-col :span="12" :offset="4">
+        <el-col :span="13" :offset="3">
           <div>
             <el-table :data="songList" style="width: 100%" stripe="true" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">
               <el-table-column type="index" label=" " :index="indexMethod"></el-table-column>
@@ -94,8 +94,8 @@
         <el-col :span="4">
           <div>
             <p class="font_albumDes">简介</p>
-            <p style="display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 4;overflow: hidden;" class="font_other">{{album.des}}</p>
-            <el-popover placement="left" title="专辑简介" trigger="click">
+            <p id="albumDes" style="display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 4;overflow: hidden;" class="font_other">{{album.des}}</p>
+            <el-popover v-if="isOverflow" placement="left" title="专辑简介" trigger="click">
               <p class="font_other">{{album.des}}</p>
               <el-button type="text" slot="reference" style="color:black" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">[更多]</el-button>
             </el-popover>
@@ -134,6 +134,7 @@
           { min: 1, max: 140, message: '长度在 140 个字符以内', trigger: 'blur' }
           ]
         },
+        isOverflow:'',
         userID:'',
         state:true,
         album:{
@@ -373,9 +374,20 @@ getAlbumInfo:function(albumID){
 getPlaylistList:function(){
 //无提交，返回歌单列表
 },
+handleOverflow:function(){
+  var offsetWidth = document.getElementById("albumDes").offsetHeight;  
+  var scrollWidth = document.getElementById("albumDes").scrollHeight;
+  if (offsetWidth < scrollWidth) {
+    this.isOverflow=true;
+  }
+  else{
+    this.isOverflow=false;
+  }
+}
 },
 mounted:function(){
   this.getAlbumInfo(this.album.ID);
+  this.handleOverflow();
   this.getPlaylistList(this.userID);
 }
 }
