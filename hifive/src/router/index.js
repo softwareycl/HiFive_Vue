@@ -16,11 +16,11 @@ export default new Router({
     //以下为用户页面的跳转
     {
       path: '/',
-      // name: '音乐馆',
       component: resolve => require(['../components/user/page/unlogin.vue'], resolve)
     },
     {
       path: '/user/album',
+      name: '专辑',
       component: resolve => require(['../components/user/page/album.vue'], resolve)
     },
     {
@@ -29,6 +29,7 @@ export default new Router({
     },
     {
       path: '/user/artist',
+      name: '歌手',
       component: resolve => require(['../components/user/page/artist.vue'], resolve)
     },
     {
@@ -41,11 +42,12 @@ export default new Router({
     },
     {
       path: '/user/home',
+      name: '首页',
       component: resolve => require(['../components/user/page/home.vue'], resolve)
     },
     {
       path: '/user/mymusic',
-      // name: '我的音乐',
+      name: '我的音乐',
       component: resolve => require(['../components/user/page/mymusic.vue'], resolve)
     },
     {
@@ -58,6 +60,7 @@ export default new Router({
     },
     {
       path: '/user/rank',
+      name: '排行榜',
       component: resolve => require(['../components/user/page/rank.vue'], resolve)
     },
     {
