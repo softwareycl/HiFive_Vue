@@ -5,10 +5,13 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import App from './App'
 import router from './router'
+import axios from 'axios'
+import VueAxios from 'vue-axios'
 import Vuex from 'vuex'
 import store from './store/index'
 
 Vue.config.productionTip = false
+Vue.use(VueAxios, axios)
 Vue.use(Vuex)
 
 Vue.use(ElementUI);
