@@ -10,7 +10,7 @@
                 <el-row>
                     <el-col offset="3" style="width:44%;">
                         <el-button icon="el-icon-caret-right"  v-on:click="playAllSong">播放全部</el-button>
-                        <el-tabs @tab-click="switch1" style="width:240px;float:right">
+                        <el-tabs @tab-click="switch1" style="width:240px;float:right;">
                             <el-tab-pane label="内地" name="first"></el-tab-pane>
                             <el-tab-pane label="港台" name="second"></el-tab-pane>
                             <el-tab-pane label="日韩" name="third"></el-tab-pane>
@@ -20,26 +20,26 @@
                 </el-row>
                 <el-carousel :autoplay=false indicator-position="outside" arrow="hover" height="400px" trigger="click" style="z-index: 0">
                     <el-carousel-item v-for="page in 4" :key="page">
-                        <el-row v-for="(i, index) in 3" :key="i" style="margin-top:20px;">
-                            <el-col v-for="(j, index) in 3" :key="j" :offset="index > 0 ? 0 : 3" style="width:26%;height:100px;">
-                                <el-card :body-style="{ padding: '0px'}" shadow="never" style="border-style:none;width:450px;height:100px;">
+                        <el-row :gutter="20" v-for="(i, index) in 3" :key="i" style="margin-top:20px;">
+                            <el-col v-for="(j, index) in 3" :key="j" :offset="index > 0 ? 0 : 3" style="width:26%;">
+                                <el-card :body-style="{ padding: '0px'}" shadow="never" style="border-style:none;width:100%">
                                     <div style="height:100%;width:100%">
                                         <el-row>  
-                                            <el-col style="width:100px;height:100px;">
-                                                <div style="width:100px;height:100px;border-style:none;overflow:hidden;">
+                                            <el-col style="width:20%;">
+                                                <div style="width:100%;height:100px;border-style:none;overflow:hidden;">
                                                     <img src="../../../assets/icon.jpg" class="songImage" onmouseover="this.parentNode.children[1].style.display='block';this.style.transform='scale(1.4)';this.parentNode.children[1].style.transform='scale(1.3)';" @mouseout="handleMouseOut">
                                                     <el-button class="songButton" icon="el-icon-caret-right" circle></el-button>
                                                 </div>
                                             </el-col>  
-                                            <el-col style="width:310px;height:100px;">
-                                                <div style="margin-top:25px;">
+                                            <el-col style="width:60%">
+                                                <div style="margin-top:10%;margin-left:3%;">
                                                     <a herf="" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='#333333';" class="font_name">{{songList[9*(page-1)+3*i+j].name}}</a>
                                                 </div>
-                                                <div>
+                                                <div style="margin-left:3%;>
                                                     <a herf="" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='#9C9C9C';" class="font_other">{{songList[9*(page-1)+3*i+j].artist}}</a>
                                                 </div>
                                             </el-col>  
-                                            <el-col style="width:40px;height:100px;"><p class="font_time" style="color:#9C9C9C;margin-top:40px;">{{songList[9*(page-1)+3*i+j].time}}</p>
+                                            <el-col style="width:20%;"><p class="font_time" style="color:#9C9C9C;margin-top:40%;">{{songList[9*(page-1)+3*i+j].time}}</p>
                                             </el-col>  
                                         </el-row>   
                                     </div>   
@@ -55,7 +55,7 @@
                 </el-row>
                 <el-row>
                     <el-col align=center>
-                        <el-tabs @tab-click="switch2" style="width:240px;">
+                        <el-tabs @tab-click="switch2" style="width:240px;z-index: 0px">
                             <el-tab-pane label="内地" name="first"></el-tab-pane>
                             <el-tab-pane label="港台" name="second"></el-tab-pane>
                             <el-tab-pane label="日韩" name="third"></el-tab-pane>
@@ -65,12 +65,12 @@
                 </el-row>
                 <el-carousel :autoplay=false indicator-position="outside" arrow="hover" height="600px" trigger="click" style="z-index: 0">
                     <el-carousel-item v-for="page in 4" :key="page">
-                        <el-row v-for="(i, index) in 2" :key="i" style="margin-top:20px;">
-                            <el-col v-for="(j, index) in 5" :key="j" :offset="index > 0 ? 0 : 3" style="width:16%;height:270px;">
-                                <el-card :body-style="{ padding: '0px'}" shadow="never" style="border-style:none;width:220px;height:270px;">
+                        <el-row :gutter="80" v-for="(i, index) in 2" :key="i" style="margin-top:20px;">
+                            <el-col v-for="(j, index) in 5" :key="j" :offset="index > 0 ? 0 : 3" style="width:15%;">
+                                <el-card :body-style="{ padding: '0px'}" shadow="never" style="border-style:none;width:100%;">
                                     <div style="height:100%;width:100%">  
                                         <el-row>  
-                                            <div style="width:220px;height:220px;border-style:none;overflow:hidden;">
+                                            <div style="width:100%;height:220px;border-style:none;overflow:hidden;">
                                                 <img src="../../../assets/icon.jpg" class="albumImage" onmouseover="this.parentNode.children[1].style.display='block';this.style.transform='scale(1.4)';this.parentNode.children[1].style.transform='scale(1.7)';" @mouseout="handleMouseOut">
                                                 <el-button class="albumButton" icon="el-icon-caret-right" circle></el-button>
                                             </div>
@@ -93,6 +93,74 @@
             <div style="margin-top:30px;">
                 <el-row>
                     <p align=center class="font_Menu">排行榜</p>
+                </el-row>
+                <el-row style="height:600px;">
+                    <el-col offset="3" style="width:10%;">
+                        <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;">
+                            <div data="list1" style="width:100%;height:500px;border-style:none;overflow:hidden;background:url(../../../assets/icon.jpg) no-repeat;">
+                                <el-row><P align=center>巅峰榜</P><p align=center style="font-size:large;">新歌</p></el-row>
+                                <el-row><P align=center>———</P></el-row>
+                                <ol>
+                                    <li v-for="song in list1" style="margin-left:10%;"><div style="margin-top:25%;"><a herf="" class="font_other">{{song.name}}</a></div><div><a herf="" class="font_other">{{song.artist}}</a></div></li>
+                                </ol>
+                            </div>
+                        </el-card>
+                    </el-col>
+                    <el-col style="width:10%;margin-left:3%">
+                        <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;">
+                            <div data="list2" style="width:100%;height:500px;border-style:none;overflow:hidden;">
+                                <el-row><P align=center>巅峰榜</P><p align=center style="font-size:large;">热歌</p></el-row>
+                                <el-row><P align=center>———</P></el-row>
+                                <ol>
+                                    <li v-for="song in list2" style="margin-left:10%;"><div style="margin-top:25%;"><a herf="" class="font_other">{{song.name}}</a></div><div><a herf="" class="font_other">{{song.artist}}</a></div></li>
+                                </ol>
+                             </div>  
+                        </el-card>
+                    </el-col>
+                    <el-col style="width:10%;margin-left:3%">
+                        <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;"> 
+                            <div data="list3" style="width:100%;height:500px;border-style:none;overflow:hidden;">
+                                <el-row><P align=center>巅峰榜</P><p align=center style="font-size:large;">内地</p></el-row>
+                                <el-row><P align=center>———</P></el-row>
+                                <ol>
+                                    <li v-for="song in list3" style="margin-left:10%;"><div style="margin-top:25%;"><a herf="" class="font_other">{{song.name}}</a></div><div><a herf="" class="font_other">{{song.artist}}</a></div></li>
+                                </ol>
+                            </div>   
+                        </el-card>
+                    </el-col>
+                    <el-col style="width:10%;margin-left:3%">
+                        <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;"> 
+                            <div data="list4" style="width:100%;height:500px;border-style:none;overflow:hidden;">
+                                <el-row><P align=center>巅峰榜</P><p align=center style="font-size:large;">港台</p></el-row>
+                                <el-row><P align=center>———</P></el-row>
+                                <ol>
+                                    <li v-for="song in list4" style="margin-left:10%;"><div style="margin-top:25%;"><a herf="" class="font_other">{{song.name}}</a></div><div><a herf="" class="font_other">{{song.artist}}</a></div></li>
+                                </ol>
+                            </div>
+                        </el-card>
+                    </el-col>
+                    <el-col style="width:10%;margin-left:3%">
+                        <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;">
+                            <div data="list5" style="width:100%;height:500px;border-style:none;overflow:hidden;">
+                                <el-row><P align=center>巅峰榜</P><p align=center style="font-size:large;">日韩</p></el-row>
+                                <el-row><P align=center>———</P></el-row>
+                                <ol>
+                                    <li v-for="song in list5" style="margin-left:10%;"><div style="margin-top:25%;"><a herf="" class="font_other">{{song.name}}</a></div><div><a herf="" class="font_other">{{song.artist}}</a></div></li>
+                                </ol>
+                            </div> 
+                        </el-card>
+                    </el-col>
+                    <el-col style="width:10%;margin-left:3%">
+                        <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;">
+                            <div data="list6" style="width:100%;height:500px;border-style:none;overflow:hidden;">
+                                <el-row><P align=center>巅峰榜</P><p align=center style="font-size:large;">欧美</p></el-row>
+                                <el-row><P align=center>———</P></el-row>
+                                <ol>
+                                    <li v-for="song in list6" style="margin-left:10%;"><div style="margin-top:25%;"><a herf="" class="font_other">{{song.name}}</a></div><div><a herf="" class="font_other">{{song.artist}}</a></div></li>
+                                </ol>
+                            </div>
+                        </el-card>
+                    </el-col>
                 </el-row>
             </div>
         </div>
@@ -677,7 +745,85 @@ export default {
         		ID:'001',
                 name:'心之科学',
                 artist:'容祖儿',
-        	},]
+        	},],
+            list1:[{
+                name:'心之科学',
+                artist:'容祖儿',
+            },{
+                name:'心之科学',
+                artist:'容祖儿',
+            },{
+                name:'心之科学',
+                artist:'容祖儿',
+            },{
+                name:'心之科学',
+                artist:'容祖儿',
+            },],
+            list2:[{
+                name:'心之科学',
+                artist:'容祖儿',
+            },{
+                name:'心之科学',
+                artist:'容祖儿',
+            },{
+                name:'心之科学',
+                artist:'容祖儿',
+            },{
+                name:'心之科学',
+                artist:'容祖儿',
+            },],
+            list3:[{
+                name:'心之科学',
+                artist:'容祖儿',
+            },{
+                name:'心之科学',
+                artist:'容祖儿',
+            },{
+                name:'心之科学',
+                artist:'容祖儿',
+            },{
+                name:'心之科学',
+                artist:'容祖儿',
+            },],
+            list4:[{
+                name:'心之科学',
+                artist:'容祖儿',
+            },{
+                name:'心之科学',
+                artist:'容祖儿',
+            },{
+                name:'心之科学',
+                artist:'容祖儿',
+            },{
+                name:'心之科学',
+                artist:'容祖儿',
+            },],
+            list5:[{
+                name:'心之科学',
+                artist:'容祖儿',
+            },{
+                name:'心之科学',
+                artist:'容祖儿',
+            },{
+                name:'心之科学',
+                artist:'容祖儿',
+            },{
+                name:'心之科学',
+                artist:'容祖儿',
+            },],
+            list6:[{
+                name:'心之科学',
+                artist:'容祖儿',
+            },{
+                name:'心之科学',
+                artist:'容祖儿',
+            },{
+                name:'心之科学',
+                artist:'容祖儿',
+            },{
+                name:'心之科学',
+                artist:'容祖儿',
+            },]
         }
 
     },
