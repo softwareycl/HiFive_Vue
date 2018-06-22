@@ -26,8 +26,8 @@
                                     <div style="height:100%;width:100%">
                                         <el-row>  
                                             <el-col style="width:20%;">
-                                                <div style="width:100%;border-style:none;overflow:hidden;">
-                                                    <img src="../../../assets/icon.jpg" class="songImage" onmouseover="this.parentNode.children[1].style.display='block';this.style.transform='scale(1.4)';this.parentNode.children[1].style.transform='scale(1.3)';" @mouseout="handleMouseOut">
+                                                <div style="width:100%;height:70px;border-style:none;overflow:hidden;">
+                                                    <img src="../../../assets/icon.jpg" class="songImage" onmouseover="this.parentNode.children[1].style.display='block';this.style.transform='scale(1.4)';" @mouseout="handleMouseOut">
                                                     <el-button class="songButton" icon="el-icon-caret-right" circle></el-button>
                                                 </div>
                                             </el-col>  
@@ -70,8 +70,8 @@
                                 <el-card :body-style="{ padding: '0px'}" shadow="never" style="border-style:none;width:100%;">
                                     <div style="height:100%;width:100%">  
                                         <el-row>  
-                                            <div style="width:100%;border-style:none;overflow:hidden;">
-                                                <img src="../../../assets/icon.jpg" class="albumImage" onmouseover="this.parentNode.children[1].style.display='block';this.style.transform='scale(1.4)';this.parentNode.children[1].style.transform='scale(1.7)';" @mouseout="handleMouseOut">
+                                            <div style="width:100%;height:140px;border-style:none;overflow:hidden;">
+                                                <img src="../../../assets/icon.jpg" class="albumImage" onmouseover="this.parentNode.children[1].style.display='block';this.style.transform='scale(1.4)';this.parentNode.children[1].style.transform='scale(1.4)';" @mouseout="handleMouseOut">
                                                 <el-button class="albumButton" icon="el-icon-caret-right" circle></el-button>
                                             </div>
                                         </el-row>
@@ -883,11 +883,11 @@ export default {
     transition:all 0.5s;
 }
 .songButton{
-    position:absolute;left:30px;top:30px;
+    position:absolute;left:15px;top:15px;
     display:none;
 }
 .albumButton{
-    position:absolute;left:90px;top:90px;
+    position:absolute;left:50px;top:50px;
     display:none;
 }
 </style>
