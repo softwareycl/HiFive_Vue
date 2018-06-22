@@ -46,8 +46,8 @@
                 <li @click="region_change_bg(0);singerDisplay(1,'!',1)" class="current">全部</li>
                 <li @click="region_change_bg(1);singerDisplay(2,1)">内地</li>
                 <li @click="region_change_bg(2);singerDisplay(3,0,1)">港台</li>
-                <li @click="region_change_bg(3);singerDisplay(4,0,1)">日韩</li>
-                <li @click="region_change_bg(4);singerDisplay(5,0,1)">欧美</li>
+                <li @click="region_change_bg(3);singerDisplay(4,0,1)">欧美</li>
+                <li @click="region_change_bg(4);singerDisplay(5,0,1)">日韩</li>
                 <li @click="region_change_bg(5);singerDisplay(6,0,1)">其他</li>
               </ul>
             </td>
@@ -115,9 +115,14 @@
       vFoot
     },
 
+    computed: {
+      serverUrl() {
+        return this.$store.state.serverUrl
+      }
+    },
+
     mounted() {
-       this.$store.commit('changeTagIndex', 2);
-       this.singerDisplay(1,'@',1);
+       this.singerDisplay(1,0,1);
 
     },
    
@@ -148,7 +153,7 @@
           this.gender = _gender;
           _page = this.page;
         }
-        this.axios.get('http://localhost:8080/MusicWeb/singer/lookUpSingersByRegion', {
+        this.axios.get(serverUrl() + "/artist/filterArtist", {
           params: {
             region: _region,
             initial: _initial,
@@ -158,12 +163,12 @@
         .then(res => {
           this.singers = res.data
           for(var i = 0; i < res.data.length; i++){
-            this.singers[i].image = 'http://localhost:8080/MusicWeb' + this.singers[i].image;
+            this.singers[i].image = 'artist.image' + this.singers[i].image;
           }
           
           console.log(this.singers)
 
-            this.axios.get('http://localhost:8080/MusicWeb/singer/getSingerPageCount', {
+            this.axios.get(serverUrl() + "/album/filterArtistCount", {
               params: {
                 region: _region,
                 initial: _initial,
