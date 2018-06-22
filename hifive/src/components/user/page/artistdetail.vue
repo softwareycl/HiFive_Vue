@@ -6,7 +6,7 @@
       	<el-row :gutter="50">
       		<el-col :span="4" :offset="4">
       			<div>
-      				<img align=right style="float: left;margin-top:30px; border-radius:70%; height: 230px; overflow:hidden;" src='../../../assets/周杰伦.jpg'>
+      				<img align=right style="float: left;margin-top:30px; border-radius:70%; height: 230px; overflow:hidden;" src=''>
       			</div>
       		</el-col>
       		<el-col :span="8">
