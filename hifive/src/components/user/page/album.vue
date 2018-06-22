@@ -9,11 +9,11 @@
             <td>
               <td><span class="cl">地区</span></td>
               <ul id ="region" class="album-nav-tag" >
-                <li @click="region_change_bg(0);albumDisplay(1,0,1)">内地</li>
-                <li @click="region_change_bg(1);albumDisplay(2,0,1)">港台</li>
-                <li @click="region_change_bg(2);albumDisplay(3,0,1)">日韩</li>
-                <li @click="region_change_bg(3);albumDisplay(4,0,1)">欧美</li>
-                <li @click="region_change_bg(4);albumDisplay(5,0,1)">其他</li>
+                <li @click="region_change_bg(0);albumDisplay(1,-1,1)">内地</li>
+                <li @click="region_change_bg(1);albumDisplay(2,-1,1)">港台</li>
+                <li @click="region_change_bg(2);albumDisplay(3,-1,1)">欧美</li>
+                <li @click="region_change_bg(3);albumDisplay(4,-1,1)">日韩</li>
+                <li @click="region_change_bg(4);albumDisplay(5,-1,1)">其他</li>
               </ul>
             </td>
           </tr>
@@ -21,15 +21,16 @@
             <td>
               <td><span class="cl">流派</span></td>
               <ul class="album-nav-tag" id="style">
-                <li @click="style_change_bg(0);albumDisplay(0,1,1)">流行</li>
-                <li @click="style_change_bg(1);albumDisplay(0,2,1)">摇滚</li>
-                <li @click="style_change_bg(2);albumDisplay(0,3,1)">民谣</li>
-                <li @click="style_change_bg(3);albumDisplay(0,4,1)">电子</li>
-                <li @click="style_change_bg(4);albumDisplay(0,5,1)">轻音乐</li>
-                <li @click="style_change_bg(5);albumDisplay(0,6,1)">RAP</li>
-                <li @click="style_change_bg(6);albumDisplay(0,7,1)">乡村</li>
-                <li @click="style_change_bg(7);albumDisplay(0,8,1)">舞曲</li>
-                <li @click="style_change_bg(8);albumDisplay(0,9,1)">其他</li>
+                <li @click="style_change_bg(0);albumDisplay(0,0,1)">全部</li>
+                <li @click="style_change_bg(1);albumDisplay(0,1,1)">流行</li>
+                <li @click="style_change_bg(2);albumDisplay(0,2,1)">摇滚</li>
+                <li @click="style_change_bg(3);albumDisplay(0,3,1)">民谣</li>
+                <li @click="style_change_bg(4);albumDisplay(0,4,1)">电子</li>
+                <li @click="style_change_bg(5);albumDisplay(0,5,1)">轻音乐</li>
+                <li @click="style_change_bg(6);albumDisplay(0,6,1)">RAP</li>
+                <li @click="style_change_bg(7);albumDisplay(0,7,1)">乡村</li>
+                <li @click="style_change_bg(8);albumDisplay(0,8,1)">舞曲</li>
+                <li @click="style_change_bg(9);albumDisplay(0,9,1)">其他</li>
               </ul>
             </td>
           </tr>
@@ -40,8 +41,8 @@
         <li v-for="item in albums" class="albumli">
           <div class="album">
             <img :src="item.image" alt="">
-            <p>{{item.albumName}}</p>
-            <p>{{item.singerName}}</p>
+            <p>{{item.name}}</p>
+            <p>{{item.artistName}}</p>
             <p>{{item.releaseTime}}</p>
           </div>
         </li>
@@ -73,17 +74,21 @@
     data() {
       return{
         region: 1,
-        style: 1,
+        style: 0,
         page: 1,
         pageCount: 5,
         albums: [{}]
       }
     },
 
-    mounted() {
-      this.$store.commit('changeTagIndex', 3);
-      this.albumDisplay(1,1,1);
+      computed: {
+      serverUrl() {
+        return this.$store.state.sererUrl
+      }
+    },
 
+    mounted() {
+      this.albumDisplay(1,0,1);
     },
 
     methods: {
@@ -104,7 +109,7 @@
           _region = this.region;
           _style = this.style;
           this.page = _page;
-        } else if(_style != 0){
+        } else if(_style != -1){
           _region = this.region;
           this.style = _style;
           _page = this.page;
@@ -113,7 +118,7 @@
           this.region = _region;
           _page = this.page
         }
-        this.axios.get('http://localhost:8080/MusicWeb/album/lookUpAlbumsByCatagory', {
+        this.axios.get(serverUrl() + "/album/filterAlbum", {
           params: {
             region: _region,
             style: _style,
@@ -123,13 +128,13 @@
         .then(res => {
           this.albums = res.data
           for(var i = 0; i < res.data.length; i++){
-            this.albums[i].image = 'http://localhost:8080/MusicWeb' + this.albums[i].image;
+            this.albums[i].image = serverUrl() + this.albums[i].image;
             this.albums[i].releaseTime = this.timestampToTime(this.albums[i].releaseTime);
           }
           
           console.log(this.albums)
 
-            this.axios.get('http://localhost:8080/MusicWeb/album/getAlbumPageCount', {
+            this.axios.get(serverUrl() + "/album/filterAlbumCount", {
               params: {
                 region: _region,
                 style: _style,
@@ -183,7 +188,7 @@
 <style lang="scss" scoped>
 .main {
   padding-top: 30px;
-  height: 800px;
+  height: 900px;
   opacity: 0.95;
   position: relative;
   color: #333;
@@ -196,21 +201,19 @@
   .album-nav {
     max-width: 1200px;
     height: 80px;
-    margin: 0 auto;
+    margin: 0 240px 50px;
     padding: 0px 0;
 
-
     .cl{
+      width: 40px;
+      height: 28px;
+      padding-left: 10px;
+      margin-bottom: 15px;
       color: #fff;
-      margin-left: 30px;
-      margin-bottom: 10px;
       font-size: 15px;
-      float: center;
-      line-height: 25px;
+      float: left;
+      line-height: 30px;
       background-color: #31c27c;
-      &:hover {
-        color: #fff;
-      }
     }
 
     .album-nav-tag {
@@ -279,6 +282,7 @@
   .pagination {
     text-align: center;
     font-size: 20px;
+    
   }
 }
 </style>
