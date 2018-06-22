@@ -1,7 +1,7 @@
 <template>
 
   <div class="wholeBody">
-    <div class="footer">
+    <div class="playerFooter">
     <!--去掉audio标签中controls="controls"属性就可以修改样式-->
       <audio 
       ref="audio" 
@@ -9,39 +9,34 @@
       @play="onPlay"
       @timeupdate="onTimeupdate" 
       @loadedmetadata="onLoadedmetadata"
-      src="http://65.ierge.cn/12/186/372266.mp3" 
+      @ended="end"
+      autoplay
+      :src="currentSong.filePath" 
       controlsList="nodownload">
       </audio>
-    <!--<el-row>
-      <el-button type="text" @click="startPlayOrPause">{{audio.playing | transPlayPause}}</el-button>
-    </el-row>-->
-
       <el-col :span="1">
-        <el-button class="btn" icon="el-icon-d-arrow-left" circle></el-button>
+        <el-button class="btn" icon="el-icon-d-arrow-left" @click="preSong" circle></el-button>
       </el-col>
       <el-col :span="1"> 
         <el-button class="btn" @click="startPlayOrPause" circle>{{audio.playing|transPlayPause}}</el-button>
       </el-col>
       <el-col :span="1">
-        <el-button class="btn" icon="el-icon-d-arrow-right" circle></el-button>
+        <el-button class="btn" icon="el-icon-d-arrow-right" @click="nextSong" circle></el-button>
       </el-col>
       <el-col :span="2">
-        <img class="albumImg" src="https://p.qpic.cn/music_cover/oQ7QIr12iawo8AdKZPxIeuUneZQTUL489DXnNEkpG9Ltz39j6dBOsfw/300?n=1" alt="专辑图片">
+        <img class="songImg" :src="currentSong.image" alt="歌曲图片">
       </el-col>
       <el-col :span="13">
       <div class="songInfo">  
-        <el-button class="songInfo2" type="text" @click="songdetail">{{songList[0].id}}</el-button>
-        <el-button class="songInfo2" type="text" @click="artistdetail">{{songList[0].name}}</el-button>
+        <el-button class="songInfo2" type="text" @click="songdetail">{{currentSong.name}}</el-button>
+        <el-button class="songInfo2" type="text" @click="artistdetail">{{currentSong.artistName}}</el-button>
       </div>
       <div class="tooltip">
         <el-slider v-model="sliderTime" :format-tooltip="formatProcessToolTip" @change="changeCurrentTime" class="slider"></el-slider>
       </div>
       </el-col>
-      <el-col :span="2">
-        <p class="time">{{ audio.currentTime | formatSecond}}</p>
-      </el-col>
-      <el-col :span="2">
-        <p class="time">{{ audio.maxTime | formatSecond}}</p>
+      <el-col :span="4">
+        <p class="time">{{ audio.currentTime | formatSecond}}/{{ audio.maxTime | formatSecond}}</p>
       </el-col>
       <!--以下为弹出框内容-->
       <el-popover
@@ -55,18 +50,42 @@
           <el-main>
             <div class="playlist">
               <h2>播放列表</h2>
+              <!--播放列表表格-->
+              <div class="songTable">
+              <el-table
+                :data="songList"
+                style="width: 100%"
+                max-height="394"
+                :show-header="false">
+              <el-table-column               
+                prop="name"
+                label="歌曲"
+                width="300">
+              </el-table-column>
+              <el-table-column               
+                prop="artistName"
+                label="歌手"
+                width="170">
+              </el-table-column>            
+              <el-table-column               
+                prop="duration"
+                label="时长"
+                width="150">
+              </el-table-column>
+              </el-table>
+              </div>
             </div>
           </el-main>
           <el-aside width="40%">
             <div class="lyrics">
-              <h4>{{songList[0].id}}</h4>
+              <h3>{{currentSong.name}}</h3>
               <el-input
               id="lyrics"
               type="textarea"
               :disabled="true"
-              :autosize="{ minRows: 20, maxRows: 20}"
+              :autosize="{ minRows: 19, maxRows: 200}"
               placeholder="歌词"
-              v-model="textarea">
+              v-model="currentSong.lyricPath">
               </el-input>
             </div>
           </el-aside>
@@ -104,26 +123,23 @@ function realFormatSecond(second) {
 export default {
     data(){
         return {
-          textarea:'',
-            audio:{
-                // 该字段是音频是否处于播放状态的属性
-                playing:false,
-                // 音频当前播放时长
-                currentTime: 0,
-                // 音频最大播放时长
-                maxTime: 0,
-                id:0,
-                url:'',
-                singer:'',
-                img_url:'',
-                lyrics:'',
-            }
+          id: '',
+          songUrl: [],
+          audio: {
+            playing:false,
+            currentTime: 0,
+            maxTime: 0,
+          },
+          sliderTime:0,
         }
     },
     computed: {
       ...mapState([
-        'songList', 
-      ])
+        'songList',
+      ]),
+      currentSong() {
+        return this.$store.state.currentSong
+      },
     },
    methods: {
     // 控制音频的播放与暂停
@@ -165,8 +181,6 @@ export default {
     },
     // 当音频当前时间改变后，进度条也要改变
     onTimeupdate(res) {
-    console.log('timeupdate')
-    console.log(res)
     this.audio.currentTime = res.target.currentTime
     this.sliderTime = parseInt(this.audio.currentTime / this.audio.maxTime * 100)
     },
@@ -188,40 +202,32 @@ export default {
           path: '/page/artistdetail'
       });
     },
-    		/* 播放上一曲
-		playNext (state) {
-			state.currentIndex ++
-			const length = state.songList.length
-			if (state.currentIndex >= length) {
-				state.currentIndex = 0
-			}
-			state.audioelement.setAttribute('src', state.songList[state.currentIndex].url)
-			state.playing = true
-			state.audioelement.load()
-			state.audioelement.play()
-		},
-
+    //播放上一曲
+      preSong: function(){
+        if(this.$store.state.currentIndex > 0){
+          this.$store.state.currentIndex = this.$store.state.currentIndex - 1
+          this.$store.state.currentSong = this.$store.state.songList[this.$store.state.currentIndex]
+        }
+      },
 		// 播放下一曲
-		playPrev (state) {
-			state.currentIndex --
-			const length = state.songList.length
-			if (state.currentIndex < 0) {
-				state.currentIndex = length - 1
-			}
-			state.audioelement.setAttribute('src', state.songList[state.currentIndex].url)
-			state.playing = true
-			state.audioelement.load()
-			state.audioelement.play()
-    },*/
+      nextSong: function(){
+        if(this.$store.state.currentIndex < this.$store.state.songList.length){
+          this.$store.state.currentIndex = this.$store.state.currentIndex + 1
+          this.$store.state.currentSong = this.$store.state.songList[this.$store.state.currentIndex]
+        }
+      },
+      end: function () {
+        this.nextSong()
+      },
   },
   filters: {
     // 使用组件过滤器来动态改变按钮的显示
     transPlayPause(value) {
-      return value ? '|| ': '►'
+      return value ? '|| ': '►';
     },
     // 将整数转化成时分秒
     formatSecond(second = 0) {
-      return realFormatSecond(second)
+      return realFormatSecond(second);
     }
   }
 }
@@ -238,7 +244,7 @@ export default {
   width:100%;
   background:url("http://publicdomainarchive.com/wp-content/uploads/2016/01/public-domain-images-free-stock-photos-002.jpg") 0 0 no-repeat;
 }
-.footer {
+.playerFooter {
     color: #333;
     text-align: center;
     width:100%;
@@ -246,25 +252,30 @@ export default {
     position:fixed;
     bottom:0px;
     background-color:white;
-    margin-left:-10px;
+    margin-left:-1px;
+    margin-bottom:0px;
   }
 .playlist {
     color: #333;
-    text-align: center;
+    text-align: left;
     line-height: 10px;
-
+    margin-left:100px;
   }
-  
+.songTable{
+  margin-top:25px;
+  text-align:left;
+  margin-left:-10px;
+}
   .lyrics {
     color: #333;
     text-align: center;
     line-height: 10px;
-
+    margin-top:30px;
   }
-.albumImg{
+.songImg{
   width:50px;
   height:50px;
-  padding-top:1%;
+  padding-top:5%;
 }
 .time{    
   width:50px;
@@ -301,4 +312,5 @@ export default {
   margin-left:-80px;
   margin-top:0.8%;
 }
+
 </style>

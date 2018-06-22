@@ -3,7 +3,7 @@
 		<v-head></v-head>
 		<v-nav></v-nav>
 		<div class="main">
-			<p @click='search' style="text-align:center;">search</p>
+			<p @click='onSearch' style="text-align:center;">search</p>
 		</div>
 		<v-foot></v-foot>
 	</div>
@@ -26,7 +26,7 @@
 			}
 		},
 		methods: {
-			search: function() {
+			onSearch: function() {
 				this.$router.push('/user/search')
 			}
 		}

@@ -7,10 +7,9 @@
 			<li v-for="list in headNav" :class="{ list_color:curTitle == list.title}" @click="cur_title(list.title)" @mouseover="mo()">
 				{{list.title}}
 			</li>
-
 		</ul>
 		<div class="search">
-			<el-input size="medium" placeholder="搜索歌手、歌曲、专辑" v-model="input" @keyup.enter.native="onSearch">
+			<el-input size="medium" placeholder="搜索歌手、歌曲、专辑" v-model="inputTxt" @keyup.enter.native="onSearch">
 				<el-button slot="append" icon="el-icon-search" @click='onSearch'></el-button>
 			</el-input>
 		</div>
@@ -32,13 +31,14 @@
 			return {
 				curTitle: '音乐馆',
 				headNav: [
-					{
-						title:"音乐馆"  
-					},
-					{
-						title:"我的音乐"                   
-					}
-				]
+				{
+					title:"音乐馆"  
+				},
+				{
+					title:"我的音乐"                   
+				}
+				],
+				inputTxt: '',
 			}
 		},
 		methods: {
@@ -55,6 +55,15 @@
 					break
 				}
 
+			},
+			onSearch: function() {	
+				this.$store.state.search.name = this.inputTxt;
+				this.$router.push('/user/search');		
+			}
+		},
+		computed: {
+			search () {
+				return this.$store.state.search
 			}
 		}
 	};
