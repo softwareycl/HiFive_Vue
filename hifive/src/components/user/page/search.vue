@@ -53,17 +53,17 @@
 					</el-table-column>
 					<el-table-column label="歌手">
 						<template slot-scope="scope">
-							<a herf="" style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.artist}}</a>
+							<a herf="" style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.artistName}}</a>
 						</template>
 					</el-table-column>
 					<el-table-column label="专辑">
 						<template slot-scope="scope">
-							<a herf="" style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.album}}</a>
+							<a herf="" style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.albumName}}</a>
 						</template>
 					</el-table-column>
 					<el-table-column prop="time" label="时长">
 						<template slot-scope="scope">
-							<span style="margin-left: 10px">{{ scope.row.time }}</span>
+							<span style="margin-left: 10px">{{ scope.row.duration }}</span>
 						</template>
 					</el-table-column>
 				</el-table>
@@ -73,11 +73,11 @@
 			</div>
 			<div class="search_artist" v-if="curTitle == '歌手'">
 				<el-row gutter="20">
-					<el-col v-for="(o, index) in 20" :key="o" style='width:20%'>
+					<el-col :data="artistList" v-for="list in artistList" style='width:20%'>
 						<el-card :body-style="{ padding: '0px'}" shadow="never" style="border:none;margin-bottom:20px;">							
 							<div style="line-height:8px;font-size:5px;text-align:center">
 								<img src="../../../assets/icon.jpg" class="image">	
-								<p>歌手名</p>
+								<p>{{list.name}}</p>
 							</div>
 						</el-card>
 					</el-col>
@@ -88,12 +88,12 @@
 			</div>
 			<div class="search_artist" v-if="curTitle == '专辑'">
 				<el-row gutter="20">
-					<el-col v-for="(o, index) in 20" :key="o" style='width:20%'>
+					<el-col :data="albumList" v-for="list in albumList" style='width:20%'>
 						<el-card :body-style="{ padding: '0px'}" shadow="never" style="border:none;margin-bottom:20px;">
 							<img src="../../../assets/icon.jpg" class="image">
 							<div style="line-height:8px;font-size:5px;">
-								<p>专辑名</p>
-								<p>歌手名</p>
+								<p>{{list.name}}</p>
+								<p>{{list.artistName}}</p>
 							</div>
 						</el-card>
 					</el-col>
@@ -116,8 +116,28 @@
 			vHead,
 			vFoot
 		},
+		computed: {
+			serverUrl() {
+				return this.$store.state.serverUrl;
+			},
+			search() {
+				return this.$store.state.search;
+			}
+		},
 		mounted () {
 			this.getPlaylistList();
+			if(this.curTitle == '歌曲') {
+				this.getSongList(this.$store.state.search.name,this.page.cur);
+				this.getSongTotal(this.$store.state.search.name);
+			}					
+			else if(this.curTitle == '歌手') {
+				this.getArtistList(this.$store.state.search.name,this.page.cur);
+				this.getArtistTotal(this.$store.state.search.name);
+			}
+			else {
+				this.getAlbumList(this.$store.state.search.name,this.page.cur);
+				this.getAlbumTotal(this.$store.state.search.name);
+			}
 		},
 		data () {
 			return {
@@ -161,32 +181,56 @@
 					title:"专辑"  
 				}],
 				songList: [{
-					ID:'1',
-					name:'心之科学',
-					artistID:'',
-					artist:'容祖儿',
-					album:'qqqq',
-					time:'03:55',
+					id: '1',
+					name: '心之科学',
+					duration: '03:55',
+					albumId: '1',
+					albumName: 'qqqq',
+					artistId: '1',
+					artistName: '容祖儿',
+					filePath: '',
+					image: '',
+					lyricsPath: '',
 					Flag:false,
 					isopen:false
-				},{
-					ID:'2',
-					name:'心之科学',
-					artistID:'',
-					artist:'容祖儿',
-					album:'qqqq',
-					time:'03:55',
-					Flag:false,
-					isopen:false
-				},{
-					ID:'3',
-					name:'心之科学',
-					artistID:'',
-					artist:'容祖儿',
-					album:'qqqq',
-					time:'03:55',
-					Flag:false,
-					isopen:false
+				}],
+				artistList: [{
+					id: '1',
+					name: '郭吉吉',
+					image: ''
+				},
+				{
+					id: '1',
+					name: '郭吉吉',
+					image: ''
+				},
+				{
+					id: '1',
+					name: '郭吉吉',
+					image: ''
+				},
+				{
+					id: '1',
+					name: '郭吉吉',
+					image: ''
+				},
+				{
+					id: '1',
+					name: '郭吉吉',
+					image: ''
+				},
+				{
+					id: '1',
+					name: '郭吉吉',
+					image: ''
+				},],
+				albumList: [{
+					id: '1',
+					name: '郭吉吉',
+					image: '',
+					artistId: '1',
+					artistName: '郭喆',
+					count: 1
 				}],
 				page: {
 					cur: 1,
@@ -198,15 +242,6 @@
 			cur_title: function(title) {
 				this.curTitle = title;
 				this.page.cur = 1;
-				// switch (title) { 
-				// 	case '歌曲': this.$router.push('/user/home') 
-				// 	break
-				// 	case '歌手': this.$router.push('/user/artist') 
-				// 	break
-				// 	case '专辑': this.$router.push('/user/album') 
-				// 	break
-				// }
-
 			},
 
 			handleMouseEnter:function(row, column, cell, event){
@@ -214,72 +249,163 @@
 			},
 			handleMouseOut:function(row, column, cell, event){
 				if(!row.isopen){
-					row.Flag=false;}
-					else{
+					row.Flag=false;
+				}
+				else{
+					return false;
+				}
+			},
+			handle:function(row,event){
+				row.Flag=event;
+				row.isopen=event;
+			},
+			handleClose(done) {
+				this.$confirm('确认关闭？')
+				.then(_ => {
+					done();
+				})
+				.catch(_ => {});
+			},
+			handleSongCommand:function(command){
+				if(command=="login"){
+					window.location.href='/';
+				}
+				else if(command=="newplaylist"){
+					this.dialogVisible=true;
+				}
+				else if(command=="playqueue"){
+
+				}
+				else{
+					console.log(command.param1);
+					console.log(command.param2.ID)
+				}
+			},
+
+			submitForm:function(formname){
+				this.$refs[formname].validate((valid) => {
+					if (valid) {
+						alert('submit!');
+						this.dialogVisible=false;
+						this.$refs[formname].resetFields();
+					} else {
+						alert('error submit!!');
 						return false;
 					}
-				},
-				handle:function(row,event){
-					row.Flag=event;
-					row.isopen=event;
-				},
-				handleClose(done) {
-					this.$confirm('确认关闭？')
-					.then(_ => {
-						done();
-					})
-					.catch(_ => {});
-				},
-				handleSongCommand:function(command){
-					if(command=="login"){
-						window.location.href='/';
+				});
+			},
+
+			downloadSong:function(row){
+
+			},
+
+			getPlaylistList:function(){
+
+			},
+
+			playSong:function(row){
+
+			},
+
+			handleCurrentChange: function(c){
+				this.page.cur = c;
+				if(this.curTitle == '歌曲')
+					this.getSongList(this.$store.state.search.name,this.page.cur)
+				else if(this.curTitle == '歌手')
+					this.getArtistList(this.$store.state.search.name,this.page.cur)
+				else
+					this.getAlbumList(this.$store.state.search.name,this.page.cur)
+			},
+
+			getSongList: function(_name, _page) {      //获取一页歌曲
+				this.axios.get(this.serverUrl + "/song/searchSong", {
+					params: {
+						name: _name,
+						page: _page
 					}
-					else if(command=="newplaylist"){
-						this.dialogVisible=true;
+				})
+				.then(res => {
+					this.songList = res.data;					
+				})
+				.catch(function (error) {
+					console.log(error);
+				});
+			},
+			getArtistList: function(name, page) {      //获取一页歌手
+				this.axios.get(this.serverUrl + "/artist/searchArtist", {
+					params: {
+						name: _name,
+						page: _page
 					}
-					//传递歌曲ID给player.vue
-					else if(command=="playqueue"){
-
+				})
+				.then(res => {
+					this.artistList = res.data;
+					for(var i = 0; i < res.data.length; i++){
+						this.artistList[i].image = this.serverUrl + this.artistList[i].image;
 					}
-					//提交歌曲ID和歌单ID，返回false则用户会话超时
-					else{
-
-						console.log(command.param1);
-						console.log(command.param2.ID)
+				})
+				.catch(function (error) {
+					console.log(error);
+				});
+			},
+			getAlbumList: function(name, page) {      //获取一页专辑
+				this.axios.get(this.serverUrl + "/album/searchAlbum", {
+					params: {
+						name: _name,
+						page: _page
 					}
-				},
-
-				submitForm:function(formname){
-
-					this.$refs[formname].validate((valid) => {
-						if (valid) {
-							alert('submit!');
-							this.dialogVisible=false;
-							this.$refs[formname].resetFields();
-						} else {
-							alert('error submit!!');
-							return false;
-						}
-					});
-				},
-
-				downloadSong:function(row){
-
-				},
-
-				getPlaylistList:function(){
-
-				},
-
-				playSong:function(row){
-
-				},
-
-				handleCurrentChange: function(c){
-					this.page.cur = c;
-				}
-			}
-		};
+				})
+				.then(res => {
+					this.artistList = res.data;
+					for(var i = 0; i < res.data.length; i++){
+						this.artistList[i].image = this.serverUrl + this.artistList[i].image;
+					}
+				})
+				.catch(function (error) {
+					console.log(error);
+				});
+			},
+			getSongTotal: function(name) {
+				this.axios.get(this.serverUrl + "/song/searchSongCount", {
+					params: {
+						name: _name,
+					}
+				})
+				.then(res => {
+					this.page.total = res.data;					
+				})
+				.catch(function (error) {
+					console.log(error);
+				});
+			},
+			getArtistTotal: function(name) {
+				this.axios.get(this.serverUrl + "/artist/searchArtistCount", {
+					params: {
+						name: _name,
+					}
+				})
+				.then(res => {
+					this.page.total = res.data;					
+				})
+				.catch(function (error) {
+					console.log(error);
+				});
+			},
+			getAlbumTotal: function(name) {
+				this.axios.get(this.serverUrl + "/album/searchAlbumCount", {
+					params: {
+						name: _name,
+					}
+				})
+				.then(res => {
+					this.page.total = res.data;					
+				})
+				.catch(function (error) {
+					console.log(error);
+				});
+			},
+		}
+	};
 </script>
 
 <style>
