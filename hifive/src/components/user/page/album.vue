@@ -9,7 +9,7 @@
             <td>
               <td><span class="cl">地区</span></td>
               <ul id ="region" class="album-nav-tag" >
-                <li @click="region_change_bg(0);albumDisplay(1,-1,1)">内地</li>
+                <li @click="region_change_bg(0);albumDisplay(1,-1,1)" class="current">内地</li>
                 <li @click="region_change_bg(1);albumDisplay(2,-1,1)">港台</li>
                 <li @click="region_change_bg(2);albumDisplay(3,-1,1)">欧美</li>
                 <li @click="region_change_bg(3);albumDisplay(4,-1,1)">日韩</li>
@@ -21,7 +21,7 @@
             <td>
               <td><span class="cl">流派</span></td>
               <ul class="album-nav-tag" id="style">
-                <li @click="style_change_bg(0);albumDisplay(0,0,1)">全部</li>
+                <li @click="style_change_bg(0);albumDisplay(0,0,1)" class="current">全部</li>
                 <li @click="style_change_bg(1);albumDisplay(0,1,1)">流行</li>
                 <li @click="style_change_bg(2);albumDisplay(0,2,1)">摇滚</li>
                 <li @click="style_change_bg(3);albumDisplay(0,3,1)">民谣</li>
@@ -40,10 +40,14 @@
       <ul id="albumlist">
         <li v-for="item in albums" class="albumli">
           <div class="album">
-            <img :src="item.image" alt="">
-            <p>{{item.name}}</p>
-            <p>{{item.artistName}}</p>
-            <p>{{item.releaseTime}}</p>
+            <router-link to="/user/albumdetail">
+              <img :src="item.image" alt=""  @click="setAlbum(item)">
+              <p @click="setAlbum(item)">{{item.name}}</p>
+            </router-link>
+            <router-link to="/user/artistdetail">
+              <p>{{item.artistName}}</p>
+            </router-link>
+            <p>{{item.releaseDate}}</p>
           </div>
         </li>
       </ul>
@@ -77,13 +81,13 @@
         style: 0,
         page: 1,
         pageCount: 5,
-        albums: [{}]
+        albums: []
       }
     },
 
-      computed: {
+    computed: {
       serverUrl() {
-        return this.$store.state.sererUrl
+        return this.$store.state.serverUrl;
       }
     },
 
@@ -92,8 +96,12 @@
     },
 
     methods: {
+      setAlbum: function(item){
+        this.$store.state.album = item
+      },
+      
       handleCurrentChange: function(val){
-        this.albumDisplay(0,0,val);
+        this.albumDisplay(0,-1,val);
       },
 
       timestampToTime: function(timestamp) {
@@ -118,7 +126,7 @@
           this.region = _region;
           _page = this.page
         }
-        this.axios.get(serverUrl() + "/album/filterAlbum", {
+        this.axios.get(this.serverUrl + "/album/filterAlbum", {
           params: {
             region: _region,
             style: _style,
@@ -126,22 +134,23 @@
           }
         })
         .then(res => {
-          this.albums = res.data
+          this.albums = res.data;
+          console.log(res.data);
           for(var i = 0; i < res.data.length; i++){
-            this.albums[i].image = serverUrl() + this.albums[i].image;
-            this.albums[i].releaseTime = this.timestampToTime(this.albums[i].releaseTime);
+            this.albums[i].image = this.serverUrl + this.albums[i].image;
+            this.albums[i].releaseDate = this.timestampToTime(this.albums[i].releaseDate);
           }
           
           console.log(this.albums)
 
-            this.axios.get(serverUrl() + "/album/filterAlbumCount", {
+            this.axios.get(this.serverUrl + "/album/filterAlbumCount", {
               params: {
                 region: _region,
                 style: _style,
               }
             })
             .then(res => {
-              this.pageCount = res.data
+              this.pageCount = Math.ceil(parseFloat(res.data) / 10);
               
               console.log(this.albums)
             })
