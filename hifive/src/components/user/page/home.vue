@@ -1,98 +1,115 @@
 <template>
-	<div id="home">
-		<div data="songList">
-			<el-row>
-				<p align=center class="font_Menu">新歌首发</p>
-			</el-row>
-			<el-row>
-                <el-col offset="3" style="width:44%;">
-				    <el-button icon="el-icon-caret-right"  v-on:click="playAllSong">播放全部</el-button>
-				    <el-tabs @tab-click="switch1" style="width:240px;float:right">
-                        <el-tab-pane label="内地" name="first"></el-tab-pane>
-                        <el-tab-pane label="港台" name="second"></el-tab-pane>
-                        <el-tab-pane label="日韩" name="third"></el-tab-pane>
-                        <el-tab-pane label="欧美" name="fourth"></el-tab-pane>
-                    </el-tabs>
-				</el-col>
-			</el-row>
-			<el-carousel :autoplay=false indicator-position="outside" arrow="hover" height="400px" trigger="click">
-				<el-carousel-item v-for="page in 4" :key="page">
-					<el-row v-for="(i, index) in 3" :key="i" style="margin-top:20px;">
-						<el-col v-for="(j, index) in 3" :key="j" :offset="index > 0 ? 0 : 3" style="width:26%;height:100px;">
-							<el-card :body-style="{ padding: '0px'}" shadow="never" style="border-style:none;width:450px;height:100px;">
-								<div style="height:100%;width:100%">
-									<el-row>  
-										<el-col style="width:100px;height:100px;">
-                                            <div style="width:100%;height:100px;border-style:none;overflow:hidden;">
-											    <img src="../../../assets/icon.jpg" class="songImage" onmouseover="this.parentNode.children[1].style.display='block';this.style.transform='scale(1.4)';this.parentNode.children[1].style.transform='scale(1.4)';" @mouseout="handleMouseOut">
-                                                <el-button class="songButton" icon="el-icon-caret-right" circle></el-button>
+    <div class="wrapper">
+        <v-head></v-head>
+        <v-nav></v-nav>
+        <div id="home">
+            <div data="songList">
+                <el-row>
+                    <p align=center class="font_Menu">新歌首发</p>
+                </el-row>
+                <el-row>
+                    <el-col offset="3" style="width:44%;">
+                        <el-button icon="el-icon-caret-right"  v-on:click="playAllSong">播放全部</el-button>
+                        <el-tabs @tab-click="switch1" style="width:240px;float:right">
+                            <el-tab-pane label="内地" name="first"></el-tab-pane>
+                            <el-tab-pane label="港台" name="second"></el-tab-pane>
+                            <el-tab-pane label="日韩" name="third"></el-tab-pane>
+                            <el-tab-pane label="欧美" name="fourth"></el-tab-pane>
+                        </el-tabs>
+                    </el-col>
+                </el-row>
+                <el-carousel :autoplay=false indicator-position="outside" arrow="hover" height="400px" trigger="click" style="z-index: 0">
+                    <el-carousel-item v-for="page in 4" :key="page">
+                        <el-row v-for="(i, index) in 3" :key="i" style="margin-top:20px;">
+                            <el-col v-for="(j, index) in 3" :key="j" :offset="index > 0 ? 0 : 3" style="width:26%;height:100px;">
+                                <el-card :body-style="{ padding: '0px'}" shadow="never" style="border-style:none;width:450px;height:100px;">
+                                    <div style="height:100%;width:100%">
+                                        <el-row>  
+                                            <el-col style="width:100px;height:100px;">
+                                                <div style="width:100px;height:100px;border-style:none;overflow:hidden;">
+                                                    <img src="../../../assets/icon.jpg" class="songImage" onmouseover="this.parentNode.children[1].style.display='block';this.style.transform='scale(1.4)';this.parentNode.children[1].style.transform='scale(1.3)';" @mouseout="handleMouseOut">
+                                                    <el-button class="songButton" icon="el-icon-caret-right" circle></el-button>
+                                                </div>
+                                            </el-col>  
+                                            <el-col style="width:310px;height:100px;">
+                                                <div style="margin-top:25px;">
+                                                    <a herf="" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='#333333';" class="font_name">{{songList[9*(page-1)+3*i+j].name}}</a>
+                                                </div>
+                                                <div>
+                                                    <a herf="" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='#9C9C9C';" class="font_other">{{songList[9*(page-1)+3*i+j].artist}}</a>
+                                                </div>
+                                            </el-col>  
+                                            <el-col style="width:40px;height:100px;"><p class="font_time" style="color:#9C9C9C;margin-top:40px;">{{songList[9*(page-1)+3*i+j].time}}</p>
+                                            </el-col>  
+                                        </el-row>   
+                                    </div>   
+                                </el-card>
+                            </el-col>
+                        </el-row>
+                    </el-carousel-item>
+                </el-carousel>
+            </div>
+            <div data="albumList" style="margin-top:30px;">
+                <el-row>
+                    <p align=center class="font_Menu">新碟首发</p>
+                </el-row>
+                <el-row>
+                    <el-col align=center>
+                        <el-tabs @tab-click="switch2" style="width:240px;">
+                            <el-tab-pane label="内地" name="first"></el-tab-pane>
+                            <el-tab-pane label="港台" name="second"></el-tab-pane>
+                            <el-tab-pane label="日韩" name="third"></el-tab-pane>
+                            <el-tab-pane label="欧美" name="fourth"></el-tab-pane>
+                        </el-tabs>
+                    </el-col>
+                </el-row>
+                <el-carousel :autoplay=false indicator-position="outside" arrow="hover" height="600px" trigger="click" style="z-index: 0">
+                    <el-carousel-item v-for="page in 4" :key="page">
+                        <el-row v-for="(i, index) in 2" :key="i" style="margin-top:20px;">
+                            <el-col v-for="(j, index) in 5" :key="j" :offset="index > 0 ? 0 : 3" style="width:16%;height:270px;">
+                                <el-card :body-style="{ padding: '0px'}" shadow="never" style="border-style:none;width:220px;height:270px;">
+                                    <div style="height:100%;width:100%">  
+                                        <el-row>  
+                                            <div style="width:220px;height:220px;border-style:none;overflow:hidden;">
+                                                <img src="../../../assets/icon.jpg" class="albumImage" onmouseover="this.parentNode.children[1].style.display='block';this.style.transform='scale(1.4)';this.parentNode.children[1].style.transform='scale(1.7)';" @mouseout="handleMouseOut">
+                                                <el-button class="albumButton" icon="el-icon-caret-right" circle></el-button>
                                             </div>
-										</el-col>  
-										<el-col style="width:250px;height:100px;">
-											<div style="margin-top:25px;">
-												<a herf="" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='#333333';" class="font_name">{{songList[9*(page-1)+3*i+j].name}}</a>
-											</div>
-											<div>
-												<a herf="" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='#9C9C9C';" class="font_other">{{songList[9*(page-1)+3*i+j].artist}}</a>
-											</div>
-										</el-col>  
-										<el-col style="width:50px;height:100px;"><p class="font_time" style="color:#9C9C9C;margin-top:40px;">{{songList[9*(page-1)+3*i+j].time}}</p></el-col>  
-									</el-row>   
-								</div>   
-							</el-card>
-						</el-col>
-					</el-row>
-				</el-carousel-item>
-			</el-carousel>
-		</div>
-		<div data="albumList" style="margin-top:30px;">
-			<el-row>
-				<p align=center class="font_Menu">新碟首发</p>
-			</el-row>
-			<el-row>
-				<el-col align=center>
-					<el-tabs @tab-click="switch2" style="width:240px;">
-                        <el-tab-pane label="内地" name="first"></el-tab-pane>
-                        <el-tab-pane label="港台" name="second"></el-tab-pane>
-                        <el-tab-pane label="日韩" name="third"></el-tab-pane>
-                        <el-tab-pane label="欧美" name="fourth"></el-tab-pane>
-                    </el-tabs>
-				</el-col>
-			</el-row>
-			<el-carousel :autoplay=false indicator-position="outside" arrow="hover" height="600px" trigger="click">
-				<el-carousel-item v-for="page in 4" :key="page">
-					<el-row :gutter="20" v-for="(i, index) in 2" :key="i" style="margin-top:20px;">
-						<el-col v-for="(j, index) in 5" :key="j" :offset="index > 0 ? 0 : 3" style="width:16%;height:270px;">
-							<el-card :body-style="{ padding: '0px'}" shadow="never" style="border-style:none;width:220px;height:270px;">
-								<div style="height:100%;width:100%">  
-									<el-row>  
-                                        <div style="width:220px;height:220px;border-style:none;overflow:hidden;">
-										    <img src="../../../assets/icon.jpg" class="albumImage" onmouseover="this.parentNode.children[1].style.display='block';this.style.transform='scale(1.4)';" @mouseout="handleMouseOut">
-                                            <el-button class="albumButton" icon="el-icon-caret-right" circle></el-button>
-                                        </div>
-									</el-row>
-									<el-row>
-										<div>
-											<a herf="" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='#333333';" class="font_name">{{albumList[10*(page-1)+5*i+j].name}}</a>
-										</div>
-										<div>
-											<a herf="" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='#9C9C9C';" class="font_other">{{albumList[10*(page-1)+5*i+j].artist}}</a>
-										</div>
-									</el-row> 
-								</div>   
-							</el-card>
-						</el-col>
-					</el-row>
-				</el-carousel-item>
-			</el-carousel>
-		</div>
-        <div>
+                                        </el-row>
+                                        <el-row>
+                                            <div>
+                                                <a herf="" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='#333333';" class="font_name">{{albumList[10*(page-1)+5*i+j].name}}</a>
+                                            </div>
+                                            <div>
+                                                <a herf="" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='#9C9C9C';" class="font_other">{{albumList[10*(page-1)+5*i+j].artist}}</a>
+                                            </div>
+                                        </el-row> 
+                                    </div>   
+                                </el-card>
+                            </el-col>
+                        </el-row>
+                    </el-carousel-item>
+                </el-carousel>
+            </div>
+            <div style="margin-top:30px;">
+                <el-row>
+                    <p align=center class="font_Menu">排行榜</p>
+                </el-row>
+            </div>
         </div>
-	</div>
+        <v-foot></v-foot>
+    </div>
 </template>
 
 <script>
+    import vHead from '../common/header.vue'
+    import vNav from '../common/navigation.vue'
+    import vFoot from '../common/footer.vue'
 export default {
+    components: {
+        vHead,
+        vNav,
+        vFoot
+    },
     data(){
         return{
         	songList: [{
@@ -672,7 +689,6 @@ export default {
             console.log(tab, event);
         },
         handleMouseOut:function(event) {
-            console.log(event.target);
             if(event.toElement==event.target.parentNode.children[1]){
                 return false;
             }
@@ -712,24 +728,20 @@ export default {
     height:100%;
     width:100%;
     cursor:pointer;
-    transition:all 1s;
+    transition:all 0.5s;
 }
 .songImage{
     height:100%;
     width:100%;
     cursor:pointer;
-    transition:all 1s;
+    transition:all 0.5s;
 }
 .songButton{
     position:absolute;left:30px;top:30px;
     display:none;
-    transition:all 1s;
 }
 .albumButton{
-    position:absolute;left:70px;top:70px;
-    width:80px;
-    height:80px;
+    position:absolute;left:90px;top:90px;
     display:none;
-    transition:all 1s;
 }
 </style>
