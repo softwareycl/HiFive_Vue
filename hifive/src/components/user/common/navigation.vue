@@ -1,7 +1,7 @@
 <template>
 	<div class="navigator">	
 		<ul class="menu_2">
-			<li v-for="list in headNav" :class="{ nav_color:curTitle == list.title}" @click="cur_title(list.title)" @mouseover="mo()">
+			<li v-for="list in headNav" :class="{ nav_color:curTitle == list.title}" @click="cur_title(list.title)">
 				{{list.title}}
 			</li>
 
