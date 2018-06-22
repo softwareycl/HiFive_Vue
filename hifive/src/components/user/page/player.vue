@@ -10,7 +10,6 @@
       @timeupdate="onTimeupdate" 
       @loadedmetadata="onLoadedmetadata"
       @ended="end"
-      autoplay
       :src="currentSong.filePath" 
       controlsList="nodownload">
       </audio>
