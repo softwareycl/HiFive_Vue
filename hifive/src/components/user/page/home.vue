@@ -18,7 +18,7 @@
                         </el-tabs>
                     </el-col>
                 </el-row>
-                <el-carousel :autoplay=false indicator-position="outside" arrow="hover" height="400px" trigger="click" style="z-index: 0">
+                <el-carousel :autoplay=false indicator-position="outside" arrow="hover" height="300px" trigger="click" style="z-index: 0">
                     <el-carousel-item v-for="page in 4" :key="page">
                         <el-row :gutter="20" v-for="(i, index) in 3" :key="i" style="margin-top:20px;">
                             <el-col v-for="(j, index) in 3" :key="j" :offset="index > 0 ? 0 : 3" style="width:26%;">
@@ -26,7 +26,7 @@
                                     <div style="height:100%;width:100%">
                                         <el-row>  
                                             <el-col style="width:20%;">
-                                                <div style="width:100%;height:100px;border-style:none;overflow:hidden;">
+                                                <div style="width:100%;border-style:none;overflow:hidden;">
                                                     <img src="../../../assets/icon.jpg" class="songImage" onmouseover="this.parentNode.children[1].style.display='block';this.style.transform='scale(1.4)';this.parentNode.children[1].style.transform='scale(1.3)';" @mouseout="handleMouseOut">
                                                     <el-button class="songButton" icon="el-icon-caret-right" circle></el-button>
                                                 </div>
@@ -63,14 +63,14 @@
                         </el-tabs>
                     </el-col>
                 </el-row>
-                <el-carousel :autoplay=false indicator-position="outside" arrow="hover" height="600px" trigger="click" style="z-index: 0">
+                <el-carousel :autoplay=false indicator-position="outside" arrow="hover" height="480px" trigger="click" style="z-index: 0">
                     <el-carousel-item v-for="page in 4" :key="page">
                         <el-row :gutter="80" v-for="(i, index) in 2" :key="i" style="margin-top:20px;">
                             <el-col v-for="(j, index) in 5" :key="j" :offset="index > 0 ? 0 : 3" style="width:15%;">
                                 <el-card :body-style="{ padding: '0px'}" shadow="never" style="border-style:none;width:100%;">
                                     <div style="height:100%;width:100%">  
                                         <el-row>  
-                                            <div style="width:100%;height:220px;border-style:none;overflow:hidden;">
+                                            <div style="width:100%;border-style:none;overflow:hidden;">
                                                 <img src="../../../assets/icon.jpg" class="albumImage" onmouseover="this.parentNode.children[1].style.display='block';this.style.transform='scale(1.4)';this.parentNode.children[1].style.transform='scale(1.7)';" @mouseout="handleMouseOut">
                                                 <el-button class="albumButton" icon="el-icon-caret-right" circle></el-button>
                                             </div>
@@ -95,7 +95,7 @@
                     <p align=center class="font_Menu">排行榜</p>
                 </el-row>
                 <el-row style="height:600px;">
-                    <el-col offset="3" style="width:10%;">
+                    <el-col offset="3" style="width:12%;">
                         <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;">
                             <div data="list1" style="width:100%;height:500px;border-style:none;overflow:hidden;background:url(../../../assets/icon.jpg) no-repeat;">
                                 <el-row><P align=center>巅峰榜</P><p align=center style="font-size:large;">新歌</p></el-row>
@@ -106,7 +106,7 @@
                             </div>
                         </el-card>
                     </el-col>
-                    <el-col style="width:10%;margin-left:3%">
+                    <el-col style="width:12%;margin-left:0.5%">
                         <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;">
                             <div data="list2" style="width:100%;height:500px;border-style:none;overflow:hidden;">
                                 <el-row><P align=center>巅峰榜</P><p align=center style="font-size:large;">热歌</p></el-row>
@@ -117,7 +117,7 @@
                              </div>  
                         </el-card>
                     </el-col>
-                    <el-col style="width:10%;margin-left:3%">
+                    <el-col style="width:12%;margin-left:0.5%">
                         <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;"> 
                             <div data="list3" style="width:100%;height:500px;border-style:none;overflow:hidden;">
                                 <el-row><P align=center>巅峰榜</P><p align=center style="font-size:large;">内地</p></el-row>
@@ -128,7 +128,7 @@
                             </div>   
                         </el-card>
                     </el-col>
-                    <el-col style="width:10%;margin-left:3%">
+                    <el-col style="width:12%;margin-left:0.5%">
                         <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;"> 
                             <div data="list4" style="width:100%;height:500px;border-style:none;overflow:hidden;">
                                 <el-row><P align=center>巅峰榜</P><p align=center style="font-size:large;">港台</p></el-row>
@@ -139,7 +139,7 @@
                             </div>
                         </el-card>
                     </el-col>
-                    <el-col style="width:10%;margin-left:3%">
+                    <el-col style="width:12%;margin-left:0.5%">
                         <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;">
                             <div data="list5" style="width:100%;height:500px;border-style:none;overflow:hidden;">
                                 <el-row><P align=center>巅峰榜</P><p align=center style="font-size:large;">日韩</p></el-row>
@@ -150,7 +150,7 @@
                             </div> 
                         </el-card>
                     </el-col>
-                    <el-col style="width:10%;margin-left:3%">
+                    <el-col style="width:12%;margin-left:0.5%">
                         <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;">
                             <div data="list6" style="width:100%;height:500px;border-style:none;overflow:hidden;">
                                 <el-row><P align=center>巅峰榜</P><p align=center style="font-size:large;">欧美</p></el-row>
