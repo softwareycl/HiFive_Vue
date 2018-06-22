@@ -40,7 +40,7 @@
       <el-row :gutter="50">
         <el-col :span="13" :offset="3">
           <div>
-            <el-table :data="songList" style="width: 100%" stripe="true" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">
+            <el-table :data="songList" style="height:600px;width: 100%" stripe="true" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">
               <el-table-column type="index" label=" " :index="indexMethod"></el-table-column>
               <el-table-column label="歌曲">
                 <template slot-scope="scope">
