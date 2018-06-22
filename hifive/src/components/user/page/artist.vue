@@ -9,7 +9,7 @@
             <td><span class="cl long"></span></td>
             <td>
               <ul class="singer-nav-tag" id="initial">
-                <li @click="initial_change_bg(0);singerDisplay(0,'@',1)" class="current long">热门</li>
+                <li @click="initial_change_bg(0);singerDisplay(0,'@',1)" class="current">热门</li>
                 <li @click="initial_change_bg(1);singerDisplay(0,2,1)">A</li>
                 <li @click="initial_change_bg(2);singerDisplay(0,3,1)">B</li>
                 <li @click="initial_change_bg(3);singerDisplay(0,4,1)">C</li>
@@ -56,7 +56,7 @@
             <td><span class="cl gender"></span></td>
             <td>
               <ul id ="gender" class="singer-nav-tag" >
-                <li @click="gender_change_bg(0);singerDisplay(1,'*',1)" class="curr">全部</li>
+                <li @click="gender_change_bg(0);singerDisplay(1,'*',1)" class="current">全部</li>
                 <li @click="gender_change_bg(1);singerDisplay(2,1)">男</li>
                 <li @click="gender_change_bg(2);singerDisplay(3,0,1)">女</li>
                 <li @click="gender_change_bg(3);singerDisplay(4,0,1)">组合</li>
@@ -228,11 +228,10 @@
 <style lang="scss" scoped>
 .main {
   padding-top: 30px;
-  height: 750px;
+  height: 900px;
   opacity: 0.95;
   position: relative;
   color: #333;
-  background-color: #fbfbfb;
   ul {
     margin: 0 auto;
     height: 100%;
@@ -241,20 +240,15 @@
   }
   .singer-nav-table {
     width: 1200px;
-    height: 150px;
-    background-color: #fbfbfb;
+    height: 80px;
+    margin: 0 240px 50px;
     padding-bottom: 3px;
   }
   .singer-nav {
-    max-width: 1200px;
-    height: 80px;
-    margin: 0 auto;
-    padding: 0px 0;
 
-    
     .cl{
       font-weight:bold;
-      margin-left: 30px;
+      margin-left: 150px;
       margin-top: 0px;
       font-size: 15px;
       float: left;
@@ -264,13 +258,8 @@
     .singer-nav-tag {
       display: inline;
       height: 50px;
-      margin: 100px 20px;
       text-align: center;
       .current {
-        height: 28px;
-        margin-left: 20px;
-        margin-right: 17px;
-        margin-bottom: 14px;
         color: #fff;
         background-color: #31c27c;
         &:hover {
@@ -279,9 +268,8 @@
       }
 
       li {
-        width: auto;
+        width: 30px;
         height: 30px;
-        margin-left: 20px;
         margin-top: 0px;
         font-size: 15px;
         float: left;
@@ -289,35 +277,28 @@
         &:hover {
           color: #31c27c;
           cursor: pointer;
-        }
-        
+        } 
       }
-      .long{
-        width: 50px;
-        height: 28px;
-        margin-right: 28px;
-        margin-bottom: 14px;
-      }
-
-.curr {
-        height: 28px;
-        margin-right: 10px;
-        margin-bottom: 14px;
-        color: #fff;
-        background-color: #31c27c;
-        &:hover {
-          color: #fff;
-        }
-        }
     }
-    .long{
-      width: 50px;
+
+    #initial li {
+      width: 30px;
+      padding-left: 8px;
+      padding-right: 8px;
+      margin-bottom: 18px;
     }
     #region li{
-      width: 50px;
+      width: 40px;
+      padding-left: 3px;
+      padding-right: 3px;
+      margin-right: 7px;
+      margin-bottom: 18px;
     }
     #gender li{
-      width: 50px;
+      width: 40px;
+      padding-left: 3px;
+      padding-right: 3px;
+      margin-right: 3px;
     }
   }
 
