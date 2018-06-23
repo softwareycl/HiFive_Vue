@@ -6,7 +6,7 @@
       	<el-row :gutter="50">
       		<el-col :span="4" :offset="4">
       			<div>
-      				<img align=right style="float: left;margin-top:30px; border-radius:70%; height: 230px; overflow:hidden;" src=''>
+      				<img align=right style="float:left;margin-top:30px; border-radius:70%; height: 230px; overflow:hidden;" src='../../../assets/周杰伦.jpg'>
       			</div>
       		</el-col>
       		<el-col :span="8">
@@ -34,14 +34,12 @@
       		<el-col :span="12" :offset="4">
       			<div style="width: 1000px; margin-top: 50px">
       				<p style="font-family:'Microsoft YaHei'; font-size:x-large">热门歌曲</p>
-      				<el-table :data="songList" style="width: 100%" stripe="true" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">
+      				<el-table :data="songListView" style="width: 100%" stripe="true" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">
       					<el-table-column type="index" label= " " :index="indexMethod"></el-table-column>
       					<el-table-column label="歌曲">
-      						<template>
+      						<template slot-scope="scope">
                     <router-link to="/user/songdetail">
-                      <el-row  v-for="page in songPage">
-      						  	 <a href="" style="color: black; cursor:  pointer; text-decoration:none" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';" @click="setSong(item)">{{scope.row.name}}</a>   
-                      </el-row>
+      							<a href="" style="color: black; cursor:  pointer; text-decoration:none" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';" @click="setSong(item)">{{scope.row.name}}</a>   
                     </router-link>   
       						</template>
       					</el-table-column>
@@ -83,7 +81,7 @@
               </el-table-column>
        					<el-table-column label="专辑">
       						<template slot-scope="scope">
-                    <router-link to="/user/albumNamedetail">
+                    <router-link to="/user/albumdetail">
       							<a href="" style="margin-right: 50px; color:black;cursor:pointer;text-decoration:none" onmouseover="this.style.color='#31C27C';" @click="setalbumName(item)" onmouseout="this.style.color='black';">{{scope.row.albumName}}</a>
                   </router-link>
       						</template>
@@ -93,20 +91,29 @@
       			</div>
       		</el-col>
       	</el-row>
-      	<el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-count="pageCount" class="pagination"></el-pagination>
+      	<el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-count="songPageCount" class="pagination"></el-pagination>
         <div style="width: 1000px; margin-top: 50px; margin-left: 255px;">
               <p style="font-family:'Microsoft YaHei'; font-size:x-large;">专辑</p>
-              <ul id="albumList">
-                <li v-for="item in albums" class="albumli">
-                  <router-link to = "/user/albumdetail">
-                    <img src="item.image" alt="" @click="setAlbum(item)">
-                    <p @click="setAlbum(item)">{{item.name}}</p>
-                  </router-link>
-                  <p>{{item.releaseDate}}</p>
-                </li>
-              </ul>
-              <el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-count="pageCount" class="pagination">
-              </el-pagination>
+              <el-carousel :autoplay=false indicator-position="outside" arrow="hover" height="480px" trigger="click" style="z-index: 0">
+                <el-carousel-item v-for="page in albumPageCount" :key="page">
+                  <el-col :gutter="80" v-for="i in 5" :key="i" :offset="2" style="width: 15%">
+                    <el-card :body-style="{ padding: '0px'}" shadow="nerver" style="border-style: none; width: 100%;">
+                      <div style="height: 100%; width: 100%">
+                        <el-row>
+                          <div style="width: 100%; height: 140px; border-style: none; overflow: hidden;">
+                            <img src="../../../assets/周杰伦.jpg" class="artistImage" onmouseover="this.parentNode.children[1].style.display='block'; this.style.transform='scale(1.4)'; this.parentNode.children[1].style.transform='scale(1.4)';" @mouseout="handleMouseOut">
+                          </div>
+                        </el-row>
+                        <el-row>
+                          <div>
+                            <a href="" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='#333333';" class="font_name">{{albums[5*(page-1)+i].name}}</a>
+                          </div>
+                        </el-row>
+                      </div>
+                    </el-card>  
+                  </el-col>
+                </el-carousel-item>
+              </el-carousel>
         </div>
       </div>
       <v-foot></v-foot>
@@ -127,8 +134,6 @@
     data(){
     	return{
     		dialogVisible:false,
-        Rows:[],//每页行数
-        totalPage: 0,
         songPage: 1,
         songPageCount:0,
         albumPage: 0,
@@ -160,6 +165,7 @@
     			intro:'周杰伦（Jay Chou），1979年1月18日出生于台湾省新北市，华语流行男歌手、演员、词曲创作人、MV及电影导演、编剧及制作人。	2000年被吴宗宪发掘，发行首张个人专辑《Jay》。	2001年发行专辑《范特西》。2002年在中国、新加坡、马来西亚、美国等地举办首场个人世界巡回演唱会。	2003年登上美国《时代周刊》亚洲版封面人物。周杰伦的音乐融合中西方元素，风格多变，四次获得世界音乐大奖最畅销亚洲艺人。凭借专辑《Jay》、《范特西》、《叶惠美》及《跨时代》四次获得金曲奖"最佳国语专辑"奖，并凭借《魔杰座》、《跨时代》获得第20届和第22届金曲奖“最佳国语男歌手”奖； 						2014年获QQ音乐年度盛典“港台最受欢迎男歌手”及压轴大奖“最佳全能艺人”。	2005年开始涉足影视，以电影《头文字D》获第42届台湾电影金马奖及第25届香港电影金像奖“最佳新人”奖。	2006年起连续三年获得世界音乐大奖中国区最畅销艺人奖。	2007年自立门户，成立JVR（杰威尔）有限公司，自编自导自演的电影《不能说的秘密》获得第44届台湾电影金马奖“年度台湾杰出电影”奖。	2008年凭借歌曲《青花瓷》获得第19届金曲奖最佳作曲人奖。	2009年入选美国CNN亚洲极具影响力人物；同年凭借专辑《魔杰座》获得第20届金曲奖最佳国语男歌手奖。2010年入选美国《Fast Company》评出的“全球百大创意人物”。2011年凭借专辑《跨时代》再度获得金曲奖最佳国语男歌手奖，并且第4次获得金曲奖最佳国语专辑奖；同年主演好莱坞电影《青蜂侠》。																					2012年登福布斯中国名人榜榜首。										2013年自编自导自演第二部电影《天台爱情》取得了不俗的票房与口碑。	2014年加盟好莱坞电影《惊天魔盗团2》；同年发行华语乐坛首张数字音乐专辑《哎呦，不错哦》。	娱乐圈外，周杰伦在2011年跨界担任华硕（ASUS）笔电外观设计师并入股香港文化传信集团。2012在中国内地开设真爱范特西连锁KTV。	除了力拼自己的事业，周杰伦还热心公益慈善活动，多次向内地灾区捐款并与众多艺人募款新建希望小学。			2015年担任《中国好声音 第四季》导师。			2016年发行演唱会专辑《周杰伦魔天伦世界巡回演唱会》；同年推出专辑《周杰伦的床边故事》。	2017年，确认加盟原创专业音乐节目《中国新歌声第二季》。',
     			isCollected:false
     		},
+        songListView: [],
     		songList: [{
     			id:'1',
     			name:'不爱我就拉倒',
@@ -280,6 +286,38 @@
           albumName:'范特西',
           Flag:false,
           isopen:false
+        },{
+          id:'16',
+          name:'安静',
+          duration:'03:43',
+          albumID:'',
+          albumName:'范特西',
+          Flag:false,
+          isopen:false
+        },{
+          id:'17',
+          name:'安静',
+          duration:'03:43',
+          albumID:'',
+          albumName:'范特西',
+          Flag:false,
+          isopen:false
+        },{
+          id:'18',
+          name:'安静',
+          duration:'03:43',
+          albumID:'',
+          albumName:'范特西',
+          Flag:false,
+          isopen:false
+        },{
+          id:'19',
+          name:'安静',
+          duration:'03:43',
+          albumID:'',
+          albumName:'范特西',
+          Flag:false,
+          isopen:false
         }],
     		playlistList:[{
     			ID:'1',
@@ -294,7 +332,9 @@
           		name:'3'
     		}],
         albums: [{
-
+          id:'001',
+          name:'范特西',
+          image:'',
         }]
     	}
     },
@@ -306,11 +346,29 @@
     },
 
       mounted(){
-        this.songLists();
-        this.albumDisplay();
+        this.pagination(this.songPage,this.songList,this.songListView);
+        //this.albumDisplay();
       },
 
     methods: {
+      /*每页显示十行*/
+      pagination: function(_page, _songList, _songListView){
+        this.songPageCount = Math.ceil(parseFloat(this.songList.length) / 10);
+        if(_page != this.songPage){
+          this.songPage = _page;
+          this.songListView.splice(0,this.songListView.length);
+        } 
+        for(var i = 0; i < 10; i++){
+          if(this.songList[((this.songPage - 1)*10) + i] == null){
+            //var list = [];
+            this.songListView.push([]);
+          } else {
+            _songList = this.songList[((this.songPage - 1)*10) + i];
+            this.songListView.push(_songList);
+          }
+        }
+      },
+
       setSong: function(item){
         this.$store.state.song = item
       },
@@ -320,7 +378,7 @@
       },
 
     	indexMethod(index) {
-    		return index+1;
+          return (this.songPage - 1)*10 + index + 1;
     	},
 
     	handleClose(done) {
@@ -331,24 +389,26 @@
         .catch(_ => {});
         },
 
-      songLists: function() {
-          this.pageCount = Math.ceil(parseFloat(this.songList.length) / 10);
-        },
-
-        albumDisplay: function(){
+      albumDisplay: function(){
           this.axios.get(this.serverUrl + "/artist/getInfo",{
 
           })
         },
-
-        handleMouseEnter:function(row, column, cell, event){
+      handleCurrentChange: function(val){
+        this.pagination(val,this.songList,this.songListView);
+      },
+      handleMouseEnter:function(row, column, cell, event){
         row.Flag=true;
         },
-        handleMouseOut:function(row, column, cell, event){
+      handleMouseOut:function(row, column, cell, event){
         if(!row.isopen){
           row.Flag=false;}
-          else{
+          else if(event.toElement==event.target.parentNode.children[1]){
             return false;
+          } else {
+            event.target.style.transform='scale(1)';
+            event.target.parentNode.children[1].style.transform='scale(1)';
+            event.target.parentNode.children[1].style.display='none';
           }
         },
 
@@ -424,10 +484,7 @@
 		//无提交，返回歌单列表
 		},
 	},
-		mounted:function(){
-  			this.getalbumNameInfo(this.albumName.ID);
-  			this.getPlaylistList(this.userID);
-	}
+
 }
 </script>
 
@@ -435,9 +492,10 @@
   a {text-decoration: none;}
 
 	.main {
-   		height: 1500px;
+   		height: 2000px;
     	opacity: 0.95;
     	position: relative;
+      font-family: "Microsoft YaHei";
     	color: #333;
   	}
 	.el-popover{
@@ -454,6 +512,12 @@
         margin-top: 50px;
         margin-bottom: 5px;
 	}
+  .font_name{
+        font-family: "Microsoft YaHei";
+        font-size:smaller;
+        color: #333333;
+        cursor: pointer;
+  }
 	.font_other{
         font-family:"Microsoft YaHei";
         font-size:Medium;
