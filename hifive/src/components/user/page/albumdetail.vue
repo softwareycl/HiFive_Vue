@@ -187,7 +187,7 @@
 //传递所有歌曲ID给player.vue
 },
         collect:function(){
-          this.album.isCollected=true;
+          this.set(data, 'isCollect', true);
           this.$axios.get('',{
             params:{
               id:this.album.id
@@ -214,7 +214,7 @@
           });
         },
         cancelCollect:function(albumId){ 
-          this.album.isCollected=false;
+          this.set(data, 'isCollect', false);
           this.$axios.get('',{
             params:{
               id:this.album.id
@@ -407,9 +407,10 @@
                 this.album.style = this.style[this.album.style];
                 this.songList = this.album.songList;
                 for(var i = 0; i < this.songList.length; i++){
-                  this.songList[i].Flag = false;
-                  this.songList[i].isopen = false;
+                  this.$set(this.songList[i],'Flag',false);
+                  this.$set(this.songList[i],'isopen',false);
                 }
+                this.$set(this.album,'isCollected',false);
               })
               .catch(function(err){
                 console.log(err)
@@ -453,7 +454,7 @@ mounted:function(){
 }
 </script>
 <style>
-#app{
+#albumdetail{
   padding: 30px;
 }
 .spHeight td{
