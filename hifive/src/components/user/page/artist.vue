@@ -5,12 +5,13 @@
     <div class="main">
       <div class="singer-nav">
         <table id="singer-nav-table">
+          <div style="background-color: rgb(251,251,253); width: 1170px; height: 160px; margin-left: 190px">
             <tr>
             <td><span class="cl long"></span></td>
-            <td>
+            <td style="text-align: left;" >
               <ul class="singer-nav-tag" id="initial">
-                <li @click="initial_change_bg(0);singerDisplay(-1,'@',-1,0)" id="all" class="current long">热门</li>
-                <li v-for="item in items" @click="initial_change_bg(item.charCodeAt()-64);singerDisplay(-1,item,-1,0)" >{{item}}</li>
+                <li @click="initial_change_bg(0);singerDisplay(-1,'@',-1,0)" id="all" class="current long" style="width: 40px; padding-left: 3px; padding-right: 3px; margin-right: 5px; margin-top: 12px">热门</li>
+                <li v-for="item in items" @click="initial_change_bg(item.charCodeAt()-64);singerDisplay(-1,item,-1,0)" style="margin-top: 12px">{{item}}</li>
                 
               </ul>
             </td>
@@ -39,6 +40,7 @@
               </ul>
             </td>
           </tr>
+          </div>
         </table>
       </div>
 
@@ -211,7 +213,7 @@
 <style lang="scss" scoped>
 a {text-decoration: none; color: black}
 .main {
-  padding-top: 30px;
+  padding-top: 10px;
   height: 900px;
   opacity: 0.95;
   position: relative;
@@ -230,11 +232,9 @@ a {text-decoration: none; color: black}
     padding-bottom: 3px;
   }
   .singer-nav {
-
     .cl{
       font-weight:bold;
-      margin-left: 150px;
-      margin-top: 0px;
+      margin-left: 50px;
       font-size: 15px;
       float: left;
       line-height: 35px;
@@ -267,9 +267,9 @@ a {text-decoration: none; color: black}
     }
 
     #initial li {
-      width: 30px;
-      padding-left: 8px;
-      padding-right: 8px;
+      width: 25px;
+      padding-left: 5px;
+      padding-right: 5px;
       margin-bottom: 18px;
     }
     #region li{
@@ -297,6 +297,7 @@ a {text-decoration: none; color: black}
     height: 300px;
     .singer {
       background-color: rgb(251,251,253);
+      margin-top: 0px;
       height: 250px;
       width: 210px;
       margin-left: 12px;
@@ -329,7 +330,7 @@ a {text-decoration: none; color: black}
 }
 
 .el-row {
-    margin-bottom: 80px;
+    margin-bottom: 40px;
     &:last-child {
       margin-bottom: 20;
     }
