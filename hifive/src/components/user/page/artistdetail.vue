@@ -37,8 +37,12 @@
       				<el-table :data="songList" style="width: 100%" stripe="true" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">
       					<el-table-column type="index" label= " " :index="indexMethod"></el-table-column>
       					<el-table-column label="歌曲">
-      						<template slot-scope="scope">
-      							<a href="" style="color: black; cursor:  pointer; text-decoration:none" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.name}}</a>      
+      						<template>
+                    <router-link to="/user/songdetail">
+                      <el-row  v-for="page in songPage">
+      						  	 <a href="" style="color: black; cursor:  pointer; text-decoration:none" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';" @click="setSong(item)">{{scope.row.name}}</a>   
+                      </el-row>
+                    </router-link>   
       						</template>
       					</el-table-column>
       					<el-table-column label=" ">
@@ -46,20 +50,20 @@
       							<span v-if="scope.row.Flag">
       								<el-button icon="el-icon-caret-right" circle v-on:click="playSong(scope.row)"></el-button>
       							</span>
-      						<span v-if="scope.row.Flag"> 
-                    			<el-dropdown trigger="click" placement="bottom-start" @visible-change="handle(scope.row,$event)" @command="handleSongCommand">
-                     				<el-button icon="el-icon-plus" circle></el-button>
-                     				<el-dropdown-menu slot="dropdown" :data="playlistList">
-                        			<el-dropdown-item command="playqueue">播放队列</el-dropdown-item>
-                        			<div v-if="state">
-                          				<el-dropdown-item disabled divided>我喜欢</el-dropdown-item>
-                          				<el-dropdown-item v-for="playlist in playlistList" :key="playlist.ID" :command='{type:"playlist",param1:playlist.ID,param2:scope.row}'>{{playlist.name}}</el-dropdown-item>
-                          				<el-dropdown-item command="newplaylist" divided>添加到新歌单</el-dropdown-item>
-                        			</div>
-                        			<el-dropdown-item v-else command="login" divided>登录后添加到歌单</el-dropdown-item>
-                      				</el-dropdown-menu>
-                   			    	</el-dropdown>
-                  				</span>
+      						  <span v-if="scope.row.Flag"> 
+                    	<el-dropdown trigger="click" placement="bottom-start" @visible-change="handle(scope.row,$event)" @command="handleSongCommand">
+                     		<el-button icon="el-icon-plus" circle></el-button>
+                     			<el-dropdown-menu slot="dropdown" :data="playlistList">
+                        		<el-dropdown-item command="playqueue">播放队列</el-dropdown-item>
+                        		 <div v-if="state">
+                          		<el-dropdown-item disabled divided>我喜欢</el-dropdown-item>
+                          		<el-dropdown-item v-for="playlist in playlistList" :key="playlist.ID" :command='{type:"playlist",param1:playlist.ID,param2:scope.row}'>{{playlist.name}}</el-dropdown-item>
+                          		<el-dropdown-item command="newplaylist" divided>添加到新歌单</el-dropdown-item>
+                        		 </div>
+                        		<el-dropdown-item v-else command="login" divided>登录后添加到歌单</el-dropdown-item>
+                      		</el-dropdown-menu>
+                   		  </el-dropdown>
+                	</span>
                   				<el-dialog title="创建歌单" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
                     				<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
                       					<el-form-item label="歌单名称" prop="name">
@@ -79,15 +83,31 @@
               </el-table-column>
        					<el-table-column label="专辑">
       						<template slot-scope="scope">
-      							<a href="" style="color:black;cursor:pointer;text-decoration:none" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.album}}</a>
+                    <router-link to="/user/albumNamedetail">
+      							<a href="" style="margin-right: 50px; color:black;cursor:pointer;text-decoration:none" onmouseover="this.style.color='#31C27C';" @click="setalbumName(item)" onmouseout="this.style.color='black';">{{scope.row.albumName}}</a>
+                  </router-link>
       						</template>
       					</el-table-column>
-      					<el-table-column prop="time" label="时长"></el-table-column>
+      					<el-table-column prop= "duration" label="时长"></el-table-column>
       				</el-table>
       			</div>
       		</el-col>
       	</el-row>
-      	<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page
+      	<el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-count="pageCount" class="pagination"></el-pagination>
+        <div style="width: 1000px; margin-top: 50px; margin-left: 255px;">
+              <p style="font-family:'Microsoft YaHei'; font-size:x-large;">专辑</p>
+              <ul id="albumList">
+                <li v-for="item in albums" class="albumli">
+                  <router-link to = "/user/albumdetail">
+                    <img src="item.image" alt="" @click="setAlbum(item)">
+                    <p @click="setAlbum(item)">{{item.name}}</p>
+                  </router-link>
+                  <p>{{item.releaseDate}}</p>
+                </li>
+              </ul>
+              <el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-count="pageCount" class="pagination">
+              </el-pagination>
+        </div>
       </div>
       <v-foot></v-foot>
 	</div>
@@ -107,6 +127,12 @@
     data(){
     	return{
     		dialogVisible:false,
+        Rows:[],//每页行数
+        totalPage: 0,
+        songPage: 1,
+        songPageCount:0,
+        albumPage: 0,
+        albumPageCount:0,
     		ruleForm: {
     			name: '',
     			des: ''
@@ -123,7 +149,7 @@
     		userID:'',
     		state:true,
     		artist:{
-    			ID:'001',
+    			id:'001',
     			name:'周杰伦',
     			image:'',
     			country:'中国',
@@ -135,76 +161,126 @@
     			isCollected:false
     		},
     		songList: [{
-    			ID:'1',
+    			id:'1',
     			name:'不爱我就拉倒',
-    			album:'不爱我就拉倒',
-    			time:'04:05',
+          duration:'04:05',
+          albumID:'',
+    			albumName:'不爱我就拉倒',
     			Flag:false,
     			isopen:false
     		},{
-    			ID:'2',
+    			id:'2',
     			name:'告白气球',
-    			album:'周杰伦的床边故事',
-    			time:'03:35',
+          duration:'03:35',
+          albumID:'',
+    			albumName:'周杰伦的床边故事',
     			Flag:false,
     			isopen:false
     		},{
-    			ID:'3',
+    			id:'3',
     			name:'等你下课（with 杨瑞代）',
-    			album:'等你下课',
-    			time:'04:30',
+          duration:'04:30',
+          albumID:'',
+    			albumName:'等你下课',
     			Flag:false,
     			isopen:false
     		},{
-    			ID:'4',
+    			id:'4',
     			name:'稻香',
-    			album:'魔杰座',
-    			time:'03:43',
+          duration:'03:43',
+          albumID:'',
+    			albumName:'魔杰座',
     			Flag:false,
     			isopen:false
     		},{
-    			ID:'5',
+    			id:'5',
     			name:'晴天',
-    			album:'叶惠美',
-    			time:'03:43',
+          duration:'03:43',
+          albumID:'',
+    			albumName:'叶惠美',
     			Flag:false,
     			isopen:false
     		},{
-    			ID:'6',
+    			id:'6',
     			name:'青花瓷',
-    			album:'我很忙',
-    			time:'03:43',
+          duration:'03:43',
+          albumID:'',
+    			albumName:'我很忙',
     			Flag:false,
     			isopen:false
     		},{
-    			ID:'7',
+    			id:'7',
     			name:'退后',
-    			album:'依然范特西',
-    			time:'03:43',
+          duration:'03:43',
+          albumID:'',
+    			albumName:'依然范特西',
     			Flag:false,
     			isopen:false
     		},{
-    			ID:'8',
+    			id:'8',
     			name:'七里香',
-    			album:'七里香',
-    			time:'03:43',
+          duration:'03:43',
+          albumID:'',
+    			albumName:'七里香',
     			Flag:false,
     			isopen:false
     		},{
-    			ID:'9',
+    			id:'9',
     			name:'简单爱',
-    			album:'范特西',
-    			time:'03:43',
+          duration:'03:43',
+          albumID:'',
+    			albumName:'范特西',
     			Flag:false,
     			isopen:false
     		},{
-    			ID:'10',
+    			id:'10',
     			name:'给我一首歌的时间',
-    			album:'魔杰座',
-    			time:'03:43',
+          duration:'03:43',
+          albumID:'',
+    			albumName:'魔杰座',
     			Flag:false,
     			isopen:false
-    		}],
+    		},{
+          id:'11',
+          name:'夜曲',
+          duration:'03:43',
+          albumID:'',
+          albumName:'十一月的萧邦',
+          Flag:false,
+          isopen:false
+        },{
+          id:'12',
+          name:'彩虹',
+          duration:'03:43',
+          albumID:'',
+          albumName:'我很忙',
+          Flag:false,
+          isopen:false
+        },{
+          id:'13',
+          name:'算什么男人',
+          duration:'03:43',
+          albumID:'',
+          albumName:'哎哟，不错哦',
+          Flag:false,
+          isopen:false
+        },{
+          id:'14',
+          name:'说好的幸福呢',
+          duration:'03:43',
+          albumID:'',
+          albumName:'魔杰座',
+          Flag:false,
+          isopen:false
+        },{
+          id:'15',
+          name:'安静',
+          duration:'03:43',
+          albumID:'',
+          albumName:'范特西',
+          Flag:false,
+          isopen:false
+        }],
     		playlistList:[{
     			ID:'1',
     			name:'1'
@@ -216,13 +292,37 @@
         	  {
           		ID:'3',
           		name:'3'
-    		}]
+    		}],
+        albums: [{
+
+        }]
     	}
     },
+
+    computed: {
+      serverUrl() {
+        return this.$store.state.serverUrl;
+      }
+    },
+
+      mounted(){
+        this.songLists();
+        this.albumDisplay();
+      },
+
     methods: {
+      setSong: function(item){
+        this.$store.state.song = item
+      },
+
+      setAlbum: function(item){
+        this.$store.state.album = item
+      },
+
     	indexMethod(index) {
     		return index+1;
     	},
+
     	handleClose(done) {
         this.$confirm('确认关闭？')
         .then(_ => {
@@ -230,6 +330,17 @@
         })
         .catch(_ => {});
         },
+
+      songLists: function() {
+          this.pageCount = Math.ceil(parseFloat(this.songList.length) / 10);
+        },
+
+        albumDisplay: function(){
+          this.axios.get(this.serverUrl + "/artist/getInfo",{
+
+          })
+        },
+
         handleMouseEnter:function(row, column, cell, event){
         row.Flag=true;
         },
@@ -240,6 +351,7 @@
             return false;
           }
         },
+
         handle:function(row,event){
           row.Flag=event;
           row.isopen=event;
@@ -247,15 +359,15 @@
         playAllSong:function(){
 		//传递所有歌曲ID给player.vue
 		},
-		collect:function(albumID){
-  			this.album.isCollected=true;
+		collect:function(albumNameID){
+  			this.albumName.isCollected=true;
 		//提交专辑id，返回true/false
 		},
-		cancelCollect:function(albumID){ 
-  			this.album.isCollected=false;
+		cancelCollect:function(albumNameID){ 
+  			this.albumName.isCollected=false;
 		//提交专辑id，返回true/false
 		},
-		handleAlbumCommand:function(command){
+		handlealbumNameCommand:function(command){
   			if(command=="login"){
     			window.location.href='/';
   		}
@@ -305,7 +417,7 @@
 		downloadSong:function(row){
 		//提交歌曲ID，无返回
 		},
-		getAlbumInfo:function(albumID){
+		getalbumNameInfo:function(albumNameID){
 		//提交专辑ID，获得专辑信息和歌曲列表
 		},
 		getPlaylistList:function(){
@@ -313,13 +425,15 @@
 		},
 	},
 		mounted:function(){
-  			this.getAlbumInfo(this.album.ID);
+  			this.getalbumNameInfo(this.albumName.ID);
   			this.getPlaylistList(this.userID);
 	}
 }
 </script>
 
 <style>
+  a {text-decoration: none;}
+
 	.main {
    		height: 1500px;
     	opacity: 0.95;
@@ -354,4 +468,13 @@
     	font-size:Medium;
     	margin-top: 5px;
     }
+
+    .pagination {
+    text-align: center;
+    font-size: 20px;
+    &:hover {
+        cursor: pointer;
+        color: #31c27c;
+      }
+  }
 </style>
