@@ -187,7 +187,7 @@
 //传递所有歌曲ID给player.vue
 },
         collect:function(){
-          this.set(data, 'isCollect', true);
+          this.album.isCollected=true;
           this.$axios.get('',{
             params:{
               id:this.album.id
@@ -214,7 +214,7 @@
           });
         },
         cancelCollect:function(albumId){ 
-          this.set(data, 'isCollect', false);
+          this.album.isCollected=false;
           this.$axios.get('',{
             params:{
               id:this.album.id
