@@ -14,7 +14,9 @@
 				<el-table :data="songList" style="width: 100%" stripe="true" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">
 					<el-table-column label="歌曲">
 						<template slot-scope="scope">
-							<a herf="" style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.name}}</a>
+							<router-link tag="a" :to="{path:'/user/songdetail',query:{id:songList.id}}">
+								<span style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.name}}</span>
+							</router-link>
 						</template>
 					</el-table-column>
 					<el-table-column label=" ">
@@ -53,12 +55,16 @@
 					</el-table-column>
 					<el-table-column label="歌手">
 						<template slot-scope="scope">
-							<a herf="" style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.artistName}}</a>
+							<router-link tag="a" :to="{path:'/user/artistdetail',query:{id:songList.artistId}}">
+								<span style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.artistName}}</span>
+							</router-link>
 						</template>
 					</el-table-column>
 					<el-table-column label="专辑">
 						<template slot-scope="scope">
-							<a herf="" style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.albumName}}</a>
+							<router-link tag="a" :to="{path:'/user/albumdetail',query:{id:songList.albumId}}">
+								<span style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.albumName}}</span>
+							</router-link>
 						</template>
 					</el-table-column>
 					<el-table-column prop="time" label="时长">
@@ -76,8 +82,10 @@
 					<el-col :data="artistList" v-for="list in artistList" style='width:20%'>
 						<el-card :body-style="{ padding: '0px'}" shadow="never" style="border:none;margin-bottom:20px;">							
 							<div style="line-height:8px;font-size:5px;text-align:center">
-								<img src="../../../assets/icon.jpg" class="image">	
-								<p>{{list.name}}</p>
+								<router-link tag="a" :to="{path:'/user/artistdetail',query:{id:artistList.id}}">
+									<img src="../../../assets/icon.jpg" class="image">	
+									<p style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{list.name}}</p>
+								</router-link>			
 							</div>
 						</el-card>
 					</el-col>
@@ -90,10 +98,16 @@
 				<el-row gutter="20">
 					<el-col :data="albumList" v-for="list in albumList" style='width:20%'>
 						<el-card :body-style="{ padding: '0px'}" shadow="never" style="border:none;margin-bottom:20px;">
-							<img src="../../../assets/icon.jpg" class="image">
+							<router-link tag="a" :to="{path:'/user/albumdetail',query:{id:albumList.id}}">
+								<img src="../../../assets/icon.jpg" class="image">
+							</router-link>
 							<div style="line-height:8px;font-size:5px;">
-								<p>{{list.name}}</p>
-								<p>{{list.artistName}}</p>
+								<router-link tag="a" :to="{path:'/user/albumdetail',query:{id:albumList.id}}">
+									<p style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{list.name}}</p>
+								</router-link>
+								<router-link tag="a" :to="{path:'/user/artistdetail',query:{id:albumList.artistId}}">
+									<p style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{list.artistName}}</p>
+								</router-link>
 							</div>
 						</el-card>
 					</el-col>
@@ -122,9 +136,15 @@
 			},
 			search() {
 				return this.$store.state.search;
+			},
+			state() {
+				return this.$store.state;
 			}
 		},
 		mounted () {
+			if(this.$store.state.isLogin == true) {
+				this.state = true;
+			}
 			this.getPlaylistList();
 			if(this.curTitle == '歌曲') {
 				this.getSongList(this.$store.state.search.name,this.page.cur);
@@ -142,6 +162,7 @@
 		data () {
 			return {
 				dialogVisible:false,
+				state:true,
 				ruleForm: {
 					name: '',
 					des: ''
@@ -155,7 +176,7 @@
 					{ min: 1, max: 140, message: '长度在 140 个字符以内', trigger: 'blur' }
 					]
 				},
-				state:true,
+
 				playlistList:[{
 					ID:'1',
 					name:'1'
@@ -226,7 +247,7 @@
 				},],
 				albumList: [{
 					id: '1',
-					name: '郭吉吉',
+					name: '郭吉吉专辑',
 					image: '',
 					artistId: '1',
 					artistName: '郭喆',
@@ -365,7 +386,7 @@
 					console.log(error);
 				});
 			},
-			getSongTotal: function(name) {
+			getSongTotal: function(_name) {
 				this.axios.get(this.serverUrl + "/song/searchSongCount", {
 					params: {
 						name: _name,
@@ -378,7 +399,7 @@
 					console.log(error);
 				});
 			},
-			getArtistTotal: function(name) {
+			getArtistTotal: function(_name) {
 				this.axios.get(this.serverUrl + "/artist/searchArtistCount", {
 					params: {
 						name: _name,
@@ -391,7 +412,7 @@
 					console.log(error);
 				});
 			},
-			getAlbumTotal: function(name) {
+			getAlbumTotal: function(_name) {
 				this.axios.get(this.serverUrl + "/album/searchAlbumCount", {
 					params: {
 						name: _name,
@@ -404,7 +425,8 @@
 					console.log(error);
 				});
 			},
-		}
+		},
+		
 	};
 </script>
 
@@ -453,5 +475,10 @@
 		text-align: center;
 		margin-bottom: 40px;
 		margin-top: 20px; 
+	}
+
+	a {
+		 text-decoration:none;
+		 out-line: none;
 	}
 </style>
