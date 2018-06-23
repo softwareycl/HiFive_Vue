@@ -68,7 +68,7 @@
 			<el-row :gutter="50" style="margin-top:30px;">
 				<el-col :span="4" :offset="4">
 					<p class="font_songLry" style="font-size:20px">歌词</p>
-					<p id="albumDes" style="display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 4;overflow: hidden;" class="font_other">dsfa</p>
+					<p style="display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 4;overflow: hidden;" id="lyr">{{this.id}}</p>
 				</el-col>
 			</el-row>
 		</div>
@@ -120,7 +120,7 @@
 					releaseDate:'2018-06-16',
 					lyricsPath: "/static/lyr.txt",
 					filePath: '',
-					image: require('../../../assets/logo.png'),
+					image: "/src/assets/logo.png",
 					isCollected:false
 				},
 				playlistList:[{
@@ -178,6 +178,13 @@
 					console.log(command.param2.ID)
 				}
 			},
+			handleClose(done) {
+				this.$confirm('确认关闭？')
+				.then(_ => {
+					done();
+				})
+				.catch(_ => {});
+			},
 			submitForm:function(formname){
 				this.$refs[formname].validate((valid) => {
 					if (valid) {
@@ -198,7 +205,9 @@
 					}
 				})
 				.then(res => {
-					this.song = res.data;					
+					this.song = res.data;
+					this.song.image = this.serverUrl + this.song.image;
+					this.song.lyricsPath = this.serverUrl + this.song.lyricsPath;
 				})
 				.catch(function (error) {
 					console.log(error);
@@ -210,7 +219,7 @@
 
 <style>
 	.song_detail {
-		min-height: 380px;
+		min-height: 500px;
 	}
 	.font_songName{
 		font-family:"Microsoft YaHei";

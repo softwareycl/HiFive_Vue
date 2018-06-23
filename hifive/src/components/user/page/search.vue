@@ -14,7 +14,7 @@
 				<el-table :data="songList" style="width: 100%" stripe="true" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">
 					<el-table-column label="歌曲">
 						<template slot-scope="scope">
-							<router-link tag="a" :to="{path:'/user/songdetail',query:{id:songList.id}}">
+							<router-link tag="a" :to="{path:'/user/songdetail',query:{id:scope.row.id}}">
 								<span style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.name}}</span>
 							</router-link>
 						</template>
@@ -55,14 +55,14 @@
 					</el-table-column>
 					<el-table-column label="歌手">
 						<template slot-scope="scope">
-							<router-link tag="a" :to="{path:'/user/artistdetail',query:{id:songList.artistId}}">
+							<router-link tag="a" :to="{path:'/user/artistdetail',query:{id:scope.row.artistId}}">
 								<span style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.artistName}}</span>
 							</router-link>
 						</template>
 					</el-table-column>
 					<el-table-column label="专辑">
 						<template slot-scope="scope">
-							<router-link tag="a" :to="{path:'/user/albumdetail',query:{id:songList.albumId}}">
+							<router-link tag="a" :to="{path:'/user/albumdetail',query:{id:scope.row.albumId}}">
 								<span style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.albumName}}</span>
 							</router-link>
 						</template>
@@ -78,7 +78,7 @@
 				</div>
 			</div>
 			<div class="search_artist" v-if="curTitle == '歌手'">
-				<el-row gutter="20">
+				<!-- <el-row gutter="20">
 					<el-col :data="artistList" v-for="list in artistList" style='width:20%'>
 						<el-card :body-style="{ padding: '0px'}" shadow="never" style="border:none;margin-bottom:20px;">							
 							<div style="line-height:8px;font-size:5px;text-align:center">
@@ -89,7 +89,17 @@
 							</div>
 						</el-card>
 					</el-col>
-				</el-row>
+				</el-row> -->
+				<ul id="singerlist">
+					<li v-for="item in artistList" class="singerli">
+						<div class="singer">
+							<router-link to="/user/artistdetail">
+								<img :src="item.image" alt="" style="border-radius:100%; padding: 35px; ">
+								<p style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{item.name}}</p>
+							</router-link>
+						</div>
+					</li>
+				</ul>
 				<div class="pagination-footer">	
 					<el-pagination @current-change="handleCurrentChange" :current-page="page.cur" :page-size="20" background="#31C27C" layout="total, prev, pager, next" :total="page.total"> </el-pagination>
 				</div>
@@ -98,14 +108,14 @@
 				<el-row gutter="20">
 					<el-col :data="albumList" v-for="list in albumList" style='width:20%'>
 						<el-card :body-style="{ padding: '0px'}" shadow="never" style="border:none;margin-bottom:20px;">
-							<router-link tag="a" :to="{path:'/user/albumdetail',query:{id:albumList.id}}">
+							<router-link tag="a" :to="{path:'/user/albumdetail',query:{id:list.id}}">
 								<img src="../../../assets/icon.jpg" class="image">
 							</router-link>
 							<div style="line-height:8px;font-size:5px;">
-								<router-link tag="a" :to="{path:'/user/albumdetail',query:{id:albumList.id}}">
+								<router-link tag="a" :to="{path:'/user/albumdetail',query:{id:list.id}}">
 									<p style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{list.name}}</p>
 								</router-link>
-								<router-link tag="a" :to="{path:'/user/artistdetail',query:{id:albumList.artistId}}">
+								<router-link tag="a" :to="{path:'/user/artistdetail',query:{id:list.artistId}}">
 									<p style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{list.artistName}}</p>
 								</router-link>
 							</div>
@@ -346,7 +356,11 @@
 					}
 				})
 				.then(res => {
-					this.songList = res.data;					
+					this.songList = res.data;
+					for(var i = 0; i < this.songList.length; i++){
+						this.$set(this.songList[i],'Flag',false);
+						this.$set(this.songList[i],'isopen',false);
+					}				
 				})
 				.catch(function (error) {
 					console.log(error);
@@ -457,7 +471,7 @@
 	}
 
 	.search_main {
-		min-height: 400px;
+		min-height: 500px;
 		margin: 10px 100px;
 	}
 
@@ -481,4 +495,54 @@
 		 text-decoration:none;
 		 out-line: none;
 	}
+</style>
+
+<style lang="scss" scoped>
+	#singerlist{
+		height: 620px;
+
+		.singerli {
+			text-align: top;
+			float: left;
+			width: 20%;
+			height: 300px;
+			.singer {
+				background-color: rgb(251,251,253);
+				margin-top: 0px;
+				height: 250px;
+				width: 210px;
+				margin-left: 12px;
+			}
+			img {
+				width: 210px;
+				height: 210px;
+				box-sizing: border-box;
+				&:hover {
+					cursor: pointer;
+					opacity: 0.9;
+				}
+			}
+			p {
+				margin-left: 60px;
+				margin-right: 60px;
+				margin-top: 0px;
+				font-size: 16px;
+				text-align: center;
+				&:hover {
+					cursor: pointer;
+					color: #31c27c;
+				}
+			}
+		}
+	}
+
+	.search_artist {
+		ul {
+			margin: 0 auto;
+			height: 100%;
+			max-width: 1200px;
+			list-style-type:none;
+		}
+	}
+
 </style>
