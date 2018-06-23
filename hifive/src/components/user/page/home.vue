@@ -21,8 +21,8 @@
                 <el-carousel :autoplay=false indicator-position="outside" arrow="hover" height="350px" trigger="click" style="z-index: 0">
                     <el-carousel-item v-for="page in 4" :key="page">
                         <el-row v-for="i in 3" :key="i" style="margin-top:20px;">
-                            <el-col v-for="j in 3" :key="j" :offset="j > 1 ? 0 : 3" style="width:400px;">
-                                <el-card :body-style="{ padding: '0px'}" shadow="never" style="border-style:none;width:100%">
+                            <el-col v-for="j in 3" :key="j" :offset="j > 1 ? 0 : 3" style="width:390px;">
+                                <el-card :body-style="{ padding: '0px'}" shadow="never" style="border-style:none;width:100%;borderRadius:0px;">
                                     <div style="height:100%;width:100%">
                                         <el-row>  
                                             <el-col style="width:90px;">
@@ -31,7 +31,7 @@
                                                     <el-button class="songButton" icon="el-icon-caret-right" circle v-on:click="clickOnSongButton(songList[9*(page-1)+3*(i-1)+j-1].id)"></el-button>
                                                 </div>
                                             </el-col>  
-                                            <el-col style="width:230px">
+                                            <el-col style="width:220px">
                                                 <div style="margin-top:25px;margin-left:10px;">
                                                     <a herf="" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='#333333';" class="font_name">{{songList[9*(page-1)+3*(i-1)+j-1].name}}</a>
                                                 </div>
@@ -67,7 +67,7 @@
                     <el-carousel-item v-for="page in 4" :key="page">
                         <el-row v-for="i in 2" :key="i" style="margin-top:20px;">
                             <el-col v-for="j in 5" :key="j" :offset="j > 1 ? 1 : 3" style="width:175px;">
-                                <el-card :body-style="{ padding: '0px'}" shadow="never" style="border-style:none;width:100%;">
+                                <el-card :body-style="{ padding: '0px'}" shadow="never" style="border-style:none;width:100%;borderRadius:0px;">
                                     <div style="height:100%;width:100%">  
                                         <el-row>  
                                             <div style="width:175px;height:175px;border-style:none;overflow:hidden;">
