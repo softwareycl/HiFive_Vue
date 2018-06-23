@@ -92,5 +92,9 @@ export default new Router({
       path: '/admin/songdetail',
       component: resolve => require(['../components/admin/songdetail.vue'], resolve)
     },
+    {
+      path: '/user/black',
+      component: resolve => require(['../components/user/page/black.vue'], resolve)
+    },
   ],
 })

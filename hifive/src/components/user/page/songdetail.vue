@@ -6,16 +6,20 @@
 			<el-row :gutter="50">
 				<el-col :span="4" :offset="4">
 					<div>
-						<img align=right style="margin-top:30px" :src="song.imagePath">
+						<img align=right style="margin-top:30px" :src="song.image">
 					</div>
 				</el-col>
 				<el-col :span="9">
 					<div>
 						<p class="font_songName">{{song.name}}</p>
 						<i class="el-icon-service"></i>
-						<a herf="" class="font_songArtist"  style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{song.artistName}}</a>
+						<router-link tag="a" :to="{path:'/user/artistdetail',query:{id:song.artistId}}">
+							<span class="font_songArtist"  style="cursor:pointer;color:#2C3E50" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='#2C3E50';">{{song.artistName}}</span>
+						</router-link>
 						<div>
-							<p class="font_other" style="float:left;width:250px">专辑 : {{song.albumName}}</p>
+							<router-link tag="a" :to="{path:'/user/artistdetail',query:{id:song.artistId}}">
+								<p class="font_other" style="float:left;width:250px;color:#2C3E50;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='#2C3E50';">专辑 : {{song.albumName}}</p>
+							</router-link>
 							<p class="font_other" style="float:left">语种 : {{song.language}}</p>
 							<div style="clear:both"></div>
 						</div>
@@ -78,24 +82,45 @@
 	import vFoot from '../common/footer.vue'
 
 	export default {
+		created() {
+			this.id = this.$route.query.id;
+		},
+		mounted() {
+			if(this.$store.state.isLogin == true) {
+				this.state = true;
+			}
+			this.getIntro(this.id);
+		},
 		components: {
 			vHead,
 			vNav,
 			vFoot
 		},
+		computed: {
+			song () {
+				return this.$store.state.song;
+			},
+			state () {
+				return this.$store.state;
+			}
+		},
 		data () {
 			return {
+				id: '',
 				song:{
-					ID:'001',
+					id:'001',
 					name:'心之科学',
+					artistId: '01',
 					artistName:'容祖儿',
 					language: '中文',
 					style:'Pop流行',
+					albumId: '01',
 					albumName:'污污污',
+					duration: '03:55',
 					releaseDate:'2018-06-16',
 					lyricsPath: "/static/lyr.txt",
-					lyrics: '',
-					imagePath: require('../../../assets/logo.png'),
+					filePath: '',
+					image: require('../../../assets/logo.png'),
 					isCollected:false
 				},
 				playlistList:[{
@@ -165,10 +190,21 @@
 					}
 				});
 			},
-		},
-		mounted() {
 
-		}
+			getIntro: function(_id) {
+				this.axios.get(this.serverUrl + "/song/getInfo", {
+					params: {
+						id: _id,
+					}
+				})
+				.then(res => {
+					this.song = res.data;					
+				})
+				.catch(function (error) {
+					console.log(error);
+				});
+			},
+		},
 	};
 </script>
 
@@ -179,5 +215,9 @@
 	.font_songName{
 		font-family:"Microsoft YaHei";
 		font-size:xx-large;
+	}
+	a {
+		text-decoration:none;
+		 out-line: none;
 	}
 </style>
