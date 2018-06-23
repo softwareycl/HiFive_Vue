@@ -265,7 +265,7 @@
 				this.page.cur = 1;
 			},
 
-			handleMouseEnter:function(row, column, cell, event){
+			handleMouseEnter:function(row, column, cell, event){				
 				row.Flag=true;
 			},
 			handleMouseOut:function(row, column, cell, event){
