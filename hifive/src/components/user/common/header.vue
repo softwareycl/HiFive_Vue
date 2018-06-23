@@ -58,7 +58,7 @@
 			},
 			onSearch: function() {	
 				this.$store.state.search.name = this.inputTxt;
-				this.$router.push('/user/search');		
+				this.$router.push('/user/black');		
 			}
 		},
 		computed: {
