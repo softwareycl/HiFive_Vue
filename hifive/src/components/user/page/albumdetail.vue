@@ -220,70 +220,233 @@
         playAllSong:function(){
 //传递所有歌曲ID给player.vue
 },
-collect:function(albumId){
-  this.album.isCollected=true;
-//提交专辑id，返回true/false
-},
-cancelCollect:function(albumId){ 
-  this.album.isCollected=false;
-//提交专辑id，返回true/false
-},
-handleAlbumCommand:function(command){
-  if(command=="login"){
-    window.location.href='/';
-  }
-  if(command=="newplaylist"){
-    this.dialogVisible=true;
-  }
-  else if(command=="playqueue"){
-//传递所有歌曲ID给player.vue
-}
-else{
-//提交专辑ID和歌单ID，返回false则用户会话超时
-console.log(command.params);
-}
-},
-playSong:function(row){
-//传递歌曲ID给player.vue
-},
-handleSongCommand:function(command){
-  if(command=="login"){
-    window.location.href='/';
-  }
-  else if(command=="newplaylist"){
-    this.dialogVisible=true;
-  }
-  else if(command=="playqueue"){
-//传递歌曲ID给player.vue
-}
-else{
-//提交歌曲ID和歌单ID，返回false则用户会话超时
-console.log(command.param1);
-console.log(command.param2.id)
-}
-},
-submitForm:function(formname){
-//提交playlist对象，包括歌单名称和简介，返回-1用户会话超时
-this.$refs[formname].validate((valid) => {
-  if (valid) {
-    alert('submit!');
-    this.dialogVisible=false;
-    this.$refs[formname].resetFields();
-  } else {
-    alert('error submit!!');
-    return false;
-  }
-});
-},
-downloadSong:function(row){
-//提交歌曲ID，无返回
-},
-getAlbumInfo:function(albumId){
-//提交专辑ID，获得专辑信息和歌曲列表
-},
-getPlaylistList:function(){
-//无提交，返回歌单列表
-},
+        collect:function(){
+          this.album.isCollected=true;
+          this.$axios.get('',{
+            params:{
+              id:this.album.id
+            }
+          })
+          .then(function(response){
+            if(response){
+              this.$message({
+                showClose: true,
+                message: '收藏专辑成功',
+                type: 'success'
+              });
+            }
+            else{
+              this.$message({
+                showClose: true,
+                message: '会话超时',
+                type: 'error'
+              });
+            }
+          })
+          .catch(function(err){
+            console.log(err)
+          });
+        },
+        cancelCollect:function(albumId){ 
+          this.album.isCollected=false;
+          this.$axios.get('',{
+            params:{
+              id:this.album.id
+            }
+          })
+          .then(function(response){
+            if(response){
+              this.$message({
+                showClose: true,
+                message: '取消收藏成功',
+                type: 'success'
+              });
+            }
+            else{
+              this.$message({
+                showClose: true,
+                message: '会话超时',
+                type: 'error'
+              });
+            }
+          })
+          .catch(function(err){
+            console.log(err)
+          });
+        },
+        handleAlbumCommand:function(command){
+          if(command=="login"){
+            window.location.href='/';
+          }
+          if(command=="newplaylist"){
+            this.dialogVisible=true;
+          }
+          else if(command=="playqueue"){
+            //传递所有歌曲ID给player.vue
+          }
+          else{
+            this.$axios.get('',{
+              params:{
+                id:this.album.id,
+                playlistId:command.params
+              }
+            })
+            .then(function(response){
+              if(response){
+                this.$message({
+                  showClose: true,
+                  message: '已成功添加到歌单',
+                  type: 'success'
+                });
+              }
+              else{
+                this.$message({
+                  showClose: true,
+                  message: '会话超时',
+                  type: 'error'
+                });
+              }
+            })
+            .catch(function(err){
+              console.log(err)
+            });
+          }
+        },
+        playSong:function(row){
+          //传递歌曲ID给player.vue
+        },
+        handleSongCommand:function(command){
+          if(command=="login"){
+            window.location.href='/';
+          }
+          else if(command=="newplaylist"){
+            this.dialogVisible=true;
+          }
+          else if(command=="playqueue"){
+            //传递歌曲ID给player.vue
+          }
+          else{
+            this.$axios.get('',{
+              params:{
+                id:command.param2.id,
+                playlistId:command.param1
+              }
+            })
+            .then(function(response){
+              if(response){
+                this.$message({
+                  showClose: true,
+                  message: '已成功添加到歌单',
+                  type: 'success'
+                });
+              }
+              else{
+                this.$message({
+                  showClose: true,
+                  message: '会话超时',
+                  type: 'error'
+                });
+              }
+            })
+            .catch(function(err){
+              console.log(err)
+            });
+          }
+        },
+        submitForm:function(formname){
+          //提交playlist对象，包括歌单名称和简介，返回-1用户会话超时
+          this.$refs[formname].validate((valid) => {
+            if (valid) {
+              this.$axios.get('',{
+                params:{
+                  
+                }
+              })
+              .then(function(response){
+                if(response){
+                  this.$message({
+                    showClose: true,
+                    message: '已成功添加到新歌单',
+                    type: 'success'
+                  });
+                }
+                else{
+                  this.$message({
+                    showClose: true,
+                    message: '会话超时',
+                    type: 'error'
+                  });
+                }
+              })
+              .catch(function(err){
+                console.log(err)
+              });
+              this.dialogVisible=false;
+              this.$refs[formname].resetFields();
+            } 
+            else {
+              this.$message({
+                    showClose: true,
+                    message: '格式不正确',
+                    type: 'error'
+              });
+              return false;
+            }
+          });
+        },
+        downloadSong:function(row){
+          this.$axios.get('',{
+                params:{
+                  id:row.id
+                }
+              })
+              .then(function(response){
+                if(response){
+                  this.$message({
+                    showClose: true,
+                    message: '下载成功',
+                    type: 'success'
+                  });
+                }
+                else{
+                  this.$message({
+                    showClose: true,
+                    message: '下载失败',
+                    type: 'error'
+                  });
+                }
+              })
+              .catch(function(err){
+                console.log(err)
+              });
+        },
+        getAlbumInfo:function(albumId){
+          this.$axios.get(this.serverUrl+'/getInfo',{
+                params:{
+                  id:this.album.id
+                }
+              })
+              .then(function(response){
+                this.album = response.data;
+                this.songList = this.album.songList;
+              })
+              .catch(function(err){
+                console.log(err)
+              });
+        },
+        getPlaylistList:function(){
+          this.$axios.get('',{
+                params:{
+                  id:this.album.id
+                }
+              })
+              .then(function(response){
+                
+              })
+              .catch(function(err){
+                console.log(err)
+              });
+        },
 handleOverflow:function(){
   var offsetWidth = document.getElementById("albumIntro").offsetHeight;  
   var scrollWidth = document.getElementById("albumIntro").scrollHeight;
@@ -295,7 +458,13 @@ handleOverflow:function(){
   }
 }
 },
+computed:{
+  serverUrl(){
+    return this.$store.state.serverUrl;
+  }
+},
 mounted:function(){
+  this.album=this.$store.state.album
   this.getAlbumInfo(this.album.id);
   this.handleOverflow();
   this.getPlaylistList();
