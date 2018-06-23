@@ -5,7 +5,8 @@
     <div class="main">
       <div class="singer-nav">
         <table id="singer-nav-table">
-          <div style="background-color: rgb(251,251,253); width: 1170px; height: 160px; margin-left: 190px">
+          <div style="position: relative; margin: 0 auto;">
+            <div style="background-color: rgb(251,251,253); width: 1170px; height: 160px; margin-left: 187px">
             <tr>
             <td><span class="cl long"></span></td>
             <td style="text-align: left;" >
@@ -40,6 +41,7 @@
               </ul>
             </td>
           </tr>
+          </div>
           </div>
         </table>
       </div>
