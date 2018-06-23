@@ -4,16 +4,14 @@
     <v-nav></v-nav>
     <div class="main">
       <div class="singer-nav">
-        <table id="singer-nav-table">
-          <div style="position: relative; margin: 0 auto;">
-            <div style="background-color: rgb(251,251,253); width: 1170px; height: 160px; margin-left: 187px">
+        <table id="singer-nav-table"  style="margin: 0 auto">
+            <div style="background-color: rgb(251,251,253); width: 1150px; height: 160px;">
             <tr>
             <td><span class="cl long"></span></td>
             <td style="text-align: left;" >
               <ul class="singer-nav-tag" id="initial">
                 <li @click="initial_change_bg(0);singerDisplay(-1,'@',-1,0)" id="all" class="current long" style="width: 40px; padding-left: 3px; padding-right: 3px; margin-right: 5px; margin-top: 12px">热门</li>
                 <li v-for="item in items" @click="initial_change_bg(item.charCodeAt()-64);singerDisplay(-1,item,-1,0)" style="margin-top: 12px">{{item}}</li>
-                
               </ul>
             </td>
           </tr>
@@ -42,7 +40,6 @@
             </td>
           </tr>
           </div>
-          </div>
         </table>
       </div>
 
@@ -54,7 +51,7 @@
         <li v-for="item in singers" class="singerli">
           <div class="singer">
             <router-link to="/user/artistdetail">
-              <img :src="item.image" alt="" style="border-radius:100%; padding: 35px; ">
+              <img :src="item.image" alt="" style="border-radius:100%; padding: 20px; ">
               <p>{{item.name}}</p>
             </router-link>
           </div>
@@ -245,6 +242,7 @@ a {text-decoration: none; color: black}
     .singer-nav-tag {
       display: inline;
       height: 50px;
+      margin:0 auto;
       text-align: center;
       .current {
         color: #fff;
