@@ -19,12 +19,12 @@
             <td><span class="cl"></span></td>
             <td>
               <ul id ="region" class="singer-nav-tag" >
-                <li @click="region_change_bg(0);singerDisplay(1,'!',-1,0)" class="current">全部</li>
-                <li @click="region_change_bg(1);singerDisplay(2,'!',-1,0)">内地</li>
-                <li @click="region_change_bg(2);singerDisplay(3,'!',-1,0)">港台</li>
-                <li @click="region_change_bg(3);singerDisplay(4,'!',-1,0)">欧美</li>
-                <li @click="region_change_bg(4);singerDisplay(5,'!',-1,0)">日韩</li>
-                <li @click="region_change_bg(5);singerDisplay(6,'!',-1,0)">其他</li>
+                <li @click="region_change_bg(0);singerDisplay(0,'!',-1,0)" class="current">全部</li>
+                <li @click="region_change_bg(1);singerDisplay(1,'!',-1,0)">内地</li>
+                <li @click="region_change_bg(2);singerDisplay(2,'!',-1,0)">港台</li>
+                <li @click="region_change_bg(3);singerDisplay(3,'!',-1,0)">欧美</li>
+                <li @click="region_change_bg(4);singerDisplay(4,'!',-1,0)">日韩</li>
+                <li @click="region_change_bg(5);singerDisplay(5,'!',-1,0)">其他</li>
               </ul>
             </td>
           </tr>
@@ -104,11 +104,11 @@
    
     methods: {
       handleCurrentChange: function(val){
-        this.singerDisplay(0,'@',0,val);
+        this.singerDisplay(0,'!',0,val);
       },
 
       singerDisplay: function(_region, _initial, _gender, _page){
-        if(_page != this.page){
+        if(_page != 0){
           _region = this.region;
           _initial = this.initial;
           _gender = this.gender;
@@ -146,7 +146,7 @@
           
           console.log(this.singers)
 
-            this.axios.get(serverUrl() + "/album/filterArtistCount", {
+            this.axios.get(this.serverUrl + "/artist/filterArtistCount", {
               params: {
                 region: _region,
                 initial: _initial,
@@ -154,7 +154,7 @@
               }
             })
             .then(res => {
-              this.pageCount = res.data
+              this.pageCount = Math.ceil(parseFloat(res.data) / 10);
               
               console.log(this.singers)
             })
