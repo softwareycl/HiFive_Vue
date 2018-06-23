@@ -39,7 +39,7 @@
 
       <ul id="albumlist">
         <li v-for="item in albums" class="albumli">
-          <div class="album">
+          <div class="album" style="margin-bottom: 20px">
             <router-link to="/user/albumdetail">
               <img :src="item.image" alt=""  @click="setAlbum(item)">
               <p @click="setAlbum(item)">{{item.name}}</p>
@@ -47,7 +47,7 @@
             <router-link to="/user/artistdetail">
               <p>{{item.artistName}}</p>
             </router-link>
-            <p>{{item.releaseDate}}</p>
+            <p style="color: #cccccc">{{item.releaseDate}}</p>
           </div>
         </li>
       </ul>
@@ -195,11 +195,14 @@
 </script>
 
 <style lang="scss" scoped>
+a {text-decoration: none; color: black}
+.router{color: #cccccc}
 .main {
   padding-top: 30px;
   height: 900px;
   opacity: 0.95;
   position: relative;
+  font-family: "Microsoft YaHei";
   color: #333;
   ul {
     margin: 0 auto;
@@ -229,7 +232,6 @@
       display: inline;
       height: 50px;
       margin-left: 20px;
-      margin-bottom: 10px;
       text-align: center;
       .current {
         color: #fff;
@@ -244,7 +246,7 @@
         height: 30px;
         margin-left: 20px;
         margin-top: 0px;
-        font-size: 15px;
+        font-size: 14px;
         float: left;
         line-height: 30px;
         &:hover {
@@ -259,10 +261,11 @@
     height: 680px;
 
     .albumli {
-    text-align: top;
-    float: left;
-    width: 20%;
-    height: 300px;
+      text-align: top;
+      float: left;
+      width: 20%;
+      height: 300px;
+      margin-bottom: 30px;
     .album {
       background-color: #f6f6f6;
       height: 210px;
@@ -272,7 +275,6 @@
     img {
       width: 210px;
       height: 210px;
-      margin-top: 20px;
       box-sizing: border-box;
       &:hover {
         cursor: pointer;
@@ -281,6 +283,8 @@
     }
     p {
       margin-top: 1px;
+      margin-bottom: 5px;
+      font-size: 14px;
       &:hover {
         cursor: pointer;
         color: #31c27c;
@@ -291,7 +295,6 @@
   .pagination {
     text-align: center;
     font-size: 20px;
-    
   }
 }
 </style>

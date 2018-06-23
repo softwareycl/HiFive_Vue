@@ -9,33 +9,9 @@
             <td><span class="cl long"></span></td>
             <td>
               <ul class="singer-nav-tag" id="initial">
-                <li @click="initial_change_bg(0);singerDisplay(0,'@',1)" class="current">热门</li>
-                <li @click="initial_change_bg(1);singerDisplay(0,2,1)">A</li>
-                <li @click="initial_change_bg(2);singerDisplay(0,3,1)">B</li>
-                <li @click="initial_change_bg(3);singerDisplay(0,4,1)">C</li>
-                <li @click="initial_change_bg(4);singerDisplay(0,5,1)">D</li>
-                <li @click="initial_change_bg(5);singerDisplay(0,6,1)">E</li>
-                <li @click="initial_change_bg(6);singerDisplay(0,7,1)">F</li>
-                <li @click="initial_change_bg(7);singerDisplay(0,8,1)">G</li>
-                <li @click="initial_change_bg(8);singerDisplay(0,9,1)">H</li>
-                <li @click="initial_change_bg(9);singerDisplay(0,9,1)">I</li>
-                <li @click="initial_change_bg(10);singerDisplay(0,9,1)">J</li>
-                <li @click="initial_change_bg(11);singerDisplay(0,9,1)">K</li>
-                <li @click="initial_change_bg(12);singerDisplay(0,9,1)">L</li>
-                <li @click="initial_change_bg(13);singerDisplay(0,9,1)">M</li>
-                <li @click="initial_change_bg(14);singerDisplay(0,9,1)">N</li>
-                <li @click="initial_change_bg(15);singerDisplay(0,9,1)">O</li>
-                <li @click="initial_change_bg(16);singerDisplay(0,9,1)">P</li>
-                <li @click="initial_change_bg(17);singerDisplay(0,9,1)">Q</li>
-                <li @click="initial_change_bg(18);singerDisplay(0,9,1)">R</li>
-                <li @click="initial_change_bg(19);singerDisplay(0,9,1)">S</li>
-                <li @click="initial_change_bg(20);singerDisplay(0,9,1)">T</li>
-                <li @click="initial_change_bg(21);singerDisplay(0,9,1)">U</li>
-                <li @click="initial_change_bg(22);singerDisplay(0,9,1)">V</li>
-                <li @click="initial_change_bg(23);singerDisplay(0,9,1)">W</li>
-                <li @click="initial_change_bg(24);singerDisplay(0,9,1)">X</li>
-                <li @click="initial_change_bg(25);singerDisplay(0,9,1)">Y</li>
-                <li @click="initial_change_bg(26);singerDisplay(0,9,1)">Z</li>
+                <li @click="initial_change_bg(0);singerDisplay(-1,'@',-1,0)" id="all" class="current long">热门</li>
+                <li v-for="item in items" @click="initial_change_bg(item.charCodeAt()-64);singerDisplay(-1,item,-1,0)" >{{item}}</li>
+                
               </ul>
             </td>
           </tr>
@@ -43,12 +19,12 @@
             <td><span class="cl"></span></td>
             <td>
               <ul id ="region" class="singer-nav-tag" >
-                <li @click="region_change_bg(0);singerDisplay(1,'!',1)" class="current">全部</li>
-                <li @click="region_change_bg(1);singerDisplay(2,1)">内地</li>
-                <li @click="region_change_bg(2);singerDisplay(3,0,1)">港台</li>
-                <li @click="region_change_bg(3);singerDisplay(4,0,1)">欧美</li>
-                <li @click="region_change_bg(4);singerDisplay(5,0,1)">日韩</li>
-                <li @click="region_change_bg(5);singerDisplay(6,0,1)">其他</li>
+                <li @click="region_change_bg(0);singerDisplay(1,'!',-1,0)" class="current">全部</li>
+                <li @click="region_change_bg(1);singerDisplay(2,'!',-1,0)">内地</li>
+                <li @click="region_change_bg(2);singerDisplay(3,'!',-1,0)">港台</li>
+                <li @click="region_change_bg(3);singerDisplay(4,'!',-1,0)">欧美</li>
+                <li @click="region_change_bg(4);singerDisplay(5,'!',-1,0)">日韩</li>
+                <li @click="region_change_bg(5);singerDisplay(6,'!',-1,0)">其他</li>
               </ul>
             </td>
           </tr>
@@ -56,10 +32,10 @@
             <td><span class="cl gender"></span></td>
             <td>
               <ul id ="gender" class="singer-nav-tag" >
-                <li @click="gender_change_bg(0);singerDisplay(1,'*',1)" class="current">全部</li>
-                <li @click="gender_change_bg(1);singerDisplay(2,1)">男</li>
-                <li @click="gender_change_bg(2);singerDisplay(3,0,1)">女</li>
-                <li @click="gender_change_bg(3);singerDisplay(4,0,1)">组合</li>
+                <li @click="gender_change_bg(0);singerDisplay(-1,'!',0,0)" class="current">全部</li>
+                <li @click="gender_change_bg(1);singerDisplay(-1,'!',1,0)">男</li>
+                <li @click="gender_change_bg(2);singerDisplay(-1,'!',2,0)">女</li>
+                <li @click="gender_change_bg(3);singerDisplay(-1,'!',3,0)">组合</li>
               </ul>
             </td>
           </tr>
@@ -73,20 +49,19 @@
       <ul id="singerlist">
         <li v-for="item in singers" class="singerli">
           <div class="singer">
-            <img :src="item.image" alt="">
-            <p>{{item.singerName}}</p>
+            <router-link to="/user/artistdetail">
+              <img :src="item.image" alt="" style="border-radius:100%; padding: 35px; ">
+              <p>{{item.name}}</p>
+            </router-link>
           </div>
         </li>
       </ul>
     
-    <div class="block">
-      <el-pagination>
-        background
+      <el-pagination
         layout="prev, pager, next"
         @current-change="handleCurrentChange"
-        :page-count="pageCount" class="pagination">
+        :page-count="pageCount" class="pagination" >
       </el-pagination>
-    </div>
 
     </div>
     <v-foot></v-foot>
@@ -101,12 +76,13 @@
     export default {
      data() {
        return{
-         region: 1,
+         region: 0,
          initial: '@',
-         gender: '*',
+         gender: 0,
          page: 1,
          pageCount: 5,
          singers: [{}],
+          items:['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'],
        }
      },
     components: {
@@ -122,13 +98,13 @@
     },
 
     mounted() {
-       this.singerDisplay(1,0,1);
+       this.singerDisplay(0,'@',0,1);
 
     },
    
     methods: {
       handleCurrentChange: function(val){
-        this.singerDisplay(0,0,val);
+        this.singerDisplay(0,'@',0,val);
       },
 
       singerDisplay: function(_region, _initial, _gender, _page){
@@ -142,7 +118,7 @@
           _gender = this.gender;
           this.initial = _initial;
           _page = this.page;
-        } else if(_region != "@"){
+        } else if(_region != -1){
           _initial = this.initial;
           _gender = this.gender;
           this.region = _region;
@@ -153,17 +129,19 @@
           this.gender = _gender;
           _page = this.page;
         }
-        this.axios.get(serverUrl() + "/artist/filterArtist", {
+        this.axios.get(this.serverUrl + "/artist/filterArtist", {
           params: {
             region: _region,
             initial: _initial,
+            gender: _gender,
             page: _page
           }
         })
         .then(res => {
           this.singers = res.data
+          console.log(res.data);
           for(var i = 0; i < res.data.length; i++){
-            this.singers[i].image = 'artist.image' + this.singers[i].image;
+            this.singers[i].image = this.serverUrl + this.singers[i].image;
           }
           
           console.log(this.singers)
@@ -172,6 +150,7 @@
               params: {
                 region: _region,
                 initial: _initial,
+                gender: _gender,
               }
             })
             .then(res => {
@@ -230,12 +209,14 @@
 </script>
 
 <style lang="scss" scoped>
+a {text-decoration: none; color: black}
 .main {
   padding-top: 30px;
   height: 900px;
   opacity: 0.95;
   position: relative;
   color: #333;
+  font-family: "Microsoft YaHei";
   ul {
     margin: 0 auto;
     height: 100%;
@@ -275,7 +256,7 @@
         width: 30px;
         height: 30px;
         margin-top: 0px;
-        font-size: 15px;
+        font-size: 14px;
         float: left;
         line-height: 30px;
         &:hover {
@@ -315,15 +296,14 @@
     width: 20%;
     height: 300px;
     .singer {
-      background-color: #f6f6f6;
-      height: 210px;
+      background-color: rgb(251,251,253);
+      height: 250px;
       width: 210px;
       margin-left: 12px;
     }
     img {
       width: 210px;
       height: 210px;
-      margin-top: 20px;
       box-sizing: border-box;
       &:hover {
         cursor: pointer;
@@ -331,7 +311,11 @@
       }
     }
     p {
-      margin-top: 1px;
+      margin-left: 60px;
+      margin-right: 60px;
+      margin-top: 0px;
+      font-size: 16px;
+      text-align: center;
       &:hover {
         cursor: pointer;
         color: #31c27c;
