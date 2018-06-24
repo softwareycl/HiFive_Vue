@@ -66,9 +66,13 @@
 				</el-col>
 			</el-row>
 			<el-row :gutter="50" style="margin-top:30px;">
-				<el-col :span="4" :offset="4">
-					<p class="font_songLry" style="font-size:20px">歌词</p>
-					<p style="display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 4;overflow: hidden;" id="lyr">{{this.id}}</p>
+				<el-col :span="8" :offset="4">
+					<div style="margin-bottom:30px;">
+						<p class="font_songLry" style="font-size:20px">歌词</p>
+						<div v-bind:class="{fold: isfold}" id="lyr"></div>
+						<button v-if="isfold" @click="isfold = false" style="border:0px;background-color:transparent;margin-top:10px;outline:none;cursor:pointer;color:#31C27C">[展开]</button>
+						<button v-if="!isfold" @click="isfold = true" style="border:0px;background-color:transparent;margin-top:10px;outline:none;cursor:pointer;color:#31C27C">[收起]</button>
+					</div>
 				</el-col>
 			</el-row>
 		</div>
@@ -89,7 +93,19 @@
 			if(this.$store.state.isLogin == true) {
 				this.state = true;
 			}
-			this.getIntro(this.id);
+
+			var xmlhttp=new XMLHttpRequest();
+			xmlhttp.onreadystatechange=function()
+			{
+				var textHTML=xmlhttp.responseText;
+				textHTML=textHTML.replace(/(\n)+|(\r\n)+/g,"<br>");
+				document.getElementById("lyr").innerHTML=textHTML;
+			}
+			xmlhttp.open("GET","/static/lyr.txt",true);
+			xmlhttp.overrideMimeType("text/html;charset=gb2312");
+			xmlhttp.send();
+			
+			this.getIntro(this.id);  
 		},
 		components: {
 			vHead,
@@ -106,6 +122,7 @@
 		},
 		data () {
 			return {
+				isfold: true,
 				id: '',
 				song:{
 					id:'001',
@@ -208,6 +225,17 @@
 					this.song = res.data;
 					this.song.image = this.serverUrl + this.song.image;
 					this.song.lyricsPath = this.serverUrl + this.song.lyricsPath;
+
+					var xmlhttp=new XMLHttpRequest();
+					xmlhttp.onreadystatechange=function()
+					{
+						var textHTML=xmlhttp.responseText;
+						textHTML=textHTML.replace(/(\n)+|(\r\n)+/g,"<br>");
+						document.getElementById("lyr").innerHTML=textHTML;
+					}
+					xmlhttp.open("GET",this.song.lyricsPath,true);
+					xmlhttp.overrideMimeType("text/html;charset=gb2312");
+					xmlhttp.send();
 				})
 				.catch(function (error) {
 					console.log(error);
@@ -219,7 +247,7 @@
 
 <style>
 	.song_detail {
-		min-height: 500px;
+		min-height: 600px;
 	}
 	.font_songName{
 		font-family:"Microsoft YaHei";
@@ -228,5 +256,10 @@
 	a {
 		text-decoration:none;
 		 out-line: none;
+	}
+
+	.fold {
+		max-height: 400px;
+		overflow: hidden;
 	}
 </style>
