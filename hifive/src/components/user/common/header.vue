@@ -61,10 +61,9 @@
 			},
 			onSearch: function() {
 				if(this.inputTxt == '') {
-					this.$notify({
-						title: '警告',
-						message: '请输入搜索内容',
-						type: 'warning'
+					this.$notify.info({
+						title: '消息',
+						message: '请输入搜索内容'
 					});
 					return;
 				}
