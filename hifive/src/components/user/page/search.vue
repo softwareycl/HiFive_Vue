@@ -11,7 +11,7 @@
 		</div>
 		<div class="search_main">
 			<div class="search_song" v-if="curTitle == '歌曲'">
-				<el-table :data="songList" style="width: 100%" stripe="true" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">
+				<el-table :data="songList" style="width: 100%" :stripe="true" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">
 					<el-table-column label="歌曲">
 						<template slot-scope="scope">
 							<router-link tag="a" :to="{path:'/user/songdetail',query:{id:scope.row.id}}">
@@ -27,7 +27,7 @@
 									<el-button icon="el-icon-plus" circle></el-button>
 									<el-dropdown-menu slot="dropdown" :data="playlistList">
 										<el-dropdown-item command="playqueue">播放队列</el-dropdown-item>
-										<div v-if="state">
+										<div v-if="isLogin">
 											<el-dropdown-item disabled divided>我喜欢</el-dropdown-item>
 											<el-dropdown-item v-for="playlist in playlistList" :key="playlist.ID" :command='{type:"playlist",param1:playlist.ID,param2:scope.row}'>{{playlist.name}}</el-dropdown-item>
 											<el-dropdown-item command="newplaylist" divided>添加到新歌单</el-dropdown-item>
@@ -74,7 +74,7 @@
 					</el-table-column>
 				</el-table>
 				<div class="pagination-footer" style="margin-top:50px">	
-					<el-pagination @current-change="handleCurrentChange" :current-page="page.cur" :page-size="20" background="#31C27C" layout="total, prev, pager, next" :total="page.total"> </el-pagination>
+					<el-pagination @current-change="handleCurrentChange" :current-page="page.cur" :page-size="20" background layout="total, prev, pager, next" :total="page.total"> </el-pagination>
 				</div>
 			</div>
 			<div class="search_artist" v-if="curTitle == '歌手'">
@@ -94,14 +94,15 @@
 					<li v-for="item in artistList" class="singerli">
 						<div class="singer">
 							<router-link to="/user/artistdetail">
-								<img :src="item.image" alt="" style="border-radius:100%; padding: 35px; ">
+								<img :src="item.image" alt="" style="border-radius:100%;padding:35px;">
 								<p style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{item.name}}</p>
 							</router-link>
 						</div>
 					</li>
 				</ul>
+				<div style="clear:both"></div>
 				<div class="pagination-footer">	
-					<el-pagination @current-change="handleCurrentChange" :current-page="page.cur" :page-size="20" background="#31C27C" layout="total, prev, pager, next" :total="page.total"> </el-pagination>
+					<el-pagination @current-change="handleCurrentChange" :current-page="page.cur" :page-size="20" background layout="total, prev, pager, next" :total="page.total"> </el-pagination>
 				</div>
 			</div>
 			<div class="search_artist" v-if="curTitle == '专辑'">
@@ -109,7 +110,7 @@
 					<el-col :data="albumList" v-for="list in albumList" style='width:20%'>
 						<el-card :body-style="{ padding: '0px'}" shadow="never" style="border:none;margin-bottom:20px;">
 							<router-link tag="a" :to="{path:'/user/albumdetail',query:{id:list.id}}">
-								<img src="../../../assets/icon.jpg" class="image">
+								<img :src="list.image" class="image">
 							</router-link>
 							<div style="line-height:8px;font-size:5px;">
 								<router-link tag="a" :to="{path:'/user/albumdetail',query:{id:list.id}}">
@@ -153,7 +154,7 @@
 		},
 		mounted () {
 			if(this.$store.state.isLogin == true) {
-				this.state = true;
+				this.isLogin = true;
 			}
 			this.getPlaylistList();
 			if(this.curTitle == '歌曲') {
@@ -164,7 +165,7 @@
 				this.getArtistList(this.$store.state.search.name,this.page.cur);
 				this.getArtistTotal(this.$store.state.search.name);
 			}
-			else {
+			else if(this.curTitle == '专辑'){
 				this.getAlbumList(this.$store.state.search.name,this.page.cur);
 				this.getAlbumTotal(this.$store.state.search.name);
 			}
@@ -172,7 +173,7 @@
 		data () {
 			return {
 				dialogVisible:false,
-				state:true,
+				isLogin:true,
 				ruleForm: {
 					name: '',
 					des: ''
@@ -273,6 +274,18 @@
 			cur_title: function(title) {
 				this.curTitle = title;
 				this.page.cur = 1;
+				if(this.curTitle == '歌曲') {
+					this.getSongList(this.$store.state.search.name,this.page.cur);
+					this.getSongTotal(this.$store.state.search.name);
+				}					
+				else if(this.curTitle == '歌手') {
+					this.getArtistList(this.$store.state.search.name,this.page.cur);
+					this.getArtistTotal(this.$store.state.search.name);
+				}
+				else if(this.curTitle == '专辑'){
+					this.getAlbumList(this.$store.state.search.name,this.page.cur);
+					this.getAlbumTotal(this.$store.state.search.name);
+				}
 			},
 
 			handleMouseEnter:function(row, column, cell, event){				
@@ -366,7 +379,7 @@
 					console.log(error);
 				});
 			},
-			getArtistList: function(name, page) {      //获取一页歌手
+			getArtistList: function(_name, _page) {      //获取一页歌手
 				this.axios.get(this.serverUrl + "/artist/searchArtist", {
 					params: {
 						name: _name,
@@ -383,17 +396,17 @@
 					console.log(error);
 				});
 			},
-			getAlbumList: function(name, page) {      //获取一页专辑
+			getAlbumList: function(_name, _page) {      //获取一页专辑
 				this.axios.get(this.serverUrl + "/album/searchAlbum", {
 					params: {
 						name: _name,
-						page: _page
+						page: _page,
 					}
 				})
 				.then(res => {
-					this.artistList = res.data;
+					this.albumList = res.data;
 					for(var i = 0; i < res.data.length; i++){
-						this.artistList[i].image = this.serverUrl + this.artistList[i].image;
+						this.albumList[i].image = this.serverUrl + this.albumList[i].image;
 					}
 				})
 				.catch(function (error) {
@@ -482,6 +495,7 @@
 
 	.image {
 		width: 100%;
+		max-height: 200px;
 		display: block;
 	}
 
@@ -544,5 +558,4 @@
 			list-style-type:none;
 		}
 	}
-
 </style>

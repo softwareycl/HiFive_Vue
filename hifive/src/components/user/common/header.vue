@@ -4,7 +4,7 @@
 			<img src="../../../assets/icon.jpg">
 		</div>
 		<ul class="menu_1">
-			<li v-for="list in headNav" :class="{ list_color:curTitle == list.title}" @click="cur_title(list.title)" @mouseover="mo()">
+			<li v-for="list in headNav" :class="{ list_color:curTitle == list.title}" @click="cur_title(list.title)">
 				{{list.title}}
 			</li>
 		</ul>
@@ -24,6 +24,9 @@
 			// if(sessionStorage.getItem('curTitle'))
 			// 	this.curTitle = sessionStorage.getItem('curTitle');
 			this.curTitle = this.$route.name;
+			if(this.$route.name == '搜索') {
+				this.inputTxt = this.$store.state.search.name;
+			}
 			if(this.curTitle != '我的音乐')
 				this.curTitle = '音乐馆';
 		},
@@ -56,7 +59,15 @@
 				}
 
 			},
-			onSearch: function() {	
+			onSearch: function() {
+				if(this.inputTxt == '') {
+					this.$notify({
+						title: '警告',
+						message: '请输入搜索内容',
+						type: 'warning'
+					});
+					return;
+				}
 				this.$store.state.search.name = this.inputTxt;
 				this.$router.push('/user/black');		
 			}

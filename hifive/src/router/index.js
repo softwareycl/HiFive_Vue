@@ -65,6 +65,7 @@ export default new Router({
     },
     {
       path: '/user/search',
+      name: '搜索',
       component: resolve => require(['../components/user/page/search.vue'], resolve)
     },
     {
