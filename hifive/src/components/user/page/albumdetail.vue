@@ -6,7 +6,7 @@
       <el-row :gutter="50">
         <el-col :span="4" :offset="4">
           <div>
-            <img align=right style="margin-top:30px" :src=album.image>
+            <img align=right style="width:200px;height:200px;margin-top:30px" :src=album.image>
           </div>
         </el-col>
         <el-col :span="8">
@@ -22,7 +22,7 @@
             <el-button v-if="album.isCollected" icon="el-icon-star-on" v-on:click="cancelCollect">已收藏</el-button>
             <el-button v-else icon="el-icon-star-off" v-on:click="collect">收藏</el-button>
             <el-dropdown trigger="click" @command="handleAlbumCommand">
-              <el-button icon="el-icon-plus" v-on:click="getPlaylistList">添加到<i class="el-icon-arrow-down el-icon--right"></i>
+              <el-button icon="el-icon-plus">添加到<i class="el-icon-arrow-down el-icon--right"></i>
               </el-button>
               <el-dropdown-menu slot="dropdown" :data="playlistList">
                 <el-dropdown-item command="playqueue">播放队列</el-dropdown-item>
@@ -40,7 +40,7 @@
       <el-row :gutter="50">
         <el-col :span="13" :offset="3">
           <div>
-            <el-table :data="songList" style="height:600px;width: 100%" stripe="true" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">
+            <el-table :data="songList" :stripe=true style="height:600px;width: 100%;" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">
               <el-table-column type="index" label=" " :index="indexMethod"></el-table-column>
               <el-table-column label="歌曲">
                 <template slot-scope="scope">
@@ -70,7 +70,7 @@
                         <el-input v-model="ruleForm.name" placeholder="请输入歌单名称"></el-input>
                       </el-form-item>
                       <el-form-item label="歌单简介" prop="intro">
-                        <el-input type="textarea" v-model="ruleForm.des" placeholder="请输入歌单简介"></el-input>
+                        <el-input type="textarea" v-model="ruleForm.intro" placeholder="请输入歌单简介"></el-input>
                       </el-form-item>
                       <el-form-item>
                         <el-button type="primary" @click="submitForm('ruleForm')">完成</el-button>
@@ -136,9 +136,8 @@
           ]
         },
         isOverflow:'',
-        isLogin:true,
+        isLogin:false,
         album:{
-
         },
         songList: [],
         playlistList:[{
@@ -184,44 +183,56 @@
           row.isopen=event;
         },
         playAllSong:function(){
-//传递所有歌曲ID给player.vue
-},
+          //传递歌曲id给player
+        },
         collect:function(){
-          this.album.isCollected=true;
-          this.$axios.get('',{
-            params:{
-              id:this.album.id
-            }
-          })
-          .then(function(response){
-            if(response){
-              this.$message({
-                showClose: true,
-                message: '收藏专辑成功',
-                type: 'success'
-              });
-            }
-            else{
-              this.$message({
-                showClose: true,
-                message: '会话超时',
-                type: 'error'
-              });
-            }
-          })
-          .catch(function(err){
-            console.log(err)
-          });
+          if(this.isLogin){
+            this.axios.get('',{
+              params:{
+                id:this.album.id
+              }
+            })
+            .then(response =>{
+              if(response){
+                this.album.isCollected=true;
+                this.$message({
+                  showClose: true,
+                  message: '收藏专辑成功',
+                  type: 'success'
+                });
+              }
+              else{
+                this.$message({
+                  showClose: true,
+                  message: '会话超时',
+                  type: 'error'
+                });
+              }
+            })
+            .catch(function(err){
+              console.log(err);
+            });
+          }
+          else{
+            //询问是否要登录
+            this.$confirm('还未登录,是否现在登录?', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+            }).then(() => {
+              window.location.href='/';
+            }).catch(() => {
+            });
+          }
         },
         cancelCollect:function(albumId){ 
-          this.album.isCollected=false;
-          this.$axios.get('',{
+          this.axios.get('',{
             params:{
               id:this.album.id
             }
           })
-          .then(function(response){
+          .then(response =>{
             if(response){
+              this.album.isCollected=false;
               this.$message({
                 showClose: true,
                 message: '取消收藏成功',
@@ -237,27 +248,27 @@
             }
           })
           .catch(function(err){
-            console.log(err)
+            console.log(err);
           });
         },
         handleAlbumCommand:function(command){
           if(command=="login"){
             window.location.href='/';
           }
-          if(command=="newplaylist"){
+          else if(command=="newplaylist"){
             this.dialogVisible=true;
           }
           else if(command=="playqueue"){
-            //传递所有歌曲ID给player.vue
+            //传递所有歌曲id给player.vue
           }
           else{
-            this.$axios.get('',{
+            this.axios.get('',{
               params:{
                 id:this.album.id,
                 playlistId:command.params
               }
             })
-            .then(function(response){
+            .then(response =>{
               if(response){
                 this.$message({
                   showClose: true,
@@ -274,12 +285,12 @@
               }
             })
             .catch(function(err){
-              console.log(err)
+              console.log(err);
             });
           }
         },
         playSong:function(row){
-          //传递歌曲ID给player.vue
+          //传递歌曲id给player.vue
         },
         handleSongCommand:function(command){
           if(command=="login"){
@@ -289,16 +300,16 @@
             this.dialogVisible=true;
           }
           else if(command=="playqueue"){
-            //传递歌曲ID给player.vue
+            //传递歌曲id给player.vue
           }
           else{
-            this.$axios.get('',{
+            this.axios.get('',{
               params:{
                 id:command.param2.id,
                 playlistId:command.param1
               }
             })
-            .then(function(response){
+            .then(response =>{
               if(response){
                 this.$message({
                   showClose: true,
@@ -315,21 +326,23 @@
               }
             })
             .catch(function(err){
-              console.log(err)
+              console.log(err);
             });
           }
         },
         submitForm:function(formname){
-          //提交playlist对象，包括歌单名称和简介，返回-1用户会话超时
           this.$refs[formname].validate((valid) => {
             if (valid) {
-              this.$axios.get('',{
+              this.axios.get('',{
                 params:{
-                  
+                  playlist:{
+
+                  }
                 }
               })
-              .then(function(response){
+              .then(response =>{
                 if(response){
+                  this.getPlaylistList();
                   this.$message({
                     showClose: true,
                     message: '已成功添加到新歌单',
@@ -345,7 +358,7 @@
                 }
               })
               .catch(function(err){
-                console.log(err)
+                console.log(err);
               });
               this.dialogVisible=false;
               this.$refs[formname].resetFields();
@@ -361,30 +374,42 @@
           });
         },
         downloadSong:function(row){
-          this.axios.get('',{
-                params:{
-                  id:row.id
-                }
-              })
-              .then(function(response){
-                if(response){
-                  this.$message({
-                    showClose: true,
-                    message: '下载成功',
-                    type: 'success'
-                  });
-                }
-                else{
-                  this.$message({
-                    showClose: true,
-                    message: '下载失败',
-                    type: 'error'
-                  });
-                }
-              })
-              .catch(function(err){
-                console.log(err)
-              });
+          if(this.isLogin){
+            this.axios.get('',{
+              params:{
+                id:row.id
+              }
+            })
+            .then(response =>{
+              if(response){
+                this.$message({
+                  showClose: true,
+                  message: '下载成功',
+                  type: 'success'
+                });
+              }
+              else{
+                this.$message({
+                  showClose: true,
+                  message: '下载失败',
+                  type: 'error'
+                });
+              }
+            })
+            .catch(function(err){
+              console.log(err);
+            });
+          }
+          else{
+            //询问要不要登录
+            this.$confirm('还未登录,是否现在登录?', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+            }).then(() => {
+              window.location.href='/';
+            }).catch(() => {
+            });
+          }
         },
         timestampToTime: function(timestamp) {
           var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
@@ -413,44 +438,43 @@
                 this.$set(this.album,'isCollected',false);
               })
               .catch(function(err){
-                console.log(err)
+                console.log(err);
               });
         },
         getPlaylistList:function(){
-          // this.axios.get('',{
-          //       params:{
-          //         id:this.album.id
-          //       }
-          //     })
-          //     .then(function(response){
-                
-          //     })
-          //     .catch(function(err){
-          //       console.log(err)
-          //     });
+          this.axios.get('',{
+            params:{
+            }
+          })
+          .then(response =>{
+
+          })
+          .catch(function(err){
+            console.log(err);
+          });
         },
-handleOverflow:function(){
-  var offsetWidth = document.getElementById("albumIntro").offsetHeight;  
-  var scrollWidth = document.getElementById("albumIntro").scrollHeight;
-  if (offsetWidth < scrollWidth) {
-    this.isOverflow=true;
-  }
-  else{
-    this.isOverflow=false;
-  }
-}
-},
-computed:{
-  serverUrl(){
-    return this.$store.state.serverUrl;
-  }
-},
-mounted:function(){
-  this.album=this.$store.state.album
-  this.getAlbumInfo(this.album.id);
-  this.handleOverflow();
-  this.getPlaylistList();
-}
+        handleOverflow:function(){
+          var offsetWidth = document.getElementById("albumIntro").offsetHeight;  
+          var scrollWidth = document.getElementById("albumIntro").scrollHeight;
+          if (offsetWidth < scrollWidth) {
+            this.isOverflow=true;
+          }
+          else{
+            this.isOverflow=false;
+          }
+        }
+      },
+      computed:{
+        serverUrl(){
+          return this.$store.state.serverUrl;
+        }
+      },
+      mounted:function(){
+        this.album=this.$store.state.album;
+        this.getAlbumInfo(this.album.id);
+        this.handleOverflow();
+        this.getPlaylistList();
+      }
 }
 </script>
 <style>

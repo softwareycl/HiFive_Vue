@@ -3,39 +3,39 @@
         <v-head></v-head>
         <v-nav></v-nav>
         <div id="home">
-            <div data="songList">
+            <div data="songList" style="background: linear-gradient(#F2F2F2, #FFFFFF);">
                 <el-row>
                     <p align=center class="font_Menu">新歌首发</p>
                 </el-row>
                 <el-row>
-                    <el-col offset="3" style="width:600px;">
-                        <el-button icon="el-icon-caret-right"  v-on:click="playAllSong">播放全部</el-button>
-                        <el-tabs @tab-click="switch1" style="width:240px;float:right;">
-                            <el-tab-pane label="内地" name="first"></el-tab-pane>
-                            <el-tab-pane label="港台" name="second"></el-tab-pane>
-                            <el-tab-pane label="日韩" name="third"></el-tab-pane>
-                            <el-tab-pane label="欧美" name="fourth"></el-tab-pane>
+                    <el-col :offset="2" style="width:690px;">
+                        <el-button icon="el-icon-caret-right" v-on:click="playAllSong">播放全部</el-button>
+                        <el-tabs value="1" @tab-click="switchSong" style="width:240px;float:right;">
+                            <el-tab-pane label="内地" name="1"></el-tab-pane>
+                            <el-tab-pane label="港台" name="2"></el-tab-pane>
+                            <el-tab-pane label="日韩" name="3"></el-tab-pane>
+                            <el-tab-pane label="欧美" name="4"></el-tab-pane>
                         </el-tabs>
                     </el-col>
                 </el-row>
                 <el-carousel :autoplay=false indicator-position="outside" arrow="hover" height="350px" trigger="click" style="z-index: 0">
                     <el-carousel-item v-for="page in 4" :key="page">
                         <el-row v-for="i in 3" :key="i" style="margin-top:20px;">
-                            <el-col v-for="j in 3" :key="j" :offset="j > 1 ? 0 : 3" style="width:380px;">
+                            <el-col v-for="j in 3" :key="j" :offset="j > 1 ? 0 : 2" style="width:380px;">
                                 <el-card :body-style="{ padding: '0px'}" shadow="never" style="border-style:none;width:100%;borderRadius:0px;">
-                                    <div style="height:100%;width:100%">
+                                    <div style="height:100%;width:100%;">
                                         <el-row>  
                                             <el-col style="width:90px;">
                                                 <div style="width:90px;height:90px;border-style:none;overflow:hidden;">
-                                                    <img src="../../../assets/icon.jpg" class="songImage" onmouseover="this.parentNode.children[1].style.display='block';this.style.transform='scale(1.4)';" @mouseout="handleMouseOut" v-on:click="clickOnSongImage(songList[9*(page-1)+3*(i-1)+j-1].id)">
-                                                    <el-button class="songButton" icon="el-icon-caret-right" circle v-on:click="clickOnSongButton(songList[9*(page-1)+3*(i-1)+j-1].id)"></el-button>
+                                                    <img src="../../../assets/icon.jpg" class="songImage" @mouseenter="enterSongImage" @mouseleave="leaveSongImage" v-on:click="clickOnSongImage(9*(page-1)+3*(i-1)+j-1)">
+                                                    <el-button class="songButton" icon="el-icon-caret-right" circle v-on:click="clickOnSongButton(9*(page-1)+3*(i-1)+j-1)"></el-button>
                                                 </div>
                                             </el-col>  
                                             <el-col style="width:220px">
                                                 <div style="margin-top:25px;margin-left:10px;">
                                                     <a herf="" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='#333333';" class="font_name">{{songList[9*(page-1)+3*(i-1)+j-1].name}}</a>
                                                 </div>
-                                                <div style="margin-left:10px;>
+                                                <div style="margin-left:10px;">
                                                     <a herf="" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='#9C9C9C';" class="font_other">{{songList[9*(page-1)+3*(i-1)+j-1].artistName}}</a>
                                                 </div>
                                             </el-col>  
@@ -49,30 +49,30 @@
                     </el-carousel-item>
                 </el-carousel>
             </div>
-            <div data="albumList" style="margin-top:30px;">
+            <div data="albumList" style="margin-top:30px;background: linear-gradient(#F2F2F2, #FFFFFF);">
                 <el-row>
                     <p align=center class="font_Menu">新碟首发</p>
                 </el-row>
                 <el-row>
                     <el-col align=center>
-                        <el-tabs @tab-click="switch2" style="width:240px;z-index: 0px">
-                            <el-tab-pane label="内地" name="first"></el-tab-pane>
-                            <el-tab-pane label="港台" name="second"></el-tab-pane>
-                            <el-tab-pane label="日韩" name="third"></el-tab-pane>
-                            <el-tab-pane label="欧美" name="fourth"></el-tab-pane>
+                        <el-tabs value="1" @tab-click="switchAlbum" style="width:240px;z-index: 0px">
+                            <el-tab-pane label="内地" name="1"></el-tab-pane>
+                            <el-tab-pane label="港台" name="2"></el-tab-pane>
+                            <el-tab-pane label="日韩" name="3"></el-tab-pane>
+                            <el-tab-pane label="欧美" name="4"></el-tab-pane>
                         </el-tabs>
                     </el-col>
                 </el-row>
-                <el-carousel :autoplay=false indicator-position="outside" arrow="hover" height="550px" trigger="click" style="z-index: 0">
+                <el-carousel :autoplay=false indicator-position="outside" arrow="hover" height="500px" trigger="click" style="z-index: 0">
                     <el-carousel-item v-for="page in 4" :key="page">
                         <el-row v-for="i in 2" :key="i" style="margin-top:20px;">
                             <el-col v-for="j in 5" :key="j" :offset="j > 1 ? 1 : 2" style="width:180px;">
                                 <el-card :body-style="{ padding: '0px'}" shadow="never" style="border-style:none;width:100%;borderRadius:0px;">
-                                    <div style="height:100%;width:100%">  
+                                    <div style="height:100%;width:100%;">  
                                         <el-row>  
                                             <div style="width:180px;height:180px;border-style:none;overflow:hidden;">
-                                                <img src="../../../assets/icon.jpg" class="albumImage" onmouseover="this.parentNode.children[1].style.display='block';this.style.transform='scale(1.4)';this.parentNode.children[1].style.transform='scale(1.4)';" @mouseout="handleMouseOut" v-on:click="clickOnAlbumImage(albumList[10*(page-1)+5*(i-1)+j-1].id)">
-                                                <el-button class="albumButton" icon="el-icon-caret-right" circle v-on:click="clickOnAlbumButton(albumList[10*(page-1)+5*(i-1)+j-1].id)"></el-button>
+                                                <img src="../../../assets/icon.jpg" class="albumImage" @mouseenter="enterAlbumImage" @mouseleave="leaveAlbumImage" v-on:click="clickOnAlbumImage(10*(page-1)+5*(i-1)+j-1)">
+                                                <el-button class="albumButton" icon="el-icon-caret-right" circle v-on:click="clickOnAlbumButton(10*(page-1)+5*(i-1)+j-1)"></el-button>
                                             </div>
                                         </el-row>
                                         <el-row>
@@ -90,85 +90,85 @@
                     </el-carousel-item>
                 </el-carousel>
             </div>
-            <div style="margin-top:30px;">
+            <div style="margin-top:30px;background: linear-gradient(#F2F2F2, #FFFFFF);">
                 <el-row>
                     <p align=center class="font_Menu">排行榜</p>
                 </el-row>
                 <el-row style="height:550px;">
-                    <el-col offset="2" style="width:175px;">
+                    <el-col :offset="2" style="width:175px;">
                         <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;">
-                            <div class="listCard" data="list1" style="background:#D97C95;">
-                                <P align=center class="font_listTitle">巅峰榜</P><p align=center class="font_listTitle" style="font-size:x-large;">新歌</p>
-                                <div style="height:70px;" onmouseover="this.children[0].style.display='block';" onmouseout="this.children[0].style.display='none';">
-                                    <el-button class="listButton" icon="el-icon-caret-right" circle v-on:click="playList1"></el-button>
+                            <div class="listCard" data="list1" style="background:#D97C95;" @mouseover="enterList('listButton1')" @mouseout="leaveList('listButton1')">
+                                <P align=center class="font_listTitle">巅峰榜</P><p align=center class="font_listTitle" style="font-size:x-large;cursor:pointer;" v-on:click="toList(1)">新歌</p>
+                                <div style="height:40px;">
+                                    <el-button id="listButton1" class="listButton" icon="el-icon-caret-right" circle v-on:click="playList(1)"></el-button>
                                 </div>
                                 <ol class="list">
-                                    <li v-for="song in list1" style="margin-left:10px;"><div style="margin-top:20px;"><a herf="" class="font_listContent">{{song.name}}</a></div><div><a herf="" class="font_listContent">{{song.artistName}}</a></div></li>
+                                    <li v-for="song in list1" style="margin-left:10px;"><div style="margin-top:30px;"><a herf="" class="font_listContent">{{song.name}}</a></div><div><a herf="" class="font_listContent">{{song.artistName}}</a></div></li>
                                 </ol>
                             </div>
                         </el-card>
                     </el-col>
                     <el-col style="width:175px;margin-left:10px">
                         <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;">
-                            <div class="listCard" data="list2" style="background:#6B97B1">
-                                <P align=center class="font_listTitle">巅峰榜</P><p align=center class="font_listTitle" style="font-size:x-large;">热歌</p>
-                                <div style="height:70px;" onmouseover="this.children[0].style.display='block';" onmouseout="this.children[0].style.display='none';">
-                                    <el-button class="listButton" icon="el-icon-caret-right" circle v-on:click="playList2"></el-button>
+                            <div class="listCard" data="list2" style="background:#6B97B1" @mouseover="enterList('listButton2')" @mouseout="leaveList('listButton2')">
+                                <P align=center class="font_listTitle">巅峰榜</P><p align=center class="font_listTitle" style="font-size:x-large;cursor:pointer;" v-on:click="toList(2)">热歌</p>
+                                <div style="height:40px;">
+                                    <el-button id="listButton2" class="listButton" icon="el-icon-caret-right" circle v-on:click="playList(2)"></el-button>
                                 </div>
                                 <ol class="list">
-                                    <li v-for="song in list2" style="margin-left:10px;"><div style="margin-top:20px;"><a herf="" class="font_listContent">{{song.name}}</a></div><div><a herf="" class="font_listContent">{{song.artistName}}</a></div></li>
+                                    <li v-for="song in list2" style="margin-left:10px;"><div style="margin-top:30px;"><a herf="" class="font_listContent">{{song.name}}</a></div><div><a herf="" class="font_listContent">{{song.artistName}}</a></div></li>
                                 </ol>
                              </div>  
                         </el-card>
                     </el-col>
                     <el-col style="width:175px;margin-left:10px">
                         <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;"> 
-                            <div class="listCard" data="list3" style="background:#6CBDB4">
-                                <P align=center class="font_listTitle">巅峰榜</P><p align=center class="font_listTitle" style="font-size:x-large;">内地</p>
-                                <div style="height:70px;" onmouseover="this.children[0].style.display='block';" onmouseout="this.children[0].style.display='none';">
-                                    <el-button class="listButton" icon="el-icon-caret-right" circle v-on:click="playList3"></el-button>
+                            <div class="listCard" data="list3" style="background:#6CBDB4" @mouseover="enterList('listButton3')" @mouseout="leaveList('listButton3')">
+                                <P align=center class="font_listTitle">巅峰榜</P><p align=center class="font_listTitle" style="font-size:x-large;cursor:pointer;" v-on:click="toList(3)">内地</p>
+                                <div style="height:40px;">
+                                    <el-button id="listButton3" class="listButton" icon="el-icon-caret-right" circle v-on:click="playList(3)"></el-button>
                                 </div>
                                 <ol class="list">
-                                    <li v-for="song in list3" style="margin-left:10px;"><div style="margin-top:20px;"><a herf="" class="font_listContent">{{song.name}}</a></div><div><a herf="" class="font_listContent">{{song.artistName}}</a></div></li>
+                                    <li v-for="song in list3" style="margin-left:10px;"><div style="margin-top:30px;"><a herf="" class="font_listContent">{{song.name}}</a></div><div><a herf="" class="font_listContent">{{song.artistName}}</a></div></li>
                                 </ol>
                             </div>   
                         </el-card>
                     </el-col>
                     <el-col style="width:175px;margin-left:10px">
                         <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;"> 
-                            <div class="listCard" data="list4" style="background:#508D94">
-                                <P align=center class="font_listTitle">巅峰榜</P><p align=center class="font_listTitle" style="font-size:x-large;">港台</p>
-                                <div style="height:70px;" onmouseover="this.children[0].style.display='block';" onmouseout="this.children[0].style.display='none';">
-                                    <el-button class="listButton" icon="el-icon-caret-right" circle v-on:click="playList4"></el-button>
+                            <div class="listCard" data="list4" style="background:#508D94" @mouseover="enterList('listButton4')" @mouseout="leaveList('listButton4')">
+                                <P align=center class="font_listTitle">巅峰榜</P><p align=center class="font_listTitle" style="font-size:x-large;cursor:pointer;" v-on:click="toList(4)">港台</p>
+                                <div style="height:40px;">
+                                    <el-button id="listButton4" class="listButton" icon="el-icon-caret-right" circle v-on:click="playList(4)"></el-button>
                                 </div>
                                 <ol class="list">
-                                    <li v-for="song in list4" style="margin-left:10px;"><div style="margin-top:20px;"><a herf="" class="font_listContent">{{song.name}}</a></div><div><a herf="" class="font_listContent">{{song.artistName}}</a></div></li>
+                                    <li v-for="song in list4" style="margin-left:10px;"><div style="margin-top:30px;"><a herf="" class="font_listContent">{{song.name}}</a></div><div><a herf="" class="font_listContent">{{song.artistName}}</a></div></li>
                                 </ol>
                             </div>
                         </el-card>
                     </el-col>
                     <el-col style="width:175px;margin-left:10px">
                         <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;">
-                            <div class="listCard" data="list5" style="background:#F0A470">
-                                <P align=center class="font_listTitle">巅峰榜</P><p align=center class="font_listTitle" style="font-size:x-large;">日韩</p>
-                                <div style="height:70px;" onmouseover="this.children[0].style.display='block';" onmouseout="this.children[0].style.display='none';">
-                                    <el-button class="listButton" icon="el-icon-caret-right" circle v-on:click="playList5"></el-button>
+                            <div class="listCard" data="list5" style="background:#F0A470" @mouseover="enterList('listButton5')" @mouseout="leaveList('listButton5')">
+                                <P align=center class="font_listTitle">巅峰榜</P><p align=center class="font_listTitle" style="font-size:x-large;cursor:pointer;" v-on:click="toList(5)">日韩</p>
+                                <div style="height:40px;">
+                                    <el-button id="listButton5" class="listButton" icon="el-icon-caret-right" circle v-on:click="playList(5)"></el-button>
                                 </div>
                                 <ol class="list">
-                                    <li v-for="song in list5" style="margin-left:10px;"><div style="margin-top:20px;"><a herf="" class="font_listContent">{{song.name}}</a></div><div><a herf="" class="font_listContent">{{song.artistName}}</a></div></li>
+                                    <li v-for="song in list5" style="margin-left:10px;"><div style="margin-top:30px;"><a herf="" class="font_listContent">{{song.name}}</a></div><div><a herf="" class="font_listContent">{{song.artistName}}</a></div></li>
                                 </ol>
                             </div> 
                         </el-card>
                     </el-col>
                     <el-col style="width:175px;margin-left:10px">
                         <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;">
-                            <div class="listCard" data="list6" style="background:#C0C0C0">
-                                <P align=center class="font_listTitle">巅峰榜</P><p align=center class="font_listTitle" style="font-size:x-large;">欧美</p>
-                                <div style="height:70px;" onmouseover="this.children[0].style.display='block';" onmouseout="this.children[0].style.display='none';">
-                                    <el-button class="listButton" icon="el-icon-caret-right" circle v-on:click="playList6"></el-button>
+                            <div class="listCard" data="list6" style="background:#C0C0C0" @mouseover="enterList('listButton6')" @mouseout="leaveList('listButton6')">
+                                <P align=center class="font_listTitle">巅峰榜</P><p align=center class="font_listTitle" style="font-size:x-large;cursor:pointer;" v-on:click="toList(6)">欧美</p>
+                                <div style="height:40px;">
+                                    <el-button id="listButton6" class="listButton" icon="el-icon-caret-right" circle v-on:click="playList(6)"></el-button>
                                 </div>
                                 <ol class="list">
-                                    <li v-for="song in list6" style="margin-left:10px;"><div style="margin-top:20px;"><a herf="" class="font_listContent">{{song.name}}</a></div><div><a herf="" class="font_listContent">{{song.artistName}}</a></div></li>
+                                    <li v-for="song in list6" style="margin-left:10px;"><div style="margin-top:30px;"><a herf="" class="font_listContent">{{song.name}}</a></div><div><a herf="" class="font_listContent">{{song.artistName}}</a></div></li>
                                 </ol>
                             </div>
                         </el-card>
@@ -408,30 +408,6 @@ export default {
                 artistId:'',
                 artistName:'容祖儿',
                 duration:'03:55',
-            },{
-                id:'1',
-                name:'37',
-                artistId:'',
-                artistName:'容祖儿',
-                duration:'03:55',
-            },{
-                id:'1',
-                name:'38',
-                artistId:'',
-                artistName:'容祖儿',
-                duration:'03:55',
-            },{
-                id:'1',
-                name:'39',
-                artistId:'',
-                artistName:'容祖儿',
-                duration:'03:55',
-            },{
-                id:'1',
-                name:'40',
-                artistId:'',
-                artistName:'容祖儿',
-                duration:'03:55',
             },],
         	albumList:[{
         		id:'001',
@@ -593,37 +569,13 @@ export default {
                 id:'001',
                 name:'40',
                 artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'41',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'42',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'43',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'44',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'45',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'46',
-                artistName:'容祖儿',
             },],
             list1:[{
                 name:'心之科学',
                 artistName:'容祖儿',
             },{
                 name:'心之科学',
-                artistNmae:'容祖儿',
+                artistName:'容祖儿',
             },{
                 name:'心之科学',
                 artistName:'容祖儿',
@@ -636,7 +588,7 @@ export default {
                 artistName:'容祖儿',
             },{
                 name:'心之科学',
-                artistNmae:'容祖儿',
+                artistName:'容祖儿',
             },{
                 name:'心之科学',
                 artistName:'容祖儿',
@@ -649,7 +601,7 @@ export default {
                 artistName:'容祖儿',
             },{
                 name:'心之科学',
-                artistNmae:'容祖儿',
+                artistName:'容祖儿',
             },{
                 name:'心之科学',
                 artistName:'容祖儿',
@@ -662,7 +614,7 @@ export default {
                 artistName:'容祖儿',
             },{
                 name:'心之科学',
-                artistNmae:'容祖儿',
+                artistName:'容祖儿',
             },{
                 name:'心之科学',
                 artistName:'容祖儿',
@@ -675,7 +627,7 @@ export default {
                 artistName:'容祖儿',
             },{
                 name:'心之科学',
-                artistNmae:'容祖儿',
+                artistName:'容祖儿',
             },{
                 name:'心之科学',
                 artistName:'容祖儿',
@@ -688,7 +640,7 @@ export default {
                 artistName:'容祖儿',
             },{
                 name:'心之科学',
-                artistNmae:'容祖儿',
+                artistName:'容祖儿',
             },{
                 name:'心之科学',
                 artistName:'容祖儿',
@@ -700,51 +652,102 @@ export default {
 
     },
     methods:{
-        switch1(tab, event) {
-            console.log(tab, event);
+        enterSongImage:function(event){
+            event.target.style.transform='scale(1.2)';
+            event.target.parentNode.children[1].style.transform='scale(1.2)';
+            event.target.parentNode.children[1].style.opacity=1;
         },
-        switch2(tab, event) {
-            console.log(tab, event);
-        },
-        handleMouseOut:function(event) {
+        leaveSongImage:function(event){
             if(event.toElement==event.target.parentNode.children[1]){
                 return false;
             }
             else{
                 event.target.style.transform='scale(1)';
                 event.target.parentNode.children[1].style.transform='scale(1)';
-                event.target.parentNode.children[1].style.display='none';
+                event.target.parentNode.children[1].style.opacity=0;
             }
         },
-        clickOnSongImage:function(id){
+        enterAlbumImage:function(event){
+            event.target.style.transform='scale(1.5)';
+            event.target.parentNode.children[1].style.transform='scale(1.5)';
+            event.target.parentNode.children[1].style.opacity=1;
+        },
+        leaveAlbumImage:function(event){
+            if(event.toElement==event.target.parentNode.children[1]){
+                return false;
+            }
+            else{
+                event.target.style.transform='scale(1)';
+                event.target.parentNode.children[1].style.transform='scale(1)';
+                event.target.parentNode.children[1].style.opacity=0;
+            }
+        },
+        enterList:function(button){  
+            document.getElementById(button).style.transform='scale(1.4)';
+            document.getElementById(button).style.opacity=1;
+        },
+        leaveList:function(button){
+            document.getElementById(button).style.transform='scale(1)';
+            document.getElementById(button).style.opacity=0;
+        },
+        playAllSong:function(){
+
+        },
+        switchSong(tab) {
+            console.log(tab.name);
+            this.axios.get('',{
+                params:{
+
+                }
+            })
+            .then(response =>{
+
+            })
+            .catch(function(err){
+                console.log(err);
+            });
+        },
+        clickOnSongButton:function(id){
+            console.log("button");
             console.log(id);
+            console.log(this.songList[id].id);
+        },
+        clickOnSongImage:function(id){
+            console.log("image");
+            console.log(id);
+            console.log(this.songList[id].id);
+        },
+        switchAlbum(tab) {
+            console.log(tab.name);
+            this.axios.get('',{
+                params:{
+                    
+                }
+            })
+            .then(response =>{
+
+            })
+            .catch(function(err){
+                console.log(err);
+            });
         },
         clickOnAlbumButton:function(id){
+            console.log("button");
             console.log(id);
+            console.log(this.albumList[id].id);
         },
         clickOnAlbumImage:function(id){
+            console.log("image");
             console.log(id);
+            console.log(this.albumList[id].id);
         },
-        clickOnAlbumButton:function(id){
-            console.log(id);
+        toList:function(index){
+            console.log(index);
+            //传递index给rank.vue
         },
-        playList1:function(){
-
-        },
-        playList2:function(){
-
-        },
-        playList3:function(){
-
-        },
-        playList4:function(){
-
-        },
-        playList5:function(){
-
-        },
-        playList6:function(){
-
+        playList:function(index){
+            console.log(index);
+            //
         },
     },
 }
@@ -769,7 +772,7 @@ export default {
 }
 .font_other{
   font-family:"Hiragino Sans GB";
-  font-size:small;
+  font-size:medium;
   color:#9C9C9C;
   cursor:pointer;
 }
@@ -787,15 +790,18 @@ export default {
 }
 .songButton{
     position:absolute;left:25px;top:25px;
-    display:none;
+    opacity:0;
+    transition: all 0.5s;
 }
 .albumButton{
     position:absolute;left:70px;top:70px;
-    display:none;
+    opacity:0;
+    transition: all 0.5s;
 }
 .listButton{
-    margin-left: 70px;
-    display:none;
+    margin-left: 65px;
+    opacity:0;
+    transition: all 0.5s;
 }
 .listCard{
     width:100%;
@@ -810,10 +816,11 @@ export default {
 .font_listTitle{
   font-family:"Hiragino Sans GB";
   color:white;
+  font-size:large;
 }
 .font_listContent{
   font-family:"Hiragino Sans GB";
-  font-size:small;
+  font-size:medium;
   color:white;
   cursor:pointer;
 }
