@@ -13,13 +13,13 @@
                         <el-tabs value="1" @tab-click="switchSong" style="width:240px;float:right;">
                             <el-tab-pane label="内地" name="1"></el-tab-pane>
                             <el-tab-pane label="港台" name="2"></el-tab-pane>
-                            <el-tab-pane label="日韩" name="3"></el-tab-pane>
-                            <el-tab-pane label="欧美" name="4"></el-tab-pane>
+                            <el-tab-pane label="欧美" name="3"></el-tab-pane>
+                            <el-tab-pane label="日韩" name="4"></el-tab-pane>
                         </el-tabs>
                     </el-col>
                 </el-row>
                 <el-carousel :autoplay=false indicator-position="outside" arrow="hover" height="350px" trigger="click" style="z-index: 0">
-                    <el-carousel-item v-for="page in 4" :key="page">
+                    <el-carousel-item v-for="page in 1" :key="page">
                         <el-row v-for="i in 3" :key="i" style="margin-top:20px;">
                             <el-col v-for="j in 3" :key="j" :offset="j > 1 ? 0 : 2" style="width:380px;">
                                 <el-card :body-style="{ padding: '0px'}" shadow="never" style="border-style:none;width:100%;borderRadius:0px;">
@@ -27,7 +27,7 @@
                                         <el-row>  
                                             <el-col style="width:90px;">
                                                 <div style="width:90px;height:90px;border-style:none;overflow:hidden;">
-                                                    <img src="../../../assets/icon.jpg" class="songImage" @mouseenter="enterSongImage" @mouseleave="leaveSongImage" v-on:click="clickOnSongImage(9*(page-1)+3*(i-1)+j-1)">
+                                                    <img :src="songList[9*(page-1)+3*(i-1)+j-1].image" class="songImage" @mouseenter="enterSongImage" @mouseleave="leaveSongImage" v-on:click="clickOnSongImage(9*(page-1)+3*(i-1)+j-1)">
                                                     <el-button class="songButton" icon="el-icon-caret-right" circle v-on:click="clickOnSongButton(9*(page-1)+3*(i-1)+j-1)"></el-button>
                                                 </div>
                                             </el-col>  
@@ -58,20 +58,20 @@
                         <el-tabs value="1" @tab-click="switchAlbum" style="width:240px;z-index: 0px">
                             <el-tab-pane label="内地" name="1"></el-tab-pane>
                             <el-tab-pane label="港台" name="2"></el-tab-pane>
-                            <el-tab-pane label="日韩" name="3"></el-tab-pane>
-                            <el-tab-pane label="欧美" name="4"></el-tab-pane>
+                            <el-tab-pane label="欧美" name="3"></el-tab-pane>
+                            <el-tab-pane label="日韩" name="4"></el-tab-pane>
                         </el-tabs>
                     </el-col>
                 </el-row>
                 <el-carousel :autoplay=false indicator-position="outside" arrow="hover" height="500px" trigger="click" style="z-index: 0">
-                    <el-carousel-item v-for="page in 4" :key="page">
+                    <el-carousel-item v-for="page in 1" :key="page">
                         <el-row v-for="i in 2" :key="i" style="margin-top:20px;">
                             <el-col v-for="j in 5" :key="j" :offset="j > 1 ? 1 : 2" style="width:180px;">
                                 <el-card :body-style="{ padding: '0px'}" shadow="never" style="border-style:none;width:100%;borderRadius:0px;">
                                     <div style="height:100%;width:100%;">  
                                         <el-row>  
                                             <div style="width:180px;height:180px;border-style:none;overflow:hidden;">
-                                                <img src="../../../assets/icon.jpg" class="albumImage" @mouseenter="enterAlbumImage" @mouseleave="leaveAlbumImage" v-on:click="clickOnAlbumImage(10*(page-1)+5*(i-1)+j-1)">
+                                                <img :src="albumList[10*(page-1)+5*(i-1)+j-1].image" class="albumImage" @mouseenter="enterAlbumImage" @mouseleave="leaveAlbumImage" v-on:click="clickOnAlbumImage(10*(page-1)+5*(i-1)+j-1)">
                                                 <el-button class="albumButton" icon="el-icon-caret-right" circle v-on:click="clickOnAlbumButton(10*(page-1)+5*(i-1)+j-1)"></el-button>
                                             </div>
                                         </el-row>
@@ -192,462 +192,14 @@ export default {
     },
     data(){
         return{
-        	songList: [{
-        		id:'1',
-        		name:'1',
-        		artistId:'',
-        		artistName:'容祖儿',
-        		duration:'03:55',
-        	},{
-                id:'1',
-                name:'2',
-                artistId:'',
-                artistName:'容祖儿',
-                duration:'03:55',
-            },{
-                id:'1',
-                name:'3',
-                artistId:'',
-                artistName:'容祖儿',
-                duration:'03:55',
-            },{
-                id:'1',
-                name:'4',
-                artistId:'',
-                artistName:'容祖儿',
-                duration:'03:55',
-            },{
-                id:'1',
-                name:'5',
-                artistId:'',
-                artistName:'容祖儿',
-                duration:'03:55',
-            },{
-                id:'1',
-                name:'6',
-                artistId:'',
-                artistName:'容祖儿',
-                duration:'03:55',
-            },{
-                id:'1',
-                name:'7',
-                artistId:'',
-                artistName:'容祖儿',
-                duration:'03:55',
-            },{
-                id:'1',
-                name:'8',
-                artistId:'',
-                artistName:'容祖儿',
-                duration:'03:55',
-            },{
-                id:'1',
-                name:'9',
-                artistId:'',
-                artistName:'容祖儿',
-                duration:'03:55',
-            },{
-                id:'1',
-                name:'10',
-                artistId:'',
-                artistName:'容祖儿',
-                duration:'03:55',
-            },{
-                id:'1',
-                name:'11',
-                artistId:'',
-                artistName:'容祖儿',
-                duration:'03:55',
-            },{
-                id:'1',
-                name:'12',
-                artistId:'',
-                artistName:'容祖儿',
-                duration:'03:55',
-            },{
-                id:'1',
-                name:'13',
-                artistId:'',
-                artistName:'容祖儿',
-                duration:'03:55',
-            },{
-                id:'1',
-                name:'14',
-                artistId:'',
-                artistName:'容祖儿',
-                duration:'03:55',
-            },{
-                id:'1',
-                name:'15',
-                artistId:'',
-                artistName:'容祖儿',
-                duration:'03:55',
-            },{
-                id:'1',
-                name:'16',
-                artistId:'',
-                artistName:'容祖儿',
-                duration:'03:55',
-            },{
-                id:'1',
-                name:'17',
-                artistId:'',
-                artistName:'容祖儿',
-                duration:'03:55',
-            },{
-                id:'1',
-                name:'18',
-                artistId:'',
-                artistName:'容祖儿',
-                duration:'03:55',
-            },{
-                id:'1',
-                name:'19',
-                artistId:'',
-                artistName:'容祖儿',
-                duration:'03:55',
-            },{
-                id:'1',
-                name:'20',
-                artistId:'',
-                artistName:'容祖儿',
-                duration:'03:55',
-            },{
-                id:'1',
-                name:'21',
-                artistId:'',
-                artistName:'容祖儿',
-                duration:'03:55',
-            },{
-                id:'1',
-                name:'22',
-                artistId:'',
-                artistName:'容祖儿',
-                duration:'03:55',
-            },{
-                id:'1',
-                name:'23',
-                artistId:'',
-                artistName:'容祖儿',
-                duration:'03:55',
-            },{
-                id:'1',
-                name:'24',
-                artistId:'',
-                artistName:'容祖儿',
-                duration:'03:55',
-            },{
-                id:'1',
-                name:'25',
-                artistId:'',
-                artistName:'容祖儿',
-                duration:'03:55',
-            },{
-                id:'1',
-                name:'26',
-                artistId:'',
-                artistName:'容祖儿',
-                duration:'03:55',
-            },{
-                id:'1',
-                name:'27',
-                artistId:'',
-                artistName:'容祖儿',
-                duration:'03:55',
-            },{
-                id:'1',
-                name:'28',
-                artistId:'',
-                artistName:'容祖儿',
-                duration:'03:55',
-            },{
-                id:'1',
-                name:'29',
-                artistId:'',
-                artistName:'容祖儿',
-                duration:'03:55',
-            },{
-                id:'1',
-                name:'30',
-                artistId:'',
-                artistName:'容祖儿',
-                duration:'03:55',
-            },{
-                id:'1',
-                name:'31',
-                artistId:'',
-                artistName:'容祖儿',
-                duration:'03:55',
-            },{
-                id:'1',
-                name:'32',
-                artistId:'',
-                artistName:'容祖儿',
-                duration:'03:55',
-            },{
-                id:'1',
-                name:'33',
-                artistId:'',
-                artistName:'容祖儿',
-                duration:'03:55',
-            },{
-                id:'1',
-                name:'34',
-                artistId:'',
-                artistName:'容祖儿',
-                duration:'03:55',
-            },{
-                id:'1',
-                name:'35',
-                artistId:'',
-                artistName:'容祖儿',
-                duration:'03:55',
-            },{
-                id:'1',
-                name:'36',
-                artistId:'',
-                artistName:'容祖儿',
-                duration:'03:55',
-            },],
-        	albumList:[{
-        		id:'001',
-                name:'1',
-                artistName:'容祖儿',
-        	},{
-        		id:'001',
-                name:'2',
-                artistName:'容祖儿',
-        	},{
-        		id:'001',
-                name:'3',
-                artistName:'容祖儿',
-        	},{
-                id:'001',
-                name:'4',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'5',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'6',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'7',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'8',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'9',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'10',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'11',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'12',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'13',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'14',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'15',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'16',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'17',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'18',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'19',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'20',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'21',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'22',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'23',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'24',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'25',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'26',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'27',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'28',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'29',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'30',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'31',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'32',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'33',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'34',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'35',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'36',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'37',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'38',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'39',
-                artistName:'容祖儿',
-            },{
-                id:'001',
-                name:'40',
-                artistName:'容祖儿',
-            },],
-            list1:[{
-                name:'心之科学',
-                artistName:'容祖儿',
-            },{
-                name:'心之科学',
-                artistName:'容祖儿',
-            },{
-                name:'心之科学',
-                artistName:'容祖儿',
-            },{
-                name:'心之科学',
-                artistName:'容祖儿',
-            },],
-            list2:[{
-                name:'心之科学',
-                artistName:'容祖儿',
-            },{
-                name:'心之科学',
-                artistName:'容祖儿',
-            },{
-                name:'心之科学',
-                artistName:'容祖儿',
-            },{
-                name:'心之科学',
-                artistName:'容祖儿',
-            },],
-            list3:[{
-                name:'心之科学',
-                artistName:'容祖儿',
-            },{
-                name:'心之科学',
-                artistName:'容祖儿',
-            },{
-                name:'心之科学',
-                artistName:'容祖儿',
-            },{
-                name:'心之科学',
-                artistName:'容祖儿',
-            },],
-            list4:[{
-                name:'心之科学',
-                artistName:'容祖儿',
-            },{
-                name:'心之科学',
-                artistName:'容祖儿',
-            },{
-                name:'心之科学',
-                artistName:'容祖儿',
-            },{
-                name:'心之科学',
-                artistName:'容祖儿',
-            },],
-            list5:[{
-                name:'心之科学',
-                artistName:'容祖儿',
-            },{
-                name:'心之科学',
-                artistName:'容祖儿',
-            },{
-                name:'心之科学',
-                artistName:'容祖儿',
-            },{
-                name:'心之科学',
-                artistName:'容祖儿',
-            },],
-            list6:[{
-                name:'心之科学',
-                artistName:'容祖儿',
-            },{
-                name:'心之科学',
-                artistName:'容祖儿',
-            },{
-                name:'心之科学',
-                artistName:'容祖儿',
-            },{
-                name:'心之科学',
-                artistName:'容祖儿',
-            },]
+        	songList: [],
+        	albumList:[],
+            list1:[],
+            list2:[],
+            list3:[],
+            list4:[],
+            list5:[],
+            list6:[]
         }
 
     },
@@ -694,18 +246,7 @@ export default {
 
         },
         switchSong(tab) {
-            console.log(tab.name);
-            this.axios.get('',{
-                params:{
-
-                }
-            })
-            .then(response =>{
-
-            })
-            .catch(function(err){
-                console.log(err);
-            });
+            this.getSongList(tab.name);
         },
         clickOnSongButton:function(id){
             console.log("button");
@@ -718,18 +259,7 @@ export default {
             console.log(this.songList[id].id);
         },
         switchAlbum(tab) {
-            console.log(tab.name);
-            this.axios.get('',{
-                params:{
-                    
-                }
-            })
-            .then(response =>{
-
-            })
-            .catch(function(err){
-                console.log(err);
-            });
+            this.getAlbumList(tab.name);
         },
         clickOnAlbumButton:function(id){
             console.log("button");
@@ -749,7 +279,89 @@ export default {
             console.log(index);
             //
         },
+        getSongList: function(index){
+        this.axios.get(this.serverUrl+'/song/getNewSongs',{
+                params:{
+                  region:index
+                }
+              })
+              .then(response => {
+                this.songList = response.data;
+                for(var i = 0; i < this.songList.length; i++){
+                    this.songList[i].image = this.serverUrl + this.songList[i].image;
+                    this.songList[i].filePath = this.serverUrl + this.songList[i].filePath;
+                    this.songList[i].lyricsPath = this.serverUrl + this.songList[i].lyricsPath;
+                }
+                
+              })
+              .catch(function(err){
+                console.log(err);
+              });
+        },
+        getAlbumList: function(index){
+        this.axios.get(this.serverUrl+'/album/getNewAlbums',{
+                params:{
+                  region:index
+                }
+              })
+              .then(response => {
+                this.albumList = response.data;
+                for(var i = 0; i < this.albumList.length; i++){
+                    this.albumList[i].image = this.serverUrl + this.albumList[i].image;
+                }
+                
+              })
+              .catch(function(err){
+                console.log(err);
+              });
+        },
+        getRank: function(index){
+        this.axios.get(this.serverUrl+'/song/rank',{
+                params:{
+                  type:index,
+                  isAll: false
+                }
+              })
+              .then(response => {
+                var rank;
+                rank = response.data;
+                for(var i = 0; i < rank.length; i++){
+                    rank[i].image = this.serverUrl + rank[i].image;
+                    rank.filePath = this.serverUrl + rank[i].filePath;
+                    rank.lyricsPath = this.serverUrl + rank[i].lyricsPath;
+                }
+                if(index == 1){
+                    this.list1 = rank;
+                } else if(index == 2){
+                    this.list2 = rank;
+                } else if(index == 3){
+                    this.list3 = rank;
+                } else if(index == 4){
+                    this.list4 = rank;
+                } else if(index == 5){
+                    this.list5 = rank;
+                } else if(index == 6){
+                    this.list6 = rank;
+                }
+                
+              })
+              .catch(function(err){
+                console.log(err);
+              });
+        },
     },
+    computed:{
+        serverUrl(){
+          return this.$store.state.serverUrl;
+        }
+    },
+    mounted:function(){
+        this.getSongList(1);
+        this.getAlbumList(1);
+        for(var i = 1; i <= 6; i++){
+            this.getRank(i);
+        }
+      }
 }
 
 </script>
