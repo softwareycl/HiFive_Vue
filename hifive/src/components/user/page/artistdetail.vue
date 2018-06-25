@@ -6,7 +6,7 @@
       	<el-row :gutter="50">
       		<el-col :span="4" :offset="4">
       			<div>
-      				<img align=right style="float:left;margin-top:30px; border-radius:70%; height: 230px; overflow:hidden;" src='../../../assets/周杰伦.jpg'>
+      				<img align=right style="float:left;margin-top:30px; border-radius:70%; height: 230px; overflow:hidden;" src='artist.image'>
       			</div>
       		</el-col>
       		<el-col :span="8">
@@ -30,16 +30,18 @@
       			<el-button type="primary" icon="el-icon-caret-right" style="background-color:#31C27C" onmouseover="this.style.backgroundColor='#2CAF6F';" onmouseout="this.style.backgroundColor='#31C27C';" v-on:click="playAllSong">播放全部</el-button>
       		</el-col>
       	</el-row>
+        <div style="width:900px; margin: auto;">
+          <p style="font-family:'Microsoft YaHei'; font-size:x-large;">热门歌曲</p>
+        </div>
       	<el-row :gutter="50">
-      		<el-col :span="12" :offset="4">
-      			<div style="width: 1000px; margin-top: 50px">
-      				<p style="font-family:'Microsoft YaHei'; font-size:x-large">热门歌曲</p>
-      				<el-table :data="songListView" style="width: 100%" stripe="true" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">
+      		<el-col :span="15" :offset="4">
+      			<div style="margin: auto; ">
+      				<el-table :data="songListView" style="height: 690px;width: 100%; margin-left:50px;" stripe="true" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">
       					<el-table-column type="index" label= " " :index="indexMethod"></el-table-column>
       					<el-table-column label="歌曲">
       						<template slot-scope="scope">
                     <router-link to="/user/songdetail">
-      							<a href="" style="color: black; cursor:  pointer; text-decoration:none" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';" @click="setSong(item)">{{scope.row.name}}</a>   
+      							<a href="" style="color: black; cursor:  pointer; text-decoration:none" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.name}}</a>   
                     </router-link>   
       						</template>
       					</el-table-column>
@@ -53,22 +55,22 @@
                      		<el-button icon="el-icon-plus" circle></el-button>
                      			<el-dropdown-menu slot="dropdown" :data="playlistList">
                         		<el-dropdown-item command="playqueue">播放队列</el-dropdown-item>
-                        		 <div v-if="state">
+                        		 <div v-if="isLogin">
                           		<el-dropdown-item disabled divided>我喜欢</el-dropdown-item>
-                          		<el-dropdown-item v-for="playlist in playlistList" :key="playlist.ID" :command='{type:"playlist",param1:playlist.ID,param2:scope.row}'>{{playlist.name}}</el-dropdown-item>
+                          		<el-dropdown-item v-for="playlist in playlistList" :key="playlist.id" :command='{type:"playlist",param1:playlist.id,param2:scope.row}'>{{playlist.name}}</el-dropdown-item>
                           		<el-dropdown-item command="newplaylist" divided>添加到新歌单</el-dropdown-item>
                         		 </div>
                         		<el-dropdown-item v-else command="login" divided>登录后添加到歌单</el-dropdown-item>
                       		</el-dropdown-menu>
                    		  </el-dropdown>
-                	</span>
+                	      </span>
                   				<el-dialog title="创建歌单" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
                     				<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
                       					<el-form-item label="歌单名称" prop="name">
                         					<el-input v-model="ruleForm.name" placeholder="请输入歌单名称"></el-input>
                       					</el-form-item>
-                      					<el-form-item label="歌单简介" prop="des">
-                        					<el-input type="textarea" v-model="ruleForm.des" placeholder="请输入歌单简介"></el-input>
+                      					<el-form-item label="歌单简介" prop="intro">
+                        					<el-input type="textarea" v-model="ruleForm.intro" placeholder="请输入歌单简介"></el-input>
                       					</el-form-item>
                       					<el-form-item>
                         					<el-button type="primary" @click="submitForm('ruleForm')">完成</el-button>
@@ -82,7 +84,7 @@
        					<el-table-column label="专辑">
       						<template slot-scope="scope">
                     <router-link to="/user/albumdetail">
-      							<a href="" style="margin-right: 50px; color:black;cursor:pointer;text-decoration:none" onmouseover="this.style.color='#31C27C';" @click="setalbumName(item)" onmouseout="this.style.color='black';">{{scope.row.albumName}}</a>
+      							<a href="" style="margin-right: 50px; color:black;cursor:pointer;text-decoration:none" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.albumName}}</a>
                   </router-link>
       						</template>
       					</el-table-column>
@@ -92,29 +94,24 @@
       		</el-col>
       	</el-row>
       	<el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-count="songPageCount" class="pagination"></el-pagination>
-        <div style="width: 1000px; margin-top: 50px; margin-left: 255px;">
-              <p style="font-family:'Microsoft YaHei'; font-size:x-large;">专辑</p>
-              <el-carousel :autoplay=false indicator-position="outside" arrow="hover" height="480px" trigger="click" style="z-index: 0">
-                <el-carousel-item v-for="page in albumPageCount" :key="page">
-                  <el-col :gutter="80" v-for="i in 5" :key="i" :offset="2" style="width: 15%">
-                    <el-card :body-style="{ padding: '0px'}" shadow="nerver" style="border-style: none; width: 100%;">
-                      <div style="height: 100%; width: 100%">
-                        <el-row>
-                          <div style="width: 100%; height: 140px; border-style: none; overflow: hidden;">
-                            <img src="../../../assets/周杰伦.jpg" class="artistImage" onmouseover="this.parentNode.children[1].style.display='block'; this.style.transform='scale(1.4)'; this.parentNode.children[1].style.transform='scale(1.4)';" @mouseout="handleMouseOut">
-                          </div>
-                        </el-row>
-                        <el-row>
-                          <div>
-                            <a href="" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='#333333';" class="font_name">{{albums[5*(page-1)+i].name}}</a>
-                          </div>
-                        </el-row>
-                      </div>
-                    </el-card>  
-                  </el-col>
-                </el-carousel-item>
-              </el-carousel>
+        <div style="width:900px; margin: auto;">
+          <p style="font-family:'Microsoft YaHei'; font-size:x-large;">专辑</p>
         </div>
+        <el-row style="width:1000px; height: 200px; margin: auto">
+          <ul id="albumlist" data="albumView">
+            <li v-for="item in albumView" class="albumli" style="list-style: none; width: 150px">
+              <div class="album">
+                <router-link to="/user/albumdetail">
+                  <img class="albumImage" src="albumView.image" alt=""  @click="setAlbum(item)">
+                  <p style="color: black; width: 50px;" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';" @click="setAlbum(item)">{{item.name}}</p>
+                </router-link>
+              </div>
+            </li>
+          </ul>          
+        </el-row>
+        <div style="clear: both;"></div>
+         <el-pagination layout="prev, pager, next" @current-change="handleCurrentChange2" :page-count="albumPageCount" class = "pagination">
+           </el-pagination>
       </div>
       <v-foot></v-foot>
 	</div>
@@ -136,8 +133,8 @@
     		dialogVisible:false,
         songPage: 1,
         songPageCount:0,
-        albumPage: 0,
-        albumPageCount:0,
+        albumPage: 1,
+        albumPageCount: 0,
     		ruleForm: {
     			name: '',
     			des: ''
@@ -147,12 +144,12 @@
     			{required: true, message: '请输入歌单名称', trigger: 'blur'},
     			{min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur'}
     			],
-    			des: [
+    			intro: [
     			{min: 1, max: 140, message: '长度在 140 个字符以内', trigger: 'blur' }
     			]
     		},
     		userID:'',
-    		state:true,
+    		isLogin:true,
     		artist:{
     			id:'001',
     			name:'周杰伦',
@@ -318,24 +315,126 @@
           albumName:'范特西',
           Flag:false,
           isopen:false
+        },{
+          id:'20',
+          name:'安静',
+          duration:'03:43',
+          albumID:'',
+          albumName:'范特西',
+          Flag:false,
+          isopen:false
         }],
     		playlistList:[{
-    			ID:'1',
-    			name:'1'
-    	      },
-        	  {
-          		ID:'2',
-          		name:'2'
-        	  },
-        	  {
-          		ID:'3',
-          		name:'3'
+    			id:'1',
+    			name:'1',
+          count:'',
+    	  },{
+          id:'2',
+          name:'2',
+          count:'',
+        },{
+          id:'3',
+          name:'3',
+          count:'',
     		}],
+        albumView:[],
         albums: [{
           id:'001',
           name:'范特西',
           image:'',
-        }]
+        },{
+          id:'002',
+          name:'范特西',
+          image:'',
+        },{
+          id:'003',
+          name:'范特西',
+          image:'',
+        },{
+          id:'004',
+          name:'范特西',
+          image:'',
+        },{
+          id:'005',
+          name:'范特西',
+          image:'',
+        },{
+          id:'006',
+          name:'范特西',
+          image:'',
+        },{
+          id:'007',
+          name:'范特西',
+          image:'',
+        },{
+          id:'008',
+          name:'范特西',
+          image:'',
+        },{
+          id:'009',
+          name:'范特西',
+          image:'',
+        },{
+          id:'010',
+          name:'范特西',
+          image:'',
+        },{
+          id:'011',
+          name:'范特西',
+          image:'',
+        },{
+          id:'012',
+          name:'范特西',
+          image:'',
+        },{
+          id:'013',
+          name:'范特西',
+          image:'',
+        },{
+          id:'014',
+          name:'范特西',
+          image:'',
+        },{
+          id:'015',
+          name:'范特西',
+          image:'',
+        },{
+          id:'016',
+          name:'范特西',
+          image:'',
+        },{
+          id:'017',
+          name:'范特西',
+          image:'',
+        },{
+          id:'018',
+          name:'范特西',
+          image:'',
+        },{
+          id:'019',
+          name:'范特西',
+          image:'',
+        },{
+          id:'020',
+          name:'范特西',
+          image:'',
+        },{
+          id:'021',
+          name:'范特西',
+          image:'',
+        },{
+          id:'022',
+          name:'范特西',
+          image:'',
+        },{
+          id:'023',
+          name:'范特西',
+          image:'',
+        },{
+          id:'024',
+          name:'范特西',
+          image:'',
+        },],
     	}
     },
 
@@ -346,14 +445,16 @@
     },
 
       mounted(){
-        this.pagination(this.songPage,this.songList,this.songListView);
-        //this.albumDisplay();
+        this.S_pagination(this.songPage,this.songList);
+        this.A_pagination(this.albums,this.albumPage);
+        this.getPlaylistList();
       },
 
     methods: {
       /*每页显示十行*/
-      pagination: function(_page, _songList, _songListView){
+      S_pagination: function(_page, _songList){
         this.songPageCount = Math.ceil(parseFloat(this.songList.length) / 10);
+
         if(_page != this.songPage){
           this.songPage = _page;
           this.songListView.splice(0,this.songListView.length);
@@ -368,18 +469,29 @@
           }
         }
       },
-
-      setSong: function(item){
-        this.$store.state.song = item
+      A_pagination: function(_albums,_albumPage){
+        this.albumPageCount = Math.ceil(parseFloat(this.albums.length) / 5);
+        if(_albumPage != this.albumPage){
+          this.albumPage = _albumPage;
+          this.albumView.splice(0,this.albumView.length);
+        }
+        for (var i = 0; i < 5; i++) {
+          // alert(1);
+          if(this.albums[((this.albumPage - 1)*5)+i] == null){
+            this.albumView.push([]);
+          } else {
+            _albums = this.albums[((this.albumPage - 1)*5)+i];
+            this.albumView.push(_albums);
+          }
+        }
       },
-
       setAlbum: function(item){
-        this.$store.state.album = item
+        this.$store.state.albums = item
       },
-
     	indexMethod(index) {
           return (this.songPage - 1)*10 + index + 1;
     	},
+
 
     	handleClose(done) {
         this.$confirm('确认关闭？')
@@ -395,7 +507,10 @@
           })
         },
       handleCurrentChange: function(val){
-        this.pagination(val,this.songList,this.songListView);
+        this.S_pagination(val,this.songList);
+      },
+      handleCurrentChange2: function(val){
+        this.A_pagination(this.albums,val);
       },
       handleMouseEnter:function(row, column, cell, event){
         row.Flag=true;
@@ -403,12 +518,8 @@
       handleMouseOut:function(row, column, cell, event){
         if(!row.isopen){
           row.Flag=false;}
-          else if(event.toElement==event.target.parentNode.children[1]){
+          else{
             return false;
-          } else {
-            event.target.style.transform='scale(1)';
-            event.target.parentNode.children[1].style.transform='scale(1)';
-            event.target.parentNode.children[1].style.display='none';
           }
         },
 
@@ -446,44 +557,140 @@
 		//传递歌曲ID给player.vue
 	},
 		handleSongCommand:function(command){
-  			if(command=="login"){
-    			window.location.href='/';
-  			}
-  			else if(command=="newplaylist"){
-    			this.dialogVisible=true;
-  			}
-  				else if(command=="playqueue"){
-		//传递歌曲ID给player.vue
-		}
-			else{
-		//提交歌曲ID和歌单ID，返回false则用户会话超时
-			console.log(command.param1);
-			console.log(command.param2.ID)
-		}
+          if(command=="login"){
+            window.location.href='/';
+          }
+          else if(command=="newplaylist"){
+            this.dialogVisible=true;
+          }
+          else if(command=="playqueue"){
+            //传递歌曲ID给player.vue
+          }
+          else{
+            this.$axios.get('',{
+              params:{
+                id:command.param2.id,
+                playlistId:command.param1
+              }
+            })
+            .then(function(response){
+              if(response){
+                this.$message({
+                  showClose: true,
+                  message: '已成功添加到歌单',
+                  type: 'success'
+                });
+              }
+              else{
+                this.$message({
+                  showClose: true,
+                  message: '会话超时',
+                  type: 'error'
+                });
+              }
+            })
+            .catch(function(err){
+              console.log(err)
+            });
+          }
 	},
 		submitForm:function(formname){
 		//提交playlist对象，包括歌单名称和简介，返回-1用户会话超时
 			this.$refs[formname].validate((valid) => {
-  				if (valid) {
-    				alert('submit!');
-    				this.dialogVisible=false;
-    				this.$refs[formname].resetFields();
-  				} else {
-    				alert('error submit!!');
-    			return false;
-  				}
-		});
+            if (valid) {
+              this.$axios.get('',{
+                params:{
+                  
+                }
+              })
+              .then(function(response){
+                if(response){
+                  this.$message({
+                    showClose: true,
+                    message: '已成功添加到新歌单',
+                    type: 'success'
+                  });
+                }
+                else{
+                  this.$message({
+                    showClose: true,
+                    message: '会话超时',
+                    type: 'error'
+                  });
+                }
+              })
+              .catch(function(err){
+                console.log(err)
+              });
+              this.dialogVisible=false;
+              this.$refs[formname].resetFields();
+            } 
+            else {
+              this.$message({
+                    showClose: true,
+                    message: '格式不正确',
+                    type: 'error'
+              });
+              return false;
+            }
+          });
 	},
 		downloadSong:function(row){
 		//提交歌曲ID，无返回
+    this.axios.get('',{
+                params:{
+                  id:row.id
+                }
+              })
+              .then(function(response){
+                if(response){
+                  this.$message({
+                    showClose: true,
+                    message: '下载成功',
+                    type: 'success'
+                  });
+                }
+                else{
+                  this.$message({
+                    showClose: true,
+                    message: '下载失败',
+                    type: 'error'
+                  });
+                }
+              })
+              .catch(function(err){
+                console.log(err)
+              });
 		},
-		getalbumNameInfo:function(albumNameID){
-		//提交专辑ID，获得专辑信息和歌曲列表
-		},
+
+		getArtistInfo:function(artistId){
+          this.axios.get(this.serverUrl+'/artist/getInfo',{
+                params:{
+                  id:this.artist.id
+                }
+              })
+              .then(response => {
+                console.log(response.data);
+                this.artist = response.data;
+                this.artist.image = this.serverUrl + this.artist.image;
+                this.songList = this.artist.songList;
+                this.albums = this.artist.albums;
+                for(var i = 0; i < this.songList.length; i++){
+                   this.$set(this.songList[i],'Flag',false);
+                   this.$set(this.songList[i],'isopen',false);
+                 }
+                this.$set(this.artist,'isCollected',false);
+              })
+              .catch(function(err){
+                console.log(err)
+              });
+        },
 		getPlaylistList:function(){
 		//无提交，返回歌单列表
 		},
 	},
+
+
 
 }
 </script>
@@ -492,12 +699,25 @@
   a {text-decoration: none;}
 
 	.main {
-   		height: 2000px;
+   		height: 1500px;
     	opacity: 0.95;
     	position: relative;
       font-family: "Microsoft YaHei";
     	color: #333;
   	}
+  .albumli {
+      text-align: top;
+      float: left;
+      width: 20%;
+      height: 200px;
+      margin-bottom: 30px;
+      margin-right: 40px;
+    }
+  .album {
+      background-color: #f6f6f6;
+      height: 180px;
+      width: 180px;
+    }
 	.el-popover{
 		width:550px;
   		height:400px;
@@ -533,6 +753,10 @@
     	margin-top: 5px;
     }
 
+    .spHeight td{
+      height:65px;
+    }
+
     .pagination {
     text-align: center;
     font-size: 20px;
@@ -540,5 +764,14 @@
         cursor: pointer;
         color: #31c27c;
       }
-  }
+    }
+    .albumImage{
+      width: 180px;
+      height: 180px;
+      box-sizing: border-box;
+      &:hover {
+        cursor: pointer;
+        opacity: 0.9;
+      }
+    }
 </style>
