@@ -104,7 +104,7 @@
 			xmlhttp.open("GET","/static/lyr.txt",true);
 			xmlhttp.overrideMimeType("text/html;charset=gb2312");
 			xmlhttp.send();
-			
+
 			this.getIntro(this.id);  
 		},
 		components: {
@@ -118,7 +118,10 @@
 			},
 			state () {
 				return this.$store.state;
-			}
+			},
+			serverUrl(){
+          		return this.$store.state.serverUrl;
+        	}
 		},
 		data () {
 			return {
@@ -167,6 +170,7 @@
 					{ min: 1, max: 140, message: '长度在 140 个字符以内', trigger: 'blur' }
 					]
 				},
+				style: ['', 'POP 流行', 'ROCK 摇滚', 'FOLK 民谣', 'ELECTRONIC 电子', 'LIGHT 轻音乐', 'RAP RAP', 'COUNTRY 乡村','DANCE 舞曲', '其他'],
 			}
 		},
 		methods: {
@@ -222,25 +226,40 @@
 					}
 				})
 				.then(res => {
+					console.log(res.data);
 					this.song = res.data;
 					this.song.image = this.serverUrl + this.song.image;
 					this.song.lyricsPath = this.serverUrl + this.song.lyricsPath;
+					alert(this.song.lyricsPath);
+					this.song.releaseDate = this.timestampToTime(this.song.releaseDate);
+					this.song.style = this.style[this.song.style];
 
 					var xmlhttp=new XMLHttpRequest();
 					xmlhttp.onreadystatechange=function()
 					{
 						var textHTML=xmlhttp.responseText;
+						alert(textHTML);
 						textHTML=textHTML.replace(/(\n)+|(\r\n)+/g,"<br>");
 						document.getElementById("lyr").innerHTML=textHTML;
 					}
 					xmlhttp.open("GET",this.song.lyricsPath,true);
 					xmlhttp.overrideMimeType("text/html;charset=gb2312");
 					xmlhttp.send();
+					alert(123);
 				})
 				.catch(function (error) {
 					console.log(error);
 				});
 			},
+			timestampToTime: function(timestamp) {
+		        var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+		        var Y = date.getFullYear() + '-';
+		        var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+		        var D = date.getDate();
+		        if(D < 10)
+		        	D = '0' + D;
+		        return Y+M+D;
+	      	},
 		},
 	};
 </script>

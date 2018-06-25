@@ -212,58 +212,9 @@
 				{
 					title:"专辑"  
 				}],
-				songList: [{
-					id: '1',
-					name: '心之科学',
-					duration: '03:55',
-					albumId: '1',
-					albumName: 'qqqq',
-					artistId: '1',
-					artistName: '容祖儿',
-					filePath: '',
-					image: '',
-					lyricsPath: '',
-					Flag:false,
-					isopen:false
-				}],
-				artistList: [{
-					id: '1',
-					name: '郭吉吉',
-					image: ''
-				},
-				{
-					id: '1',
-					name: '郭吉吉',
-					image: ''
-				},
-				{
-					id: '1',
-					name: '郭吉吉',
-					image: ''
-				},
-				{
-					id: '1',
-					name: '郭吉吉',
-					image: ''
-				},
-				{
-					id: '1',
-					name: '郭吉吉',
-					image: ''
-				},
-				{
-					id: '1',
-					name: '郭吉吉',
-					image: ''
-				},],
-				albumList: [{
-					id: '1',
-					name: '郭吉吉专辑',
-					image: '',
-					artistId: '1',
-					artistName: '郭喆',
-					count: 1
-				}],
+				songList: [],
+				artistList: [],
+				albumList: [],
 				page: {
 					cur: 1,
 					total: 100,
@@ -452,6 +403,15 @@
 					console.log(error);
 				});
 			},
+			setSong: function(item){
+        		this.$store.state.song.id = item
+      		},
+      		setAlbum: function(item){
+        		this.$store.state.album = item
+      		},
+      		setArtist: function(item){
+        		this.$store.state.album = item
+      		},
 		},
 		
 	};
