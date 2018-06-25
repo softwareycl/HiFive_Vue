@@ -6,12 +6,12 @@
 			<el-row :gutter="50">
 				<el-col :span="4" :offset="4">
 					<div>
-						<img align=right style="margin-top:30px" :src="song.image">
+						<img align=right style="margin-top:25px;height:235px;width:235px" :src="song.image">
 					</div>
 				</el-col>
 				<el-col :span="9">
 					<div>
-						<p class="font_songName">{{song.name}}</p>
+						<p class="font_songName" style="margin-bottom:10px">{{song.name}}</p>
 						<i class="el-icon-service"></i>
 						<router-link tag="a" :to="{path:'/user/artistdetail',query:{id:song.artistId}}">
 							<span class="font_songArtist"  style="cursor:pointer;color:#2C3E50" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='#2C3E50';">{{song.artistName}}</span>
@@ -66,7 +66,7 @@
 				</el-col>
 			</el-row>
 			<el-row :gutter="50" style="margin-top:30px;">
-				<el-col :span="8" :offset="4">
+				<el-col :span="8" :offset="3">
 					<div style="margin-bottom:30px;">
 						<p class="font_songLry" style="font-size:20px">歌词</p>
 						<div v-bind:class="{fold: isfold}" id="lyr"></div>
@@ -230,7 +230,6 @@
 					this.song = res.data;
 					this.song.image = this.serverUrl + this.song.image;
 					this.song.lyricsPath = this.serverUrl + this.song.lyricsPath;
-					alert(this.song.lyricsPath);
 					this.song.releaseDate = this.timestampToTime(this.song.releaseDate);
 					this.song.style = this.style[this.song.style];
 
@@ -238,14 +237,12 @@
 					xmlhttp.onreadystatechange=function()
 					{
 						var textHTML=xmlhttp.responseText;
-						alert(textHTML);
 						textHTML=textHTML.replace(/(\n)+|(\r\n)+/g,"<br>");
 						document.getElementById("lyr").innerHTML=textHTML;
 					}
 					xmlhttp.open("GET",this.song.lyricsPath,true);
 					xmlhttp.overrideMimeType("text/html;charset=gb2312");
 					xmlhttp.send();
-					alert(123);
 				})
 				.catch(function (error) {
 					console.log(error);

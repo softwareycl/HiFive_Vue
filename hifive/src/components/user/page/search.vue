@@ -217,7 +217,7 @@
 				albumList: [],
 				page: {
 					cur: 1,
-					total: 100,
+					total: 0,
 				}
 			}
 		},
@@ -473,7 +473,6 @@
 
 <style lang="scss" scoped>
 	#singerlist{
-		height: 620px;
 
 		.singerli {
 			text-align: top;
