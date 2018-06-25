@@ -3,7 +3,7 @@
         <v-head></v-head>
         <v-nav></v-nav>
         <div id="home">
-            <div data="songList" style="background: linear-gradient(#F2F2F2, #FFFFFF);">
+            <div :data="songList" style="background: linear-gradient(#F2F2F2, #FFFFFF);">
                 <el-row>
                     <p align=center class="font_Menu">新歌首发</p>
                 </el-row>
@@ -19,10 +19,10 @@
                     </el-col>
                 </el-row>
                 <el-carousel :autoplay=false indicator-position="outside" arrow="hover" height="350px" trigger="click" style="z-index: 0">
-                    <el-carousel-item v-for="page in 1" :key="page">
+                    <el-carousel-item v-for="page in 4" :key="page">
                         <el-row v-for="i in 3" :key="i" style="margin-top:20px;">
                             <el-col v-for="j in 3" :key="j" :offset="j > 1 ? 0 : 2" style="width:380px;">
-                                <el-card :body-style="{ padding: '0px'}" shadow="never" style="border-style:none;width:100%;borderRadius:0px;">
+                                <el-card :body-style="{ padding: '0px'}" shadow="never" style="border-style:none;width:100%;borderRadius:0px;backgroundColor:transparent;">
                                     <div style="height:100%;width:100%;">
                                         <el-row>  
                                             <el-col style="width:90px;">
@@ -49,7 +49,7 @@
                     </el-carousel-item>
                 </el-carousel>
             </div>
-            <div data="albumList" style="margin-top:30px;background: linear-gradient(#F2F2F2, #FFFFFF);">
+            <div :data="albumList" style="margin-top:30px;background: linear-gradient(#F2F2F2, #FFFFFF);">
                 <el-row>
                     <p align=center class="font_Menu">新碟首发</p>
                 </el-row>
@@ -64,10 +64,10 @@
                     </el-col>
                 </el-row>
                 <el-carousel :autoplay=false indicator-position="outside" arrow="hover" height="500px" trigger="click" style="z-index: 0">
-                    <el-carousel-item v-for="page in 1" :key="page">
+                    <el-carousel-item v-for="page in 4" :key="page">
                         <el-row v-for="i in 2" :key="i" style="margin-top:20px;">
                             <el-col v-for="j in 5" :key="j" :offset="j > 1 ? 1 : 2" style="width:180px;">
-                                <el-card :body-style="{ padding: '0px'}" shadow="never" style="border-style:none;width:100%;borderRadius:0px;">
+                                <el-card :body-style="{ padding: '0px'}" shadow="never" style="border-style:none;width:100%;borderRadius:0px;backgroundColor:transparent;">
                                     <div style="height:100%;width:100%;">  
                                         <el-row>  
                                             <div style="width:180px;height:180px;border-style:none;overflow:hidden;">
@@ -97,7 +97,7 @@
                 <el-row style="height:550px;">
                     <el-col :offset="2" style="width:175px;">
                         <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;">
-                            <div class="listCard" data="list1" style="background:#D97C95;" @mouseover="enterList('listButton1')" @mouseout="leaveList('listButton1')">
+                            <div class="listCard" data="list1" style="background:#D97C95;height:490px;" @mouseover="enterList('listButton1')" @mouseout="leaveList('listButton1')">
                                 <P align=center class="font_listTitle">巅峰榜</P><p align=center class="font_listTitle" style="font-size:x-large;cursor:pointer;" v-on:click="toList(1)">新歌</p>
                                 <div style="height:40px;">
                                     <el-button id="listButton1" class="listButton" icon="el-icon-caret-right" circle v-on:click="playList(1)"></el-button>
@@ -110,7 +110,7 @@
                     </el-col>
                     <el-col style="width:175px;margin-left:10px">
                         <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;">
-                            <div class="listCard" data="list2" style="background:#6B97B1" @mouseover="enterList('listButton2')" @mouseout="leaveList('listButton2')">
+                            <div class="listCard" data="list2" style="background:#6B97B1;height:490px;" @mouseover="enterList('listButton2')" @mouseout="leaveList('listButton2')">
                                 <P align=center class="font_listTitle">巅峰榜</P><p align=center class="font_listTitle" style="font-size:x-large;cursor:pointer;" v-on:click="toList(2)">热歌</p>
                                 <div style="height:40px;">
                                     <el-button id="listButton2" class="listButton" icon="el-icon-caret-right" circle v-on:click="playList(2)"></el-button>
@@ -123,7 +123,7 @@
                     </el-col>
                     <el-col style="width:175px;margin-left:10px">
                         <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;"> 
-                            <div class="listCard" data="list3" style="background:#6CBDB4" @mouseover="enterList('listButton3')" @mouseout="leaveList('listButton3')">
+                            <div class="listCard" data="list3" style="background:#6CBDB4;height:490px;" @mouseover="enterList('listButton3')" @mouseout="leaveList('listButton3')">
                                 <P align=center class="font_listTitle">巅峰榜</P><p align=center class="font_listTitle" style="font-size:x-large;cursor:pointer;" v-on:click="toList(3)">内地</p>
                                 <div style="height:40px;">
                                     <el-button id="listButton3" class="listButton" icon="el-icon-caret-right" circle v-on:click="playList(3)"></el-button>
@@ -136,7 +136,7 @@
                     </el-col>
                     <el-col style="width:175px;margin-left:10px">
                         <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;"> 
-                            <div class="listCard" data="list4" style="background:#508D94" @mouseover="enterList('listButton4')" @mouseout="leaveList('listButton4')">
+                            <div class="listCard" data="list4" style="background:#508D94;height:490px;" @mouseover="enterList('listButton4')" @mouseout="leaveList('listButton4')">
                                 <P align=center class="font_listTitle">巅峰榜</P><p align=center class="font_listTitle" style="font-size:x-large;cursor:pointer;" v-on:click="toList(4)">港台</p>
                                 <div style="height:40px;">
                                     <el-button id="listButton4" class="listButton" icon="el-icon-caret-right" circle v-on:click="playList(4)"></el-button>
@@ -149,8 +149,8 @@
                     </el-col>
                     <el-col style="width:175px;margin-left:10px">
                         <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;">
-                            <div class="listCard" data="list5" style="background:#F0A470" @mouseover="enterList('listButton5')" @mouseout="leaveList('listButton5')">
-                                <P align=center class="font_listTitle">巅峰榜</P><p align=center class="font_listTitle" style="font-size:x-large;cursor:pointer;" v-on:click="toList(5)">日韩</p>
+                            <div class="listCard" data="list5" style="background:#F0A470;height:490px;" @mouseover="enterList('listButton5')" @mouseout="leaveList('listButton5')">
+                                <P align=center class="font_listTitle">巅峰榜</P><p align=center class="font_listTitle" style="font-size:x-large;cursor:pointer;" v-on:click="toList(5)">欧美</p>
                                 <div style="height:40px;">
                                     <el-button id="listButton5" class="listButton" icon="el-icon-caret-right" circle v-on:click="playList(5)"></el-button>
                                 </div>
@@ -162,8 +162,8 @@
                     </el-col>
                     <el-col style="width:175px;margin-left:10px">
                         <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;">
-                            <div class="listCard" data="list6" style="background:#C0C0C0" @mouseover="enterList('listButton6')" @mouseout="leaveList('listButton6')">
-                                <P align=center class="font_listTitle">巅峰榜</P><p align=center class="font_listTitle" style="font-size:x-large;cursor:pointer;" v-on:click="toList(6)">欧美</p>
+                            <div class="listCard" data="list6" style="background:#C0C0C0;height:490px;" @mouseover="enterList('listButton6')" @mouseout="leaveList('listButton6')">
+                                <P align=center class="font_listTitle">巅峰榜</P><p align=center class="font_listTitle" style="font-size:x-large;cursor:pointer;" v-on:click="toList(6)">日韩</p>
                                 <div style="height:40px;">
                                     <el-button id="listButton6" class="listButton" icon="el-icon-caret-right" circle v-on:click="playList(6)"></el-button>
                                 </div>
@@ -184,6 +184,7 @@
     import vHead from '../common/header.vue'
     import vNav from '../common/navigation.vue'
     import vFoot from '../common/footer.vue'
+    import emptyImage from '../../../assets/暂无图片.png'
 export default {
     components: {
         vHead,
@@ -192,7 +193,349 @@ export default {
     },
     data(){
         return{
-        	songList: [],
+            emptySongList:[{
+                name:'暂无数据',
+                artistName:'',
+                duration:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                duration:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                duration:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                duration:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                duration:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                duration:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                duration:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                duration:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                duration:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                duration:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                duration:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                duration:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                duration:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                duration:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                duration:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                duration:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                duration:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                duration:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                duration:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                duration:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                duration:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                duration:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                duration:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                duration:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                duration:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                duration:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                duration:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                duration:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                duration:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                duration:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                duration:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                duration:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                duration:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                duration:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                duration:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                duration:'',
+                image:emptyImage,
+            },],
+            emptyAlbumList:[{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },{
+                name:'暂无数据',
+                artistName:'',
+                image:emptyImage,
+            },],
+            songList:[],
         	albumList:[],
             list1:[],
             list2:[],
@@ -280,40 +623,42 @@ export default {
             //
         },
         getSongList: function(index){
-        this.axios.get(this.serverUrl+'/song/getNewSongs',{
+            this.songList=this.songList.concat(this.emptySongList);
+            this.axios.get(this.serverUrl+'/song/getNewSongs',{
                 params:{
                   region:index
                 }
-              })
-              .then(response => {
+            })
+            .then(response => {
                 this.songList = response.data;
                 for(var i = 0; i < this.songList.length; i++){
                     this.songList[i].image = this.serverUrl + this.songList[i].image;
                     this.songList[i].filePath = this.serverUrl + this.songList[i].filePath;
                     this.songList[i].lyricsPath = this.serverUrl + this.songList[i].lyricsPath;
                 }
-                
-              })
-              .catch(function(err){
+                this.songList=this.songList.concat(this.emptySongList);
+            })
+            .catch(function(err){
                 console.log(err);
-              });
+            });
         },
         getAlbumList: function(index){
-        this.axios.get(this.serverUrl+'/album/getNewAlbums',{
+            this.albumList=this.albumList.concat(this.emptyAlbumList);
+            this.axios.get(this.serverUrl+'/album/getNewAlbums',{
                 params:{
                   region:index
                 }
-              })
-              .then(response => {
+            })
+            .then(response => {
                 this.albumList = response.data;
                 for(var i = 0; i < this.albumList.length; i++){
                     this.albumList[i].image = this.serverUrl + this.albumList[i].image;
                 }
-                
-              })
-              .catch(function(err){
+                this.albumList=this.albumList.concat(this.emptyAlbumList);
+            })
+            .catch(function(err){
                 console.log(err);
-              });
+            });
         },
         getRank: function(index){
         this.axios.get(this.serverUrl+'/song/rank',{
@@ -327,8 +672,8 @@ export default {
                 rank = response.data;
                 for(var i = 0; i < rank.length; i++){
                     rank[i].image = this.serverUrl + rank[i].image;
-                    rank.filePath = this.serverUrl + rank[i].filePath;
-                    rank.lyricsPath = this.serverUrl + rank[i].lyricsPath;
+                    rank[i].filePath = this.serverUrl + rank[i].filePath;
+                    rank[i].lyricsPath = this.serverUrl + rank[i].lyricsPath;
                 }
                 if(index == 1){
                     this.list1 = rank;
@@ -355,7 +700,7 @@ export default {
           return this.$store.state.serverUrl;
         }
     },
-    mounted:function(){
+    mounted(){
         this.getSongList(1);
         this.getAlbumList(1);
         for(var i = 1; i <= 6; i++){
@@ -384,7 +729,7 @@ export default {
 }
 .font_other{
   font-family:"Hiragino Sans GB";
-  font-size:medium;
+  font-size:small;
   color:#9C9C9C;
   cursor:pointer;
 }
@@ -432,7 +777,7 @@ export default {
 }
 .font_listContent{
   font-family:"Hiragino Sans GB";
-  font-size:medium;
+  font-size:small;
   color:white;
   cursor:pointer;
 }
