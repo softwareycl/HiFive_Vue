@@ -6,14 +6,16 @@
       <el-row :gutter="50">
         <el-col :span="4" :offset="4">
           <div>
-            <img align=right style="width:200px;height:200px;margin-top:30px" :src=album.image>
+            <img align=right style="width:230px;height:230px;margin-top:20px" :src=album.image>
           </div>
         </el-col>
         <el-col :span="8">
           <div>
-            <p class="font_albumName">{{album.name}}</p>
+            <p class="font_albumName" style="margin-bottom:0px">{{album.name}}</p>
             <i class="el-icon-service"></i>
-            <a herf="" class="font_albumArtistName"  style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{album.artistName}}</a>
+            <router-link :to="{ path: '/user/artistdetail', query: { id: album.artistId }}">
+              <span class="font_albumArtistName"  style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{album.artistName}}</span>
+            </router-link>
             <div>
               <p class="font_other">流派 : {{album.style}}</p>
               <p class="font_other">发行时间 : {{album.releaseDate}}</p>
@@ -44,7 +46,9 @@
               <el-table-column type="index" label=" " :index="indexMethod"></el-table-column>
               <el-table-column label="歌曲">
                 <template slot-scope="scope">
-                  <a herf="" style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.name}}</a>
+                  <router-link :to="{ path: '/user/songdetail', query: { id: scope.row.id }}">
+                    <p style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.name}}</p>
+                  </router-link>
                 </template>
               </el-table-column>
               <el-table-column label=" ">
@@ -83,7 +87,9 @@
               </el-table-column>
               <el-table-column label="歌手">
                 <template slot-scope="scope">
-                  <a herf="" style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.artistName}}</a>
+                  <router-link :to="{ path: '/user/artistdetail', query: { id: scope.row.artistId }}">
+                    <p style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.artistName}}</p>
+                </router-link>
                 </template>
               </el-table-column>
               <el-table-column prop="duration" label="时长">
@@ -120,7 +126,8 @@
     },
     data(){
       return{
-        style: ['', 'POP 流行', 'ROCK 摇滚', 'FOLK 民谣', 'ELECTRONIC 电子', 'LIGHT 轻音乐', 'RAP RAP', 'COUNTRY乡村','DANCE 舞曲', '其他'],
+        id: '',
+        style: ['', 'POP 流行', 'ROCK 摇滚', 'FOLK 民谣', 'ELECTRONIC 电子', 'LIGHT 轻音乐', 'RAP RAP', 'COUNTRY 乡村','DANCE 舞曲', '其他'],
         dialogVisible:false,
         ruleForm: {
           name: '',
@@ -416,12 +423,13 @@
           var Y = date.getFullYear() + '-';
           var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
           var D = date.getDate();
+          if(D < 10) D = '0' + D;
           return Y+M+D;
         },
         getAlbumInfo:function(albumId){
           this.axios.get(this.serverUrl+'/album/getInfo',{
                 params:{
-                  id:this.album.id
+                  id:albumId
                 }
               })
               .then(response => {
@@ -464,14 +472,16 @@
           }
         }
       },
+      created(){
+        this.id=this.$route.query.id;
+      },
       computed:{
         serverUrl(){
           return this.$store.state.serverUrl;
         }
       },
-      mounted:function(){
-        this.album=this.$store.state.album;
-        this.getAlbumInfo(this.album.id);
+      mounted(){
+        this.getAlbumInfo(this.id);
         this.handleOverflow();
         this.getPlaylistList();
       }
