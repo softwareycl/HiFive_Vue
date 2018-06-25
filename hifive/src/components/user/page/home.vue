@@ -9,7 +9,7 @@
                 </el-row>
                 <el-row>
                     <el-col :offset="2" style="width:690px;">
-                        <el-button icon="el-icon-caret-right" v-on:click="playAllSong">播放全部</el-button>
+                        <el-button icon="el-icon-caret-right" v-on:click="playAllSong" style="backgroundColor:transparent;">播放全部</el-button>
                         <el-tabs value="1" @tab-click="switchSong" style="width:240px;float:right;">
                             <el-tab-pane label="内地" name="1"></el-tab-pane>
                             <el-tab-pane label="港台" name="2"></el-tab-pane>
@@ -103,7 +103,7 @@
                                     <el-button id="listButton1" class="listButton" icon="el-icon-caret-right" circle v-on:click="playList(1)"></el-button>
                                 </div>
                                 <ol class="list">
-                                    <li v-for="song in list1" style="margin-left:10px;"><div style="margin-top:30px;"><a herf="" class="font_listContent">{{song.name}}</a></div><div><a herf="" class="font_listContent">{{song.artistName}}</a></div></li>
+                                    <li v-for="song in list1"><div style="margin-top:30px;"><a herf="" class="font_listContent">{{song.name}}</a></div><div><a herf="" class="font_listContent">{{song.artistName}}</a></div></li>
                                 </ol>
                             </div>
                         </el-card>
@@ -116,7 +116,7 @@
                                     <el-button id="listButton2" class="listButton" icon="el-icon-caret-right" circle v-on:click="playList(2)"></el-button>
                                 </div>
                                 <ol class="list">
-                                    <li v-for="song in list2" style="margin-left:10px;"><div style="margin-top:30px;"><a herf="" class="font_listContent">{{song.name}}</a></div><div><a herf="" class="font_listContent">{{song.artistName}}</a></div></li>
+                                    <li v-for="song in list2"><div style="margin-top:30px;"><a herf="" class="font_listContent">{{song.name}}</a></div><div><a herf="" class="font_listContent">{{song.artistName}}</a></div></li>
                                 </ol>
                              </div>  
                         </el-card>
@@ -129,7 +129,7 @@
                                     <el-button id="listButton3" class="listButton" icon="el-icon-caret-right" circle v-on:click="playList(3)"></el-button>
                                 </div>
                                 <ol class="list">
-                                    <li v-for="song in list3" style="margin-left:10px;"><div style="margin-top:30px;"><a herf="" class="font_listContent">{{song.name}}</a></div><div><a herf="" class="font_listContent">{{song.artistName}}</a></div></li>
+                                    <li v-for="song in list3"><div style="margin-top:30px;"><a herf="" class="font_listContent">{{song.name}}</a></div><div><a herf="" class="font_listContent">{{song.artistName}}</a></div></li>
                                 </ol>
                             </div>   
                         </el-card>
@@ -142,7 +142,7 @@
                                     <el-button id="listButton4" class="listButton" icon="el-icon-caret-right" circle v-on:click="playList(4)"></el-button>
                                 </div>
                                 <ol class="list">
-                                    <li v-for="song in list4" style="margin-left:10px;"><div style="margin-top:30px;"><a herf="" class="font_listContent">{{song.name}}</a></div><div><a herf="" class="font_listContent">{{song.artistName}}</a></div></li>
+                                    <li v-for="song in list4"><div style="margin-top:30px;"><a herf="" class="font_listContent">{{song.name}}</a></div><div><a herf="" class="font_listContent">{{song.artistName}}</a></div></li>
                                 </ol>
                             </div>
                         </el-card>
@@ -155,7 +155,7 @@
                                     <el-button id="listButton5" class="listButton" icon="el-icon-caret-right" circle v-on:click="playList(5)"></el-button>
                                 </div>
                                 <ol class="list">
-                                    <li v-for="song in list5" style="margin-left:10px;"><div style="margin-top:30px;"><a herf="" class="font_listContent">{{song.name}}</a></div><div><a herf="" class="font_listContent">{{song.artistName}}</a></div></li>
+                                    <li v-for="song in list5"><div style="margin-top:30px;"><a herf="" class="font_listContent">{{song.name}}</a></div><div><a herf="" class="font_listContent">{{song.artistName}}</a></div></li>
                                 </ol>
                             </div> 
                         </el-card>
@@ -168,7 +168,7 @@
                                     <el-button id="listButton6" class="listButton" icon="el-icon-caret-right" circle v-on:click="playList(6)"></el-button>
                                 </div>
                                 <ol class="list">
-                                    <li v-for="song in list6" style="margin-left:10px;"><div style="margin-top:30px;"><a herf="" class="font_listContent">{{song.name}}</a></div><div><a herf="" class="font_listContent">{{song.artistName}}</a></div></li>
+                                    <li v-for="song in list6"><div style="margin-top:30px;"><a herf="" class="font_listContent">{{song.name}}</a></div><div><a herf="" class="font_listContent">{{song.artistName}}</a></div></li>
                                 </ol>
                             </div>
                         </el-card>
@@ -780,5 +780,9 @@ export default {
   font-size:small;
   color:white;
   cursor:pointer;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
 }
 </style>
