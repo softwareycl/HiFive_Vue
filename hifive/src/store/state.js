@@ -13,6 +13,8 @@ const state = {
     name: "00"
   },
 
+  rankType:1,
+  
   currentIndex: 0,
   currentSong: {
     id:'s2',
