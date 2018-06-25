@@ -86,28 +86,24 @@
                 max-height="1000"
                 @cell-mouse-enter="handleMouseEnter" 
                 @cell-mouse-leave="handleMouseOut">
-                    <el-table-column type="index" width="30"></el-table-column>
-                    <el-table-column prop="image" width="150">
+                    <el-table-column type="index" width="50"></el-table-column>
+                    <!--<el-table-column prop="image" width="150">
                         <router-link to="/user/songdetail">
                             <template slot-scope="scope">
-                                <!--<router-link to="/user/songdetail">-->
-                                    <img class="songImg" v-for="item in scope.row.image" v-bind:src="item" alt="歌曲图片" @click="setSong(item)">
-                                    <!--<img class="songImg" :src="scope.row.image" alt="歌曲图片" @click="setSong(item)">-->                             
-                                <!--</router-link>-->
+                                    <img class="songImg" v-for="item in scope.row" v-bind:src="item.image" alt="歌曲图片" @click="setSong(item)">
+                                    <img class="songImg" :src="scope.row.image" alt="歌曲图片" @click="setSong(item)">                             
                             </template>
                         </router-link>
-                    </el-table-column> 
-                    <el-table-column prop="name" label="歌曲" width="250">
+                    </el-table-column>--> 
+                    <el-table-column prop="name" label="歌曲" width="300">
                         <template slot-scope="scope">
                             <router-link to="/user/songdetail">
                                 <a style="color:black;cursor:pointer;text-decoration:none" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.name}}</a>
                             </router-link>
                         </template>
                     </el-table-column>
-
-
-                    <!--以下为鼠标移动出现播放等功能的实现-->
-                    <el-table-column label=" " width="200">
+                    
+                    <el-table-column label=" " width="230">
       						<template slot-scope="scope">
       							<span v-if="scope.row.Flag">
       								<el-button icon="el-icon-caret-right" circle v-on:click="playSong(scope.row)"></el-button>
@@ -146,8 +142,7 @@
                 		</template>
                     </el-table-column>
 
-
-                    <el-table-column prop="artist" label="歌手" width="150">
+                    <el-table-column prop="artist" label="歌手" width="200">
                         <template slot-scope="scope">            
                             <router-link to="/user/artistdetail">
                                 <a style="color:black;cursor:pointer;text-decoration:none" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';" @click="setArtist(item)">{{scope.row.artist}}</a>
@@ -170,7 +165,8 @@
 <script>
 import vHeader from "../common/header.vue";
 import vNav from "../common/navigation.vue";
-import vFoot from "../common/footer.vue"
+import vFoot from "../common/footer.vue";
+import a from "@/../static/images/1.jpg"
 
 export default{
     data(){
@@ -186,7 +182,8 @@ export default{
     			duration:'04:05',
     			Flag:false,
     			isopen:false,
-                image:'http://img.jf258.com/uploads/2014-09-08/052009179.jpg',
+                //image:'../../../static/images/1.jpg',
+                image:a,
                 rankType:'1'
                 },
                 {
@@ -197,7 +194,7 @@ export default{
     			duration:'04:28',
     			Flag:false,
                 isopen:false,
-                image:'https://p.qpic.cn/music_cover/oQ7QIr12iawo8AdKZPxIeuUneZQTUL489DXnNEkpG9Ltz39j6dBOsfw/300?n=1',
+                image:'../../../static/images/2.jpg',
                 rankType:'2'
                 },
                 {
