@@ -2,7 +2,7 @@
   <div>
     <v-header></v-header>
     <v-nav></v-nav>
-    <div class="main">
+    <div class="main" >
       <div class="singer-nav">
         <table id="singer-nav-table"  style="margin: 0 auto">
             <div style="background-color: rgb(251,251,253); width: 1150px; height: 160px;">
@@ -50,7 +50,7 @@
       <ul id="singerlist">
         <li v-for="item in singers" class="singerli">
           <div class="singer">
-            <router-link to="/user/artistdetail">
+            <router-link :to="{path:'/user/artistdetail',query:{id:item.id}}">
               <img :src="item.image" alt="" style="border-radius:100%; padding: 20px; ">
               <p>{{item.name}}</p>
             </router-link>
@@ -82,7 +82,7 @@
          gender: 0,
          page: 1,
          pageCount: 5,
-         singers: [{}],
+         singers: [],
           items:['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'],
        }
      },
@@ -139,8 +139,8 @@
           }
         })
         .then(res => {
-          this.singers = res.data
-          console.log(res.data);
+          this.singers = res.data;
+          console.log(this.singers);
           for(var i = 0; i < res.data.length; i++){
             this.singers[i].image = this.serverUrl + this.singers[i].image;
           }

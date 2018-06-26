@@ -40,11 +40,11 @@
       <ul id="albumlist">
         <li v-for="item in albums" class="albumli">
           <div class="album" style="margin-bottom: 20px">
-            <router-link to="/user/albumdetail">
+            <router-link :to="{path:'/user/albumdetail',query:{id:item.id}}">
               <img :src="item.image" alt=""  @click="setAlbum(item)">
               <p @click="setAlbum(item)">{{item.name}}</p>
             </router-link>
-            <router-link to="/user/artistdetail">
+            <router-link :to="{path:'/user/artistdetail',query:{id:item.id}}">
               <p>{{item.artistName}}</p>
             </router-link>
             <p style="color: #cccccc">{{item.releaseDate}}</p>
