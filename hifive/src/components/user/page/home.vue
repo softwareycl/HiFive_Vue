@@ -285,7 +285,7 @@ export default {
         return{
             emptySongList:[{
                 name:'暂无数据',
-                artistName:'444',
+                artistName:'',
                 duration:'',
                 image:emptyImage,
             },{
@@ -466,7 +466,7 @@ export default {
             },],
             emptyAlbumList:[{
                 name:'暂无数据',
-                artistName:'444',
+                artistName:'',
                 image:emptyImage,
             },{
                 name:'暂无数据',
