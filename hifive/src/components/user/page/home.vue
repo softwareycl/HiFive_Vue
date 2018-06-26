@@ -36,16 +36,16 @@
                                             <el-col style="width:220px">
                                                 <div style="margin-top:25px;margin-left:10px;">
                                                     <router-link :to="{ path: '/user/songdetail', query: { id: songList[9*(page-1)+3*(i-1)+j-1].id }}">
-                                                        <a onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='#333333';" class="font_name">{{songList[9*(page-1)+3*(i-1)+j-1].name}}</a>
+                                                        <a onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='#333333';" class="name">{{songList[9*(page-1)+3*(i-1)+j-1].name}}</a>
                                                     </router-link>
                                                 </div>
                                                 <div style="margin-left:10px;">
                                                     <router-link :to="{ path: '/user/artistdetail', query: { id: songList[9*(page-1)+3*(i-1)+j-1].artistId }}">
-                                                        <a herf="" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='#9C9C9C';" class="font_other">{{songList[9*(page-1)+3*(i-1)+j-1].artistName}}</a>
+                                                        <a onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='#9C9C9C';" class="artistName">{{songList[9*(page-1)+3*(i-1)+j-1].artistName}}</a>
                                                     </router-link>
                                                 </div>
                                             </el-col>  
-                                            <el-col style="width:70px;"><p class="font_time" style="color:#9C9C9C;margin-top:35px;">{{songList[9*(page-1)+3*(i-1)+j-1].duration}}</p>
+                                            <el-col style="width:70px;"><p class="duration" style="color:#9C9C9C;margin-top:35px;">{{songList[9*(page-1)+3*(i-1)+j-1].duration}}</p>
                                             </el-col>  
                                         </el-row>   
                                     </div>   
@@ -86,12 +86,12 @@
                                         <el-row>
                                             <div>
                                                 <router-link :to="{ path: '/user/albumdetail', query: { id: albumList[10*(page-1)+5*(i-1)+j-1].id }}">
-                                                    <a onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='#333333';" class="font_name">{{albumList[10*(page-1)+5*(i-1)+j-1].name}}</a>
+                                                    <a onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='#333333';" class="name">{{albumList[10*(page-1)+5*(i-1)+j-1].name}}</a>
                                                 </router-link>
                                             </div>
                                             <div>
                                                 <router-link :to="{ path: '/user/artistdetail', query: { id: albumList[10*(page-1)+5*(i-1)+j-1].artistId }}">
-                                                    <a onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='#9C9C9C';" class="font_other">{{albumList[10*(page-1)+5*(i-1)+j-1].artistName}}</a>
+                                                    <a onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='#9C9C9C';" class="artistName">{{albumList[10*(page-1)+5*(i-1)+j-1].artistName}}</a>
                                                 </router-link>
                                             </div>
                                         </el-row> 
@@ -828,18 +828,18 @@ export default {
   font-family:"Microsoft YaHei";
   font-size:xx-large;
 }
-.font_name{
+.name{
   font-family:"Hiragino Sans GB";
   font-size:small;
   color:#333333;
   cursor:pointer;
 }
-.font_time{
+.duration{
   font-family:"Hiragino Sans GB";
   font-size:small;
   color:#9C9C9C; 
 }
-.font_other{
+.artistName{
   font-family:"Hiragino Sans GB";
   font-size:small;
   color:#9C9C9C;
