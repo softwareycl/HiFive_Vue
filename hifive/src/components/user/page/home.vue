@@ -702,17 +702,17 @@ export default {
                     rank[i].lyricsPath = this.serverUrl + rank[i].lyricsPath;
                 }
                 if(index == 1){
-                    this.list1 = this.list1.concat(rank);
+                    this.list1 = rank.concat(this.emptyList);
                 } else if(index == 2){
-                    this.list2 = this.list2.concat(rank);
+                    this.list2 = rank.concat(this.emptyList);
                 } else if(index == 3){
-                    this.list3 = this.list3.concat(rank);
+                    this.list3 = rank.concat(this.emptyList);
                 } else if(index == 4){
-                    this.list4 = this.list4.concat(rank);
+                    this.list4 = rank.concat(this.emptyList);
                 } else if(index == 5){
-                    this.list5 = this.list5.concat(rank);
+                    this.list5 = rank.concat(this.emptyList);
                 } else if(index == 6){
-                    this.list6 = this.list6.concat(rank);
+                    this.list6 = rank.concat(this.emptyList);
                 }
                 
               })
