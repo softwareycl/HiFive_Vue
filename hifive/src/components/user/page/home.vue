@@ -97,79 +97,79 @@
                 <el-row style="height:550px;">
                     <el-col :offset="2" style="width:175px;">
                         <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;">
-                            <div class="listCard" data="list1" style="background:#D97C95;height:490px;" @mouseover="enterList('listButton1')" @mouseout="leaveList('listButton1')">
+                            <div class="listCard" data="list1" style="background:#D97C95;height:470px;" @mouseover="enterList('listButton1')" @mouseout="leaveList('listButton1')">
                                 <P align=center class="font_listTitle">巅峰榜</P><p align=center class="font_listTitle" style="font-size:x-large;cursor:pointer;" v-on:click="toList(1)">新歌</p>
                                 <div style="height:40px;">
                                     <el-button id="listButton1" class="listButton" icon="el-icon-caret-right" circle v-on:click="playList(1)"></el-button>
                                 </div>
-                                <ol class="list">
-                                    <li v-for="song in list1"><div style="margin-top:30px;"><a herf="" class="font_listContent">{{song.name}}</a></div><div><a herf="" class="font_listContent">{{song.artistName}}</a></div></li>
-                                </ol>
+                                <ul class="list">
+                                    <li v-for="i in 4" :key="i" style="margin-top:30px;"><div class="font_number">{{i}}</div><div class="font_listContent"><a herf="">{{list1[i-1].name}}</a><br/><a herf="">{{list1[i-1].artistName}}</a></div></li>
+                                </ul>
                             </div>
                         </el-card>
                     </el-col>
                     <el-col style="width:175px;margin-left:10px">
                         <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;">
-                            <div class="listCard" data="list2" style="background:#6B97B1;height:490px;" @mouseover="enterList('listButton2')" @mouseout="leaveList('listButton2')">
+                            <div class="listCard" data="list2" style="background:#6B97B1;height:470px;" @mouseover="enterList('listButton2')" @mouseout="leaveList('listButton2')">
                                 <P align=center class="font_listTitle">巅峰榜</P><p align=center class="font_listTitle" style="font-size:x-large;cursor:pointer;" v-on:click="toList(2)">热歌</p>
                                 <div style="height:40px;">
                                     <el-button id="listButton2" class="listButton" icon="el-icon-caret-right" circle v-on:click="playList(2)"></el-button>
                                 </div>
-                                <ol class="list">
-                                    <li v-for="song in list2"><div style="margin-top:30px;"><a herf="" class="font_listContent">{{song.name}}</a></div><div><a herf="" class="font_listContent">{{song.artistName}}</a></div></li>
-                                </ol>
+                                <ul class="list">
+                                     <li v-for="i in 4" :key="i" style="margin-top:30px;"><div class="font_number">{{i}}</div><div class="font_listContent"><a herf="">{{list2[i-1].name}}</a><br/><a herf="">{{list2[i-1].artistName}}</a></div></li>
+                                </ul>
                              </div>  
                         </el-card>
                     </el-col>
                     <el-col style="width:175px;margin-left:10px">
                         <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;"> 
-                            <div class="listCard" data="list3" style="background:#6CBDB4;height:490px;" @mouseover="enterList('listButton3')" @mouseout="leaveList('listButton3')">
+                            <div class="listCard" data="list3" style="background:#6CBDB4;height:470px;" @mouseover="enterList('listButton3')" @mouseout="leaveList('listButton3')">
                                 <P align=center class="font_listTitle">巅峰榜</P><p align=center class="font_listTitle" style="font-size:x-large;cursor:pointer;" v-on:click="toList(3)">内地</p>
                                 <div style="height:40px;">
                                     <el-button id="listButton3" class="listButton" icon="el-icon-caret-right" circle v-on:click="playList(3)"></el-button>
                                 </div>
-                                <ol class="list">
-                                    <li v-for="song in list3"><div style="margin-top:30px;"><a herf="" class="font_listContent">{{song.name}}</a></div><div><a herf="" class="font_listContent">{{song.artistName}}</a></div></li>
-                                </ol>
+                                <ul class="list">
+                                    <li v-for="i in 4" :key="i" style="margin-top:30px;"><div class="font_number">{{i}}</div><div class="font_listContent"><a herf="">{{list3[i-1].name}}</a><br/><a herf="">{{list3[i-1].artistName}}</a></div></li>
+                                </ul>
                             </div>   
                         </el-card>
                     </el-col>
                     <el-col style="width:175px;margin-left:10px">
                         <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;"> 
-                            <div class="listCard" data="list4" style="background:#508D94;height:490px;" @mouseover="enterList('listButton4')" @mouseout="leaveList('listButton4')">
+                            <div class="listCard" data="list4" style="background:#508D94;height:470px;" @mouseover="enterList('listButton4')" @mouseout="leaveList('listButton4')">
                                 <P align=center class="font_listTitle">巅峰榜</P><p align=center class="font_listTitle" style="font-size:x-large;cursor:pointer;" v-on:click="toList(4)">港台</p>
                                 <div style="height:40px;">
                                     <el-button id="listButton4" class="listButton" icon="el-icon-caret-right" circle v-on:click="playList(4)"></el-button>
                                 </div>
-                                <ol class="list">
-                                    <li v-for="song in list4"><div style="margin-top:30px;"><a herf="" class="font_listContent">{{song.name}}</a></div><div><a herf="" class="font_listContent">{{song.artistName}}</a></div></li>
-                                </ol>
+                                <ul class="list">
+                                    <li v-for="i in 4" :key="i" style="margin-top:30px;"><div class="font_number">{{i}}</div><div class="font_listContent"><a herf="">{{list4[i-1].name}}</a><br/><a herf="">{{list4[i-1].artistName}}</a></div></li>
+                                </ul>
                             </div>
                         </el-card>
                     </el-col>
                     <el-col style="width:175px;margin-left:10px">
                         <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;">
-                            <div class="listCard" data="list5" style="background:#F0A470;height:490px;" @mouseover="enterList('listButton5')" @mouseout="leaveList('listButton5')">
+                            <div class="listCard" data="list5" style="background:#F0A470;height:470px;" @mouseover="enterList('listButton5')" @mouseout="leaveList('listButton5')">
                                 <P align=center class="font_listTitle">巅峰榜</P><p align=center class="font_listTitle" style="font-size:x-large;cursor:pointer;" v-on:click="toList(5)">欧美</p>
                                 <div style="height:40px;">
                                     <el-button id="listButton5" class="listButton" icon="el-icon-caret-right" circle v-on:click="playList(5)"></el-button>
                                 </div>
-                                <ol class="list">
-                                    <li v-for="song in list5"><div style="margin-top:30px;"><a herf="" class="font_listContent">{{song.name}}</a></div><div><a herf="" class="font_listContent">{{song.artistName}}</a></div></li>
-                                </ol>
+                                <ul class="list">
+                                    <li v-for="i in 4" :key="i" style="margin-top:30px;"><div class="font_number">{{i}}</div><div class="font_listContent"><a herf="">{{list5[i-1].name}}</a><br/><a herf="">{{list5[i-1].artistName}}</a></div></li>
+                                </ul>
                             </div> 
                         </el-card>
                     </el-col>
                     <el-col style="width:175px;margin-left:10px">
                         <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;">
-                            <div class="listCard" data="list6" style="background:#C0C0C0;height:490px;" @mouseover="enterList('listButton6')" @mouseout="leaveList('listButton6')">
+                            <div class="listCard" data="list6" style="background:#C0C0C0;height:470px;" @mouseover="enterList('listButton6')" @mouseout="leaveList('listButton6')">
                                 <P align=center class="font_listTitle">巅峰榜</P><p align=center class="font_listTitle" style="font-size:x-large;cursor:pointer;" v-on:click="toList(6)">日韩</p>
                                 <div style="height:40px;">
                                     <el-button id="listButton6" class="listButton" icon="el-icon-caret-right" circle v-on:click="playList(6)"></el-button>
                                 </div>
-                                <ol class="list">
-                                    <li v-for="song in list6"><div style="margin-top:30px;"><a herf="" class="font_listContent">{{song.name}}</a></div><div><a herf="" class="font_listContent">{{song.artistName}}</a></div></li>
-                                </ol>
+                                <ul class="list">
+                                    <li v-for="i in 4" :key="i" style="margin-top:30px;"><div class="font_number">{{i}}</div><div class="font_listContent"><a herf="">{{list6[i-1].name}}</a><br/><a herf="">{{list6[i-1].artistName}}</a></div></li>
+                                </ul>
                             </div>
                         </el-card>
                     </el-col>
@@ -542,7 +542,20 @@ export default {
             list3:[],
             list4:[],
             list5:[],
-            list6:[]
+            list6:[],
+            emptyList:[{
+                name:'暂无数据',
+                artistName:'暂无数据',
+            },{
+                name:'暂无数据',
+                artistName:'暂无数据',
+            },{
+                name:'暂无数据',
+                artistName:'暂无数据',
+            },{
+                name:'暂无数据',
+                artistName:'暂无数据',
+            },]
         }
 
     },
@@ -661,6 +674,19 @@ export default {
             });
         },
         getRank: function(index){
+            if(index == 1){
+                    this.list1 = this.list1.concat(this.emptyList);
+                } else if(index == 2){
+                    this.list2 = this.list2.concat(this.emptyList);
+                } else if(index == 3){
+                    this.list3 = this.list3.concat(this.emptyList);
+                } else if(index == 4){
+                    this.list4 = this.list4.concat(this.emptyList);
+                } else if(index == 5){
+                    this.list5 = this.list5.concat(this.emptyList);
+                } else if(index == 6){
+                    this.list6 = this.list6.concat(this.emptyList);
+                }
         this.axios.get(this.serverUrl+'/song/rank',{
                 params:{
                   type:index,
@@ -676,17 +702,17 @@ export default {
                     rank[i].lyricsPath = this.serverUrl + rank[i].lyricsPath;
                 }
                 if(index == 1){
-                    this.list1 = rank;
+                    this.list1 = this.list1.concat(rank);
                 } else if(index == 2){
-                    this.list2 = rank;
+                    this.list2 = this.list2.concat(rank);
                 } else if(index == 3){
-                    this.list3 = rank;
+                    this.list3 = this.list3.concat(rank);
                 } else if(index == 4){
-                    this.list4 = rank;
+                    this.list4 = this.list4.concat(rank);
                 } else if(index == 5){
-                    this.list5 = rank;
+                    this.list5 = this.list5.concat(rank);
                 } else if(index == 6){
-                    this.list6 = rank;
+                    this.list6 = this.list6.concat(rank);
                 }
                 
               })
@@ -768,7 +794,8 @@ export default {
 }
 .list{
     color:white;
-    list-style-type:decimal;
+    list-style-type:none;
+    padding-left:20px;
 }
 .font_listTitle{
   font-family:"Hiragino Sans GB";
@@ -780,9 +807,15 @@ export default {
   font-size:small;
   color:white;
   cursor:pointer;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
-  overflow: hidden;
+  margin-left:15px;
+  width:100px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.font_number{
+  font-size:small;
+  color:white;
+  float:left;
 }
 </style>
