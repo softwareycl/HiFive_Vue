@@ -140,7 +140,6 @@
         })
         .then(res => {
           this.singers = res.data;
-          console.log('0000000000000000000000000');
           console.log(this.singers);
           for(var i = 0; i < res.data.length; i++){
             this.singers[i].image = this.serverUrl + this.singers[i].image;

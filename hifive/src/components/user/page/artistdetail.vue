@@ -40,7 +40,7 @@
       					<el-table-column type="index" label= " " :index="indexMethod"></el-table-column>
       					<el-table-column label="歌曲">
       						<template slot-scope="scope">
-                    <router-link :to="{path:'/user/songdetail',query:{id:songListView.id}}">
+                    <router-link :to="{path:'/user/songdetail',query:{id:scope.row.id}}">
       							<a href="" style="color: black; cursor:  pointer; text-decoration:none" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.name}}</a>   
                     </router-link>   
       						</template>
@@ -83,7 +83,7 @@
               </el-table-column>
        					<el-table-column label="专辑">
       						<template slot-scope="scope">
-                    <router-link :to="{path:'/user/albumdetail',query:{id:songListView.albumId}}">
+                    <router-link :to="{path:'/user/albumdetail',query:{id:scope.row.albumId}}">
       							<a href="" style="margin-right: 50px; color:black;cursor:pointer;text-decoration:none" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.albumName}}</a>
                   </router-link>
       						</template>
