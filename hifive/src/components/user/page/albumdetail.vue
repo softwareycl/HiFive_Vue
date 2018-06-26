@@ -145,8 +145,12 @@
         isOverflow:'',
         isLogin:false,
         album:{
+          artistName:'111',
         },
-        songList: [],
+        songList: [{
+          name:'111',
+          artistName:'111',
+        }],
         playlistList:[{
           id:'1',
           name:'1',
@@ -518,4 +522,8 @@
   font-family:"Hiragino Sans GB";
   font-size:Medium;
 }
+a {
+     text-decoration:none;
+     out-line: none;
+  }
 </style>
