@@ -27,16 +27,22 @@
                                         <el-row>  
                                             <el-col style="width:90px;">
                                                 <div style="width:90px;height:90px;border-style:none;overflow:hidden;">
-                                                    <img :src="songList[9*(page-1)+3*(i-1)+j-1].image" class="songImage" @mouseenter="enterSongImage" @mouseleave="leaveSongImage" v-on:click="clickOnSongImage(9*(page-1)+3*(i-1)+j-1)">
+                                                    <router-link :to="{ path: '/user/songdetail', query: { id: songList[9*(page-1)+3*(i-1)+j-1].id }}">
+                                                        <img :src="songList[9*(page-1)+3*(i-1)+j-1].image" class="songImage" @mouseenter="enterSongImage" @mouseleave="leaveSongImage" v-on:click="clickOnSongImage(9*(page-1)+3*(i-1)+j-1)">
+                                                    </router-link>
                                                     <el-button class="songButton" icon="el-icon-caret-right" circle v-on:click="clickOnSongButton(9*(page-1)+3*(i-1)+j-1)"></el-button>
                                                 </div>
                                             </el-col>  
                                             <el-col style="width:220px">
                                                 <div style="margin-top:25px;margin-left:10px;">
-                                                    <a herf="" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='#333333';" class="font_name">{{songList[9*(page-1)+3*(i-1)+j-1].name}}</a>
+                                                    <router-link :to="{ path: '/user/songdetail', query: { id: songList[9*(page-1)+3*(i-1)+j-1].id }}">
+                                                        <a onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='#333333';" class="font_name">{{songList[9*(page-1)+3*(i-1)+j-1].name}}</a>
+                                                    </router-link>
                                                 </div>
                                                 <div style="margin-left:10px;">
-                                                    <a herf="" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='#9C9C9C';" class="font_other">{{songList[9*(page-1)+3*(i-1)+j-1].artistName}}</a>
+                                                    <router-link :to="{ path: '/user/artistdetail', query: { id: songList[9*(page-1)+3*(i-1)+j-1].artistId }}">
+                                                        <a herf="" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='#9C9C9C';" class="font_other">{{songList[9*(page-1)+3*(i-1)+j-1].artistName}}</a>
+                                                    </router-link>
                                                 </div>
                                             </el-col>  
                                             <el-col style="width:70px;"><p class="font_time" style="color:#9C9C9C;margin-top:35px;">{{songList[9*(page-1)+3*(i-1)+j-1].duration}}</p>
@@ -71,16 +77,22 @@
                                     <div style="height:100%;width:100%;">  
                                         <el-row>  
                                             <div style="width:180px;height:180px;border-style:none;overflow:hidden;">
-                                                <img :src="albumList[10*(page-1)+5*(i-1)+j-1].image" class="albumImage" @mouseenter="enterAlbumImage" @mouseleave="leaveAlbumImage" v-on:click="clickOnAlbumImage(10*(page-1)+5*(i-1)+j-1)">
+                                                <router-link :to="{ path: '/user/albumdetail', query: { id: albumList[10*(page-1)+5*(i-1)+j-1].id }}">
+                                                    <img :src="albumList[10*(page-1)+5*(i-1)+j-1].image" class="albumImage" @mouseenter="enterAlbumImage" @mouseleave="leaveAlbumImage" v-on:click="clickOnAlbumImage(10*(page-1)+5*(i-1)+j-1)">
+                                                </router-link>
                                                 <el-button class="albumButton" icon="el-icon-caret-right" circle v-on:click="clickOnAlbumButton(10*(page-1)+5*(i-1)+j-1)"></el-button>
                                             </div>
                                         </el-row>
                                         <el-row>
                                             <div>
-                                                <a herf="" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='#333333';" class="font_name">{{albumList[10*(page-1)+5*(i-1)+j-1].name}}</a>
+                                                <router-link :to="{ path: '/user/albumdetail', query: { id: albumList[10*(page-1)+5*(i-1)+j-1].id }}">
+                                                    <a onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='#333333';" class="font_name">{{albumList[10*(page-1)+5*(i-1)+j-1].name}}</a>
+                                                </router-link>
                                             </div>
                                             <div>
-                                                <a herf="" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='#9C9C9C';" class="font_other">{{albumList[10*(page-1)+5*(i-1)+j-1].artistName}}</a>
+                                                <router-link :to="{ path: '/user/artistdetail', query: { id: albumList[10*(page-1)+5*(i-1)+j-1].artistId }}">
+                                                    <a onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='#9C9C9C';" class="font_other">{{albumList[10*(page-1)+5*(i-1)+j-1].artistName}}</a>
+                                                </router-link>
                                             </div>
                                         </el-row> 
                                     </div>   
@@ -98,12 +110,25 @@
                     <el-col :offset="2" style="width:175px;">
                         <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;">
                             <div class="listCard" data="list1" style="background:#D97C95;height:470px;" @mouseover="enterList('listButton1')" @mouseout="leaveList('listButton1')">
-                                <P align=center class="font_listTitle">巅峰榜</P><p align=center class="font_listTitle" style="font-size:x-large;cursor:pointer;" v-on:click="toList(1)">新歌</p>
+                                <P align=center class="font_listTitle">巅峰榜</P>
+                                <router-link :to="{ path: '/user/rank'}">
+                                    <p align=center class="font_listTitle" style="font-size:x-large;cursor:pointer;" v-on:click="toList(1)">新歌</p>
+                                </router-link>
                                 <div style="height:40px;">
                                     <el-button id="listButton1" class="listButton" icon="el-icon-caret-right" circle v-on:click="playList(1)"></el-button>
                                 </div>
                                 <ul class="list">
-                                    <li v-for="i in 4" :key="i" style="margin-top:30px;"><div class="font_number">{{i}}</div><div class="font_listContent"><a herf="">{{list1[i-1].name}}</a><br/><a herf="">{{list1[i-1].artistName}}</a></div></li>
+                                    <li v-for="i in 4" :key="i" style="margin-top:30px;">
+                                        <div class="font_number">{{i}}</div>
+                                        <div class="font_listContent">
+                                        <router-link :to="{ path: '/user/songdetail', query: { id: list1[i-1].id }}">
+                                            <a style="color:white;cursor:pointer;">{{list1[i-1].name}}</a><br/>
+                                        </router-link>
+                                        <router-link :to="{ path: '/user/artistdetail', query: { id: list1[i-1].artistId }}">
+                                            <a style="color:white;cursor:pointer;">{{list1[i-1].artistName}}</a>
+                                        </router-link>
+                                        </div>
+                                    </li>
                                 </ul>
                             </div>
                         </el-card>
@@ -111,12 +136,25 @@
                     <el-col style="width:175px;margin-left:10px">
                         <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;">
                             <div class="listCard" data="list2" style="background:#6B97B1;height:470px;" @mouseover="enterList('listButton2')" @mouseout="leaveList('listButton2')">
-                                <P align=center class="font_listTitle">巅峰榜</P><p align=center class="font_listTitle" style="font-size:x-large;cursor:pointer;" v-on:click="toList(2)">热歌</p>
+                                <P align=center class="font_listTitle">巅峰榜</P>
+                                <router-link :to="{ path: '/user/rank'}">
+                                    <p align=center class="font_listTitle" style="font-size:x-large;cursor:pointer;" v-on:click="toList(2)">热歌</p>
+                                </router-link>
                                 <div style="height:40px;">
                                     <el-button id="listButton2" class="listButton" icon="el-icon-caret-right" circle v-on:click="playList(2)"></el-button>
                                 </div>
                                 <ul class="list">
-                                     <li v-for="i in 4" :key="i" style="margin-top:30px;"><div class="font_number">{{i}}</div><div class="font_listContent"><a herf="">{{list2[i-1].name}}</a><br/><a herf="">{{list2[i-1].artistName}}</a></div></li>
+                                     <li v-for="i in 4" :key="i" style="margin-top:30px;">
+                                        <div class="font_number">{{i}}</div>
+                                        <div class="font_listContent">
+                                            <router-link :to="{ path: '/user/songdetail', query: { id: list2[i-1].id }}">
+                                                <a style="color:white;cursor:pointer;">{{list2[i-1].name}}</a><br/>
+                                            </router-link>
+                                            <router-link :to="{ path: '/user/artistdetail', query: { id: list2[i-1].artistId }}">
+                                                <a style="color:white;cursor:pointer;">{{list2[i-1].artistName}}</a>
+                                            </router-link>
+                                        </div>
+                                    </li>
                                 </ul>
                              </div>  
                         </el-card>
@@ -124,12 +162,25 @@
                     <el-col style="width:175px;margin-left:10px">
                         <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;"> 
                             <div class="listCard" data="list3" style="background:#6CBDB4;height:470px;" @mouseover="enterList('listButton3')" @mouseout="leaveList('listButton3')">
-                                <P align=center class="font_listTitle">巅峰榜</P><p align=center class="font_listTitle" style="font-size:x-large;cursor:pointer;" v-on:click="toList(3)">内地</p>
+                                <P align=center class="font_listTitle">巅峰榜</P>
+                                <router-link :to="{ path: '/user/rank'}">
+                                    <p align=center class="font_listTitle" style="font-size:x-large;cursor:pointer;" v-on:click="toList(3)">内地</p>
+                                </router-link>
                                 <div style="height:40px;">
                                     <el-button id="listButton3" class="listButton" icon="el-icon-caret-right" circle v-on:click="playList(3)"></el-button>
                                 </div>
                                 <ul class="list">
-                                    <li v-for="i in 4" :key="i" style="margin-top:30px;"><div class="font_number">{{i}}</div><div class="font_listContent"><a herf="">{{list3[i-1].name}}</a><br/><a herf="">{{list3[i-1].artistName}}</a></div></li>
+                                    <li v-for="i in 4" :key="i" style="margin-top:30px;">
+                                        <div class="font_number">{{i}}</div>
+                                        <div class="font_listContent">
+                                            <router-link :to="{ path: '/user/songdetail', query: { id: list3[i-1].id }}">
+                                                <a style="color:white;cursor:pointer;">{{list3[i-1].name}}</a><br/>
+                                            </router-link>
+                                            <router-link :to="{ path: '/user/artistdetail', query: { id: list3[i-1].artistId }}">
+                                                <a style="color:white;cursor:pointer;">{{list3[i-1].artistName}}</a>
+                                            </router-link>
+                                        </div>
+                                    </li>
                                 </ul>
                             </div>   
                         </el-card>
@@ -137,12 +188,25 @@
                     <el-col style="width:175px;margin-left:10px">
                         <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;"> 
                             <div class="listCard" data="list4" style="background:#508D94;height:470px;" @mouseover="enterList('listButton4')" @mouseout="leaveList('listButton4')">
-                                <P align=center class="font_listTitle">巅峰榜</P><p align=center class="font_listTitle" style="font-size:x-large;cursor:pointer;" v-on:click="toList(4)">港台</p>
+                                <P align=center class="font_listTitle">巅峰榜</P>
+                                <router-link :to="{ path: '/user/rank'}">
+                                    <p align=center class="font_listTitle" style="font-size:x-large;cursor:pointer;" v-on:click="toList(4)">港台</p>
+                                </router-link>
                                 <div style="height:40px;">
                                     <el-button id="listButton4" class="listButton" icon="el-icon-caret-right" circle v-on:click="playList(4)"></el-button>
                                 </div>
                                 <ul class="list">
-                                    <li v-for="i in 4" :key="i" style="margin-top:30px;"><div class="font_number">{{i}}</div><div class="font_listContent"><a herf="">{{list4[i-1].name}}</a><br/><a herf="">{{list4[i-1].artistName}}</a></div></li>
+                                    <li v-for="i in 4" :key="i" style="margin-top:30px;">
+                                        <div class="font_number">{{i}}</div>
+                                        <div class="font_listContent">
+                                            <router-link :to="{ path: '/user/songdetail', query: { id: list4[i-1].id }}">
+                                                <a style="color:white;cursor:pointer;">{{list4[i-1].name}}</a><br/>
+                                            </router-link>
+                                            <router-link :to="{ path: '/user/artistdetail', query: { id: list4[i-1].id }}">
+                                                <a style="color:white;cursor:pointer;">{{list4[i-1].artistName}}</a>
+                                            </router-link>
+                                        </div>
+                                    </li>
                                 </ul>
                             </div>
                         </el-card>
@@ -150,12 +214,25 @@
                     <el-col style="width:175px;margin-left:10px">
                         <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;">
                             <div class="listCard" data="list5" style="background:#F0A470;height:470px;" @mouseover="enterList('listButton5')" @mouseout="leaveList('listButton5')">
-                                <P align=center class="font_listTitle">巅峰榜</P><p align=center class="font_listTitle" style="font-size:x-large;cursor:pointer;" v-on:click="toList(5)">欧美</p>
+                                <P align=center class="font_listTitle">巅峰榜</P>
+                                <router-link :to="{ path: '/user/rank'}">
+                                    <p align=center class="font_listTitle" style="font-size:x-large;cursor:pointer;" v-on:click="toList(5)">欧美</p>
+                                </router-link>
                                 <div style="height:40px;">
                                     <el-button id="listButton5" class="listButton" icon="el-icon-caret-right" circle v-on:click="playList(5)"></el-button>
                                 </div>
                                 <ul class="list">
-                                    <li v-for="i in 4" :key="i" style="margin-top:30px;"><div class="font_number">{{i}}</div><div class="font_listContent"><a herf="">{{list5[i-1].name}}</a><br/><a herf="">{{list5[i-1].artistName}}</a></div></li>
+                                    <li v-for="i in 4" :key="i" style="margin-top:30px;">
+                                        <div class="font_number">{{i}}</div>
+                                        <div class="font_listContent">
+                                            <router-link :to="{ path: '/user/songdetail', query: { id: list5[i-1].id }}">
+                                            <a style="color:white;cursor:pointer;">{{list5[i-1].name}}</a><br/>
+                                            </router-link>
+                                            <router-link :to="{ path: '/user/artistdetail', query: { id: list5[i-1].id }}">
+                                            <a style="color:white;cursor:pointer;">{{list5[i-1].artistName}}</a>
+                                            </router-link>
+                                        </div>
+                                    </li>
                                 </ul>
                             </div> 
                         </el-card>
@@ -163,12 +240,25 @@
                     <el-col style="width:175px;margin-left:10px">
                         <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;">
                             <div class="listCard" data="list6" style="background:#C0C0C0;height:470px;" @mouseover="enterList('listButton6')" @mouseout="leaveList('listButton6')">
-                                <P align=center class="font_listTitle">巅峰榜</P><p align=center class="font_listTitle" style="font-size:x-large;cursor:pointer;" v-on:click="toList(6)">日韩</p>
+                                <P align=center class="font_listTitle">巅峰榜</P>
+                                <router-link :to="{ path: '/user/rank'}">
+                                    <p align=center class="font_listTitle" style="font-size:x-large;cursor:pointer;" v-on:click="toList(6)">日韩</p>
+                                </router-link>
                                 <div style="height:40px;">
                                     <el-button id="listButton6" class="listButton" icon="el-icon-caret-right" circle v-on:click="playList(6)"></el-button>
                                 </div>
                                 <ul class="list">
-                                    <li v-for="i in 4" :key="i" style="margin-top:30px;"><div class="font_number">{{i}}</div><div class="font_listContent"><a herf="">{{list6[i-1].name}}</a><br/><a herf="">{{list6[i-1].artistName}}</a></div></li>
+                                    <li v-for="i in 4" :key="i" style="margin-top:30px;">
+                                        <div class="font_number">{{i}}</div>
+                                        <div class="font_listContent">
+                                            <router-link :to="{ path: '/user/songdetail', query: { id: list6[i-1].id }}">
+                                                <a style="color:white;cursor:pointer;">{{list6[i-1].name}}</a><br/>
+                                            </router-link>
+                                            <router-link :to="{ path: '/user/artistdetail', query: { id: list6[i-1].id }}">
+                                                <a style="color:white;cursor:pointer;">{{list6[i-1].artistName}}</a>
+                                            </router-link>
+                                        </div>
+                                    </li>
                                 </ul>
                             </div>
                         </el-card>
@@ -195,7 +285,7 @@ export default {
         return{
             emptySongList:[{
                 name:'暂无数据',
-                artistName:'',
+                artistName:'444',
                 duration:'',
                 image:emptyImage,
             },{
@@ -376,7 +466,7 @@ export default {
             },],
             emptyAlbumList:[{
                 name:'暂无数据',
-                artistName:'',
+                artistName:'444',
                 image:emptyImage,
             },{
                 name:'暂无数据',
@@ -562,32 +652,32 @@ export default {
     methods:{
         enterSongImage:function(event){
             event.target.style.transform='scale(1.2)';
-            event.target.parentNode.children[1].style.transform='scale(1.2)';
-            event.target.parentNode.children[1].style.opacity=1;
+            event.target.parentNode.parentNode.children[1].style.transform='scale(1.2)';
+            event.target.parentNode.parentNode.children[1].style.opacity=1;
         },
         leaveSongImage:function(event){
-            if(event.toElement==event.target.parentNode.children[1]){
+            if(event.toElement==event.target.parentNode.parentNode.children[1]){
                 return false;
             }
             else{
                 event.target.style.transform='scale(1)';
-                event.target.parentNode.children[1].style.transform='scale(1)';
-                event.target.parentNode.children[1].style.opacity=0;
+                event.target.parentNode.parentNode.children[1].style.transform='scale(1)';
+                event.target.parentNode.parentNode.children[1].style.opacity=0;
             }
         },
         enterAlbumImage:function(event){
             event.target.style.transform='scale(1.5)';
-            event.target.parentNode.children[1].style.transform='scale(1.5)';
-            event.target.parentNode.children[1].style.opacity=1;
+            event.target.parentNode.parentNode.children[1].style.transform='scale(1.5)';
+            event.target.parentNode.parentNode.children[1].style.opacity=1;
         },
         leaveAlbumImage:function(event){
-            if(event.toElement==event.target.parentNode.children[1]){
+            if(event.toElement==event.target.parentNode.parentNode.children[1]){
                 return false;
             }
             else{
                 event.target.style.transform='scale(1)';
-                event.target.parentNode.children[1].style.transform='scale(1)';
-                event.target.parentNode.children[1].style.opacity=0;
+                event.target.parentNode.parentNode.children[1].style.transform='scale(1)';
+                event.target.parentNode.parentNode.children[1].style.opacity=0;
             }
         },
         enterList:function(button){  
@@ -604,28 +694,24 @@ export default {
         switchSong(tab) {
             this.getSongList(tab.name);
         },
-        clickOnSongButton:function(id){
-            console.log("button");
-            console.log(id);
-            console.log(this.songList[id].id);
+        clickOnSongButton:function(index){
+            
+            console.log(this.songList[index].id);
         },
-        clickOnSongImage:function(id){
-            console.log("image");
-            console.log(id);
-            console.log(this.songList[id].id);
+        clickOnSongImage:function(index){
+            
+            console.log(this.songList[index].id);
         },
         switchAlbum(tab) {
             this.getAlbumList(tab.name);
         },
-        clickOnAlbumButton:function(id){
-            console.log("button");
-            console.log(id);
-            console.log(this.albumList[id].id);
+        clickOnAlbumButton:function(index){
+            
+            console.log(this.albumList[index].id);
         },
-        clickOnAlbumImage:function(id){
-            console.log("image");
-            console.log(id);
-            console.log(this.albumList[id].id);
+        clickOnAlbumImage:function(index){
+            
+            console.log(this.albumList[index].id);
         },
         toList:function(index){
             console.log(index);
@@ -805,8 +891,6 @@ export default {
 .font_listContent{
   font-family:"Hiragino Sans GB";
   font-size:small;
-  color:white;
-  cursor:pointer;
   margin-left:15px;
   width:100px;
   overflow:hidden;
@@ -818,4 +902,8 @@ export default {
   color:white;
   float:left;
 }
+a {
+     text-decoration:none;
+     out-line: none;
+  }
 </style>
