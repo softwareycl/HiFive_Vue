@@ -16,6 +16,7 @@ export default new Router({
     //以下为用户页面的跳转
     {
       path: '/',
+      name: '我的音乐',
       component: resolve => require(['../components/user/page/unlogin.vue'], resolve)
     },
     {

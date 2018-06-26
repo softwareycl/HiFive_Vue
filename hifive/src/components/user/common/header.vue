@@ -46,15 +46,20 @@
 		},
 		methods: {
 			home: function() {
-				this.$router.push('/')
+				this.$router.push('/user/home')
 			},
 			cur_title: function(title) {
 				this.curTitle = title;
 				// sessionStorage.setItem('curTitle', this.curTitle);
 				switch (title) { 
-					case '音乐馆': this.$router.push('/') 
+					case '音乐馆': this.$router.push('/user/home') 
 					break
-					case '我的音乐': this.$router.push('/user/mymusic') 
+					case '我的音乐': {
+						if(this.$store.state.isLogin == true)
+							this.$router.push('/user/mymusic')
+						else
+							this.$router.push('/')
+					} 
 					break
 				}
 
@@ -74,6 +79,9 @@
 		computed: {
 			search () {
 				return this.$store.state.search
+			},
+			state () {
+				return this.$store.state
 			}
 		}
 	};
