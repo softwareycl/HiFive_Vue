@@ -145,12 +145,8 @@
         isOverflow:'',
         isLogin:false,
         album:{
-          artistName:'111',
         },
-        songList: [{
-          name:'111',
-          artistName:'111',
-        }],
+        songList: [],
         playlistList:[{
           id:'1',
           name:'1',
