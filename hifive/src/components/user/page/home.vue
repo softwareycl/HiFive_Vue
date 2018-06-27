@@ -368,6 +368,11 @@ export default {
         },
         getSongList: function(index){
             var song={id:'',name:'暂无数据',artistName:'',duration:'',image:emptyImage};
+            this.songList=[];
+            for(var i=this.songList.length ; i < 36; i++)
+                {
+                    this.songList.push(song);
+                }
             this.axios.get(this.serverUrl+'/song/getNewSongs',{
                 params:{
                   region:index
@@ -391,6 +396,11 @@ export default {
         },
         getAlbumList: function(index){
             var album={id:'',name:'暂无数据',artistName:'',image:emptyImage};
+            this.albumList=[];
+            for(var i=this.albumList.length ; i < 40; i++)
+                {
+                    this.albumList.push(album);
+                }
             this.axios.get(this.serverUrl+'/album/getNewAlbums',{
                 params:{
                   region:index
@@ -412,6 +422,33 @@ export default {
         },
         getRank: function(index){
             var song={id:'',name:'暂无数据',artistName:''};
+            var emptyRank=[];
+            for(var i = emptyRank.length; i < 4; i++){
+                    emptyRank.push(song);
+            }
+            if(index == 1){
+                this.list1=emptyRank;
+            } 
+            else if(index == 2)
+            {
+                this.list2=emptyRank;
+            } 
+            else if(index == 3)
+            {
+                this.list3=emptyRank;
+            } 
+            else if(index == 4)
+            {
+                this.list4=emptyRank;
+            } 
+            else if(index == 5)
+            {
+                this.list5=emptyRank;
+            } 
+            else if(index == 6)
+            {
+                this.list6=emptyRank;
+            }
             this.axios.get(this.serverUrl+'/song/rank',{
                 params:{
                   type:index,
@@ -469,7 +506,7 @@ export default {
         for(var i = 1; i <= 6; i++){
             this.getRank(i);
         }
-      }
+    }
 }
 
 </script>
