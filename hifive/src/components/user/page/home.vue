@@ -3,7 +3,7 @@
         <v-head></v-head>
         <v-nav></v-nav>
         <div id="home">
-            <div :data="songList" style="background: linear-gradient(#F2F2F2, #FFFFFF);">
+            <div :data="songList" v-loading="songList[0].id==''" style="background: linear-gradient(#F2F2F2, #FFFFFF);">
                 <el-row>
                     <p align=center class="font_Menu">新歌首发</p>
                 </el-row>
@@ -55,7 +55,7 @@
                     </el-carousel-item>
                 </el-carousel>
             </div>
-            <div :data="albumList" style="margin-top:30px;background: linear-gradient(#F2F2F2, #FFFFFF);">
+            <div :data="albumList" v-loading="albumList[0].id==''" style="margin-top:30px;background: linear-gradient(#F2F2F2, #FFFFFF);">
                 <el-row>
                     <p align=center class="font_Menu">新碟首发</p>
                 </el-row>
@@ -102,7 +102,7 @@
                     </el-carousel-item>
                 </el-carousel>
             </div>
-            <div style="margin-top:30px;background: linear-gradient(#F2F2F2, #FFFFFF);">
+            <div v-loading="list6[0].id==''" style="margin-top:30px;background: linear-gradient(#F2F2F2, #FFFFFF);">
                 <el-row>
                     <p align=center class="font_Menu">排行榜</p>
                 </el-row>
@@ -111,7 +111,7 @@
                         <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;">
                             <div class="listCard" data="list1" style="background:#D97C95;height:470px;" @mouseover="enterList('listButton1')" @mouseout="leaveList('listButton1')">
                                 <P align=center class="font_listTitle">巅峰榜</P>
-                                <router-link :to="{ path: '/user/rank'}">
+                                 <router-link :to="{ path: '/user/rank', query: { rankType: 1 }}">
                                     <p align=center class="font_listTitle" style="font-size:x-large;cursor:pointer;" v-on:click="toList(1)">新歌</p>
                                 </router-link>
                                 <div style="height:40px;">
@@ -137,7 +137,7 @@
                         <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;">
                             <div class="listCard" data="list2" style="background:#6B97B1;height:470px;" @mouseover="enterList('listButton2')" @mouseout="leaveList('listButton2')">
                                 <P align=center class="font_listTitle">巅峰榜</P>
-                                <router-link :to="{ path: '/user/rank'}">
+                                <router-link :to="{ path: '/user/rank', query: { rankType: 2 }}">
                                     <p align=center class="font_listTitle" style="font-size:x-large;cursor:pointer;" v-on:click="toList(2)">热歌</p>
                                 </router-link>
                                 <div style="height:40px;">
@@ -163,7 +163,7 @@
                         <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;"> 
                             <div class="listCard" data="list3" style="background:#6CBDB4;height:470px;" @mouseover="enterList('listButton3')" @mouseout="leaveList('listButton3')">
                                 <P align=center class="font_listTitle">巅峰榜</P>
-                                <router-link :to="{ path: '/user/rank'}">
+                                <router-link :to="{ path: '/user/rank', query: { rankType: 3 }}">
                                     <p align=center class="font_listTitle" style="font-size:x-large;cursor:pointer;" v-on:click="toList(3)">内地</p>
                                 </router-link>
                                 <div style="height:40px;">
@@ -189,7 +189,7 @@
                         <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;"> 
                             <div class="listCard" data="list4" style="background:#508D94;height:470px;" @mouseover="enterList('listButton4')" @mouseout="leaveList('listButton4')">
                                 <P align=center class="font_listTitle">巅峰榜</P>
-                                <router-link :to="{ path: '/user/rank'}">
+                                <router-link :to="{ path: '/user/rank', query: { rankType: 4 }}">
                                     <p align=center class="font_listTitle" style="font-size:x-large;cursor:pointer;" v-on:click="toList(4)">港台</p>
                                 </router-link>
                                 <div style="height:40px;">
@@ -215,7 +215,7 @@
                         <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;">
                             <div class="listCard" data="list5" style="background:#F0A470;height:470px;" @mouseover="enterList('listButton5')" @mouseout="leaveList('listButton5')">
                                 <P align=center class="font_listTitle">巅峰榜</P>
-                                <router-link :to="{ path: '/user/rank'}">
+                                <router-link :to="{ path: '/user/rank', query: { rankType: 5 }}">
                                     <p align=center class="font_listTitle" style="font-size:x-large;cursor:pointer;" v-on:click="toList(5)">欧美</p>
                                 </router-link>
                                 <div style="height:40px;">
@@ -241,7 +241,7 @@
                         <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;">
                             <div class="listCard" data="list6" style="background:#C0C0C0;height:470px;" @mouseover="enterList('listButton6')" @mouseout="leaveList('listButton6')">
                                 <P align=center class="font_listTitle">巅峰榜</P>
-                                <router-link :to="{ path: '/user/rank'}">
+                                <router-link :to="{ path: '/user/rank', query: { rankType: 6 }}">
                                     <p align=center class="font_listTitle" style="font-size:x-large;cursor:pointer;" v-on:click="toList(6)">日韩</p>
                                 </router-link>
                                 <div style="height:40px;">
@@ -283,348 +283,6 @@ export default {
     },
     data(){
         return{
-            emptySongList:[{
-                name:'暂无数据',
-                artistName:'',
-                duration:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                duration:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                duration:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                duration:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                duration:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                duration:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                duration:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                duration:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                duration:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                duration:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                duration:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                duration:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                duration:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                duration:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                duration:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                duration:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                duration:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                duration:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                duration:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                duration:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                duration:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                duration:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                duration:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                duration:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                duration:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                duration:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                duration:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                duration:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                duration:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                duration:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                duration:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                duration:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                duration:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                duration:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                duration:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                duration:'',
-                image:emptyImage,
-            },],
-            emptyAlbumList:[{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },{
-                name:'暂无数据',
-                artistName:'',
-                image:emptyImage,
-            },],
             songList:[],
         	albumList:[],
             list1:[],
@@ -722,7 +380,11 @@ export default {
             //
         },
         getSongList: function(index){
-            this.songList=this.songList.concat(this.emptySongList);
+            var song={id:'',name:'暂无数据',artistName:'',duration:'',image:emptyImage};
+            for(var i=this.songList.length ; i < 36; i++)
+            {
+                this.songList.push(song);
+            }
             this.axios.get(this.serverUrl+'/song/getNewSongs',{
                 params:{
                   region:index
@@ -735,14 +397,21 @@ export default {
                     this.songList[i].filePath = this.serverUrl + this.songList[i].filePath;
                     this.songList[i].lyricsPath = this.serverUrl + this.songList[i].lyricsPath;
                 }
-                this.songList=this.songList.concat(this.emptySongList);
+                for(var i=this.songList.length ; i < 36; i++)
+                {
+                    this.songList.push(song);
+                }
             })
             .catch(function(err){
                 console.log(err);
             });
         },
         getAlbumList: function(index){
-            this.albumList=this.albumList.concat(this.emptyAlbumList);
+            var album={id:'',name:'暂无数据',artistName:'',image:emptyImage};
+            for(var i=this.albumList.length ; i < 40; i++)
+            {
+                this.albumList.push(album);
+            }
             this.axios.get(this.serverUrl+'/album/getNewAlbums',{
                 params:{
                   region:index
@@ -753,27 +422,53 @@ export default {
                 for(var i = 0; i < this.albumList.length; i++){
                     this.albumList[i].image = this.serverUrl + this.albumList[i].image;
                 }
-                this.albumList=this.albumList.concat(this.emptyAlbumList);
+                for(var i=this.songList.length ; i < 40; i++)
+                {
+                    this.albumList.push(album);
+                }
             })
             .catch(function(err){
                 console.log(err);
             });
         },
         getRank: function(index){
+            var song={id:'',name:'',artistName:''};
             if(index == 1){
-                    this.list1 = this.list1.concat(this.emptyList);
-                } else if(index == 2){
-                    this.list2 = this.list2.concat(this.emptyList);
-                } else if(index == 3){
-                    this.list3 = this.list3.concat(this.emptyList);
-                } else if(index == 4){
-                    this.list4 = this.list4.concat(this.emptyList);
-                } else if(index == 5){
-                    this.list5 = this.list5.concat(this.emptyList);
-                } else if(index == 6){
-                    this.list6 = this.list6.concat(this.emptyList);
+                for(var i=this.list1.length;i<4;i++){
+                    this.list1.push(song);
                 }
-        this.axios.get(this.serverUrl+'/song/rank',{
+            } 
+            else if(index == 2)
+            {
+                for(var i=this.list2.length;i<4;i++){
+                    this.list2.push(song);
+                }
+            } 
+            else if(index == 3)
+            {
+                for(var i=this.list3.length;i<4;i++){
+                    this.list3.push(song);
+                }
+            } 
+            else if(index == 4)
+            {
+                for(var i=this.list4.length;i<4;i++){
+                    this.list4.push(song);
+                }
+            } 
+            else if(index == 5)
+            {
+                for(var i=this.list5.length;i<4;i++){
+                    this.list5.push(song);
+                }
+            } 
+            else if(index == 6)
+            {
+                for(var i=this.list6.length;i<4;i++){
+                    this.list6.push(song);
+                }
+            }
+            this.axios.get(this.serverUrl+'/song/rank',{
                 params:{
                   type:index,
                   isAll: false
@@ -788,19 +483,40 @@ export default {
                     rank[i].lyricsPath = this.serverUrl + rank[i].lyricsPath;
                 }
                 if(index == 1){
-                    this.list1 = rank.concat(this.emptyList);
-                } else if(index == 2){
-                    this.list2 = rank.concat(this.emptyList);
-                } else if(index == 3){
-                    this.list3 = rank.concat(this.emptyList);
-                } else if(index == 4){
-                    this.list4 = rank.concat(this.emptyList);
-                } else if(index == 5){
-                    this.list5 = rank.concat(this.emptyList);
-                } else if(index == 6){
-                    this.list6 = rank.concat(this.emptyList);
+                    for(var i=this.list1.length;i<4;i++){
+                        this.list1.push(song);
+                    }
+                } 
+                else if(index == 2)
+                {
+                    for(var i=this.list2.length;i<4;i++){
+                        this.list2.push(song);
+                    }
+                } 
+                else if(index == 3)
+                {
+                    for(var i=this.list3.length;i<4;i++){
+                        this.list3.push(song);
+                    }
+                } 
+                else if(index == 4)
+                {
+                    for(var i=this.list4.length;i<4;i++){
+                        this.list4.push(song);
+                    }
+                } 
+                else if(index == 5)
+                {
+                    for(var i=this.list5.length;i<4;i++){
+                        this.list5.push(song);
+                    }
+                } 
+                else if(index == 6)
+                {
+                    for(var i=this.list6.length;i<4;i++){
+                        this.list6.push(song);
+                    }
                 }
-                
               })
               .catch(function(err){
                 console.log(err);
