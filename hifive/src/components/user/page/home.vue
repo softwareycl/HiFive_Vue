@@ -410,7 +410,7 @@ export default {
         getAlbumList: function(index){
             var album={id:'',name:'暂无数据',artistName:'',image:emptyImage};
             this.albumList=[];
-            for(var i=this.songList.length ; i < 40; i++)
+            for(var i=this.albumList.length ; i < 40; i++)
             {
                 this.albumList.push(album);
             }
@@ -435,33 +435,6 @@ export default {
         },
         getRank: function(index){
             var song={id:'',name:'暂无数据',artistName:''};
-            var rank=[];
-            for(var i = rank.length; i < 4; i++){
-                    rank.push(song);
-            }
-            if(index == 1){
-                this.list1=rank;
-            } 
-            else if(index == 2)
-            {
-                this.list2=rank;
-            } 
-            else if(index == 3)
-            {
-                this.list3=rank;
-            } 
-            else if(index == 4)
-            {
-                this.list4=rank;
-            } 
-            else if(index == 5)
-            {
-                this.list5=rank;
-            } 
-            else if(index == 6)
-            {
-                this.list6=rank;
-            }
             this.axios.get(this.serverUrl+'/song/rank',{
                 params:{
                   type:index,
