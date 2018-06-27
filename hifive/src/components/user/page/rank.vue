@@ -72,7 +72,7 @@
 
                 @cell-mouse-enter="handleMouseEnter" 
                 @cell-mouse-leave="handleMouseOut">
-                    <!-- <el-table-column prop="index" width="50"></el-table-column> -->
+                    <el-table-column prop="index" width="50" type="index" :index="indexMethod"></el-table-column>
                     <el-table-column prop="name" label="歌曲" width="250">
                         <template slot-scope="scope">
                             <router-link to="/user/songdetail">
@@ -81,16 +81,16 @@
                         </template>
                     </el-table-column>
                     
-                    <el-table-column label=" " width="230">
+                    <el-table-column label=" " width="230" type="index">
       						<template slot-scope="scope">
       							<span v-if="scope.row.Flag">
-      								<el-button icon="el-icon-caret-right" circle v-on:click="playSong(scope.row)"></el-button>
+      								<el-button icon="el-icon-caret-right" circle @click.native ="playSong(scope.$index)"></el-button>
       							</span>
-      						<span v-if="scope.row.Flag"> 
-                    			<el-dropdown trigger="click" placement="bottom-start" @visible-change="handle(scope.row,$event)" @command="handleSongCommand">
+          						<span v-if="scope.row.Flag"> 
+                        			<el-dropdown trigger="click" placement="bottom-start" @visible-change="handle(scope.row,$event)" @command="handleSongCommand">
                      				<el-button icon="el-icon-plus" circle></el-button>
                      				<el-dropdown-menu slot="dropdown" :data="playlistList">
-                        			<el-dropdown-item command="playqueue">播放队列</el-dropdown-item>
+                        			<el-dropdown-item command="playqueue" @click.native ="addToSongList(scope.$index)">播放队列</el-dropdown-item>
                         			<div v-if="state">
                           				<el-dropdown-item disabled divided>我喜欢</el-dropdown-item>
                           				<el-dropdown-item v-for="playlist in playlistList" :key="playlist.ID" :command='{type:"playlist",param1:playlist.ID,param2:scope.row}'>{{playlist.name}}</el-dropdown-item>
@@ -131,6 +131,7 @@
                     <el-table-column prop="duration" label="时长" width="100">
                     </el-table-column>  
                 </el-table>
+
                 <br>
                 <el-pagination class="pagination" :page-count="pageCount" 
                 layout="prev, pager, next" 
@@ -154,6 +155,7 @@ import a from "@/../static/images/1.jpg"
 export default{
     data(){
         return {
+            index: 1,
             page:1,
             rankType:1,
             rankText: ["新歌榜", "热歌榜", "内地榜", "港台榜", "日韩榜", "欧美榜"],
@@ -206,6 +208,9 @@ export default{
       this.getPlaylistList(this.userID);
     },
     methods:{
+        indexMethod: function(index){
+            return (this.page - 1)* 20 + index + 1;
+        },
         pagination: function(_page){
             this.page = _page;
             this.songsView.splice(0,this.songsView.length);
@@ -244,7 +249,7 @@ export default{
                     this.songs[i].lyricsPath = this.serverUrl + this.songs[i].lyricsPath;
                     this.$set(this.songs[i],'Flag',false);
                     this.$set(this.songs[i],'isopen',false);
-                    this.songs[i].name = (i+1) + "       " + this.songs[i].name;
+                    // this.songs[i].displayName = (i+1) + "  " + this.songs[i].name;
                 }
                 this.computePageCount();
                 this.pagination(1);
@@ -254,9 +259,7 @@ export default{
                 console.log(error);
             });
         },
-        playSong:function(row){
-		//传递歌曲ID给player.vue
-	    },
+
         submitForm:function(formname){
 		//提交playlist对象，包括歌单名称和简介，返回-1用户会话超时
 			this.$refs[formname].validate((valid) => {
@@ -281,56 +284,92 @@ export default{
     			this.dialogVisible=true;
   			}
   				else if(command=="playqueue"){
-		//传递歌曲ID给player.vue
+		  //传递歌曲ID给player.vue
 		    }
 			else{
-		//提交歌曲ID和歌单ID，返回false则用户会话超时
-			console.log(command.param1);
-			console.log(command.param2.ID)
+		      //提交歌曲ID和歌单ID，返回false则用户会话超时
+			 console.log(command.param1);
+			 console.log(command.param2.ID)
 		    }
 	    },
         playAllSong:function(){
 		//传递所有歌曲ID给player.vue
 		},
-            	handleClose(done) {
+        handleClose(done) {
         this.$confirm('确认关闭？')
-        .then(_ => {
-          done();
-        })
-        .catch(_ => {});
+            .then(_ => {
+              done();
+            })
+            .catch(_ => {});
         },
         handleMouseEnter:function(row, column, cell, event){
-        row.Flag=true;
+            // alert(row.id);
+            row.Flag=true;
         },
         handleMouseOut:function(row, column, cell, event){
-        if(!row.isopen){
-          row.Flag=false;}
-          else{
-            return false;
-          }
+            if(!row.isopen){
+                row.Flag=false;
+            }
+            else{
+                return false;
+            }
         },
         handle:function(row,event){
-          row.Flag=event;
-          row.isopen=event;
+            row.Flag=event;
+            row.isopen=event;
         },
 
 		getPlaylistList:function(){
 		//无提交，返回歌单列表
         },
         handleAlbumCommand:function(command){
-        if(command=="login"){
-            window.location.href='/';
-        }
-        if(command=="newplaylist"){
-            this.dialogVisible=true;
-        }
-        else if(command=="playqueue"){
-        //传递所有歌曲ID给player.vue
-        }
-        else{
-        //提交专辑ID和歌单ID，返回false则用户会话超时
-        console.log(command.params);
-        }
+            if(command=="login"){
+                window.location.href='/';
+            }
+            if(command=="newplaylist"){
+                this.dialogVisible=true;
+            }
+            else if(command=="playqueue"){
+            //传递所有歌曲ID给player.vue
+            }
+            else{
+            //提交专辑ID和歌单ID，返回false则用户会话超时
+            console.log(command.params);
+            }
+        },
+        addToSongList: function(index){
+            index = (this.page - 1) * 20 + index;
+            console.log(this.songs);
+            var song = this.songs[index];
+            var songId = song.id;
+            if(this.$store.state.songList.length == 0){
+                this.$store.state.songList = [];
+                this.$store.state.songList.push(song);
+                this.$store.state.currentSong = song;
+                this.$store.state.currentIndex = 0;
+            } else if(this.$store.state.currentSong.id != songId){
+                for(var i = 0; i < this.$store.state.songList.length; i++){
+                    if(this.$store.state.songList[i].id == songId){
+                        this.$store.state.songList.splice(i, 1);
+                        if(i < this.$store.state.currentIndex)
+                            this.$store.state.currentIndex=this.$store.state.currentIndex-1;
+                        break;
+                    }
+                }
+                this.$store.state.songList.push(song);
+            }
+        },
+
+        playSong:function(index){
+            //传递歌曲ID给player.vue
+            index = (this.page - 1) * 20 + index;
+
+            this.$store.state.songList = [];
+            for(var i = 0; i < this.songs.length; i++){
+                this.$store.state.songList.push(this.songs[i]);
+            }
+            this.$store.state.currentSong = this.songs[index];
+            this.$store.state.currentIndex = index;
         },
 	},
     
