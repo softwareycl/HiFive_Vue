@@ -11,7 +11,8 @@
       @loadedmetadata="onLoadedmetadata"
       @ended="end"
       :src="currentSong.filePath" 
-      controlsList="nodownload">
+      controlsList="nodownload"
+      autoplay>
       </audio>
       <el-col :span="1">
         <el-button class="btn" icon="el-icon-d-arrow-left" @click="preSong" circle></el-button>
@@ -23,7 +24,9 @@
         <el-button class="btn" icon="el-icon-d-arrow-right" @click="nextSong" circle></el-button>
       </el-col>
       <el-col :span="2">
-        <img class="songImg" :src="currentSong.image" alt="歌曲图片">
+        <div class="songImg" >
+          <img height="50" width="50" :src="currentSong.image" alt="" onerror="this.style.display='none'"/>
+        </div>
       </el-col>
       <el-col :span="13">
       <div class="songInfo">  
@@ -48,18 +51,19 @@
 
           <el-main>
             <div class="playlist">
-              <h2>播放列表</h2>
+              <h2 class="playlistLabel">播放列表</h2>
               <!--播放列表表格-->
               <div class="songTable">
               <el-table
                 :data="songList"
                 style="width: 100%"
-                max-height="394"
-                :show-header="false">
+                max-height="500" min-height="500">
+              <el-table-column prop="index" width="50" type="index">
+              </el-table-column>
               <el-table-column               
                 prop="name"
                 label="歌曲"
-                width="300">
+                width="350">
               </el-table-column>
               <el-table-column               
                 prop="artistName"
@@ -69,7 +73,7 @@
               <el-table-column               
                 prop="duration"
                 label="时长"
-                width="150">
+                width="80">
               </el-table-column>
               </el-table>
               </div>
@@ -78,14 +82,9 @@
           <el-aside width="40%">
             <div class="lyrics">
               <h3>{{currentSong.name}}</h3>
-              <el-input
-              id="lyrics"
-              type="textarea"
-              :disabled="true"
-              :autosize="{ minRows: 19, maxRows: 200}"
-              placeholder="歌词"
-              v-model="currentSong.lyricPath">
-              </el-input>
+              <div>
+                <textarea id="lyrics">{{currentSong.lyricsPath}}</textarea>
+              </div>
             </div>
           </el-aside>
         </el-container>
@@ -137,9 +136,37 @@ export default {
         'songList',
       ]),
       currentSong() {
-        return this.$store.state.currentSong
+        return this.$store.state.currentSong;
       },
     },
+    mounted() {
+      // this.axios.get("http://localhost:8080/hifive/lyrics/Maroon5/Red%20Pill%20Blues/Whiskey.txt", {
+      //     params: {
+      //     }
+      //   })
+      //     .then(res => {
+      //     console.log(res.data);
+
+      //   })
+      //   .catch(function (error) {
+      //     console.log(error);
+      //   });
+
+
+      // var xmlhttp=new XMLHttpRequest();
+      // xmlhttp.onreadystatechange=function()
+      // {
+      //   var textHTML=xmlhttp.responseText;
+      //   alert(textHTML);
+      //   textHTML=textHTML.replace(/(\n)+|(\r\n)+/g,"<br>");
+      //   document.getElementById("lyrics").innerHTML=textHTML;
+      // }
+      // xmlhttp.open("GET","http://localhost:8080/hifive/lyrics/Maroon5/Red%20Pill%20Blues/Whiskey.txt",true);
+      // xmlhttp.overrideMimeType("text/html;charset=gb2312");
+      // xmlhttp.send();
+ 
+    },
+
    methods: {
     // 控制音频的播放与暂停
     startPlayOrPause () {
@@ -208,7 +235,7 @@ export default {
           this.$store.state.currentSong = this.$store.state.songList[this.$store.state.currentIndex]
         }
       },
-		// 播放下一曲
+    // 播放下一曲
       nextSong: function(){
         if(this.$store.state.currentIndex < this.$store.state.songList.length){
           this.$store.state.currentIndex = this.$store.state.currentIndex + 1
@@ -218,6 +245,32 @@ export default {
       end: function () {
         this.nextSong()
       },
+      showLyrics: function(){
+        this.axios.get(this.serverUrl + "/song/getInfo", {
+          params: {
+            id: _id,
+          }
+        })
+          .then(res => {
+          console.log(res.data);
+          this.song = res.data;
+          this.song.lyricsPath = this.serverUrl + this.song.lyricsPath;
+
+          var xmlhttp=new XMLHttpRequest();
+          xmlhttp.onreadystatechange=function()
+          {
+            var textHTML=xmlhttp.responseText;
+            textHTML=textHTML.replace(/(\n)+|(\r\n)+/g,"<br>");
+            document.getElementById("lyr").innerHTML=textHTML;
+          }
+          xmlhttp.open("GET",this.song.lyricsPath,true);
+          xmlhttp.overrideMimeType("text/html;charset=gb2312");
+          xmlhttp.send();
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+      }
   },
   filters: {
     // 使用组件过滤器来动态改变按钮的显示
@@ -258,12 +311,16 @@ export default {
     color: #333;
     text-align: left;
     line-height: 10px;
-    margin-left:100px;
+    margin-left:10px;
   }
+.playlistLabel {
+  padding-top: 0px;
+  margin-top: 0px;
+}
 .songTable{
-  margin-top:25px;
+  margin-top:20px;
   text-align:left;
-  margin-left:-10px;
+  margin-left:0px;
 }
   .lyrics {
     color: #333;
@@ -271,11 +328,12 @@ export default {
     line-height: 10px;
     margin-top:30px;
   }
-.songImg{
-  width:50px;
-  height:50px;
-  padding-top:5%;
+  .songImg{
+  border-color:white;
+  padding-top:5px;
+  padding-left:25px;
 }
+
 .time{    
   width:50px;
   height:40px;
@@ -299,8 +357,10 @@ export default {
   margin-left:20px;
 }
 #lyrics{
-  margin:0 auto;
+  margin:0,auto;
   width:80%;
+  min-height:300px;
+  max-height:300px;
 }
 .tooltip{
   margin-top:-20px;
