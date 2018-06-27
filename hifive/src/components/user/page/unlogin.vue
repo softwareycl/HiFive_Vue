@@ -13,16 +13,16 @@
 						<template>
 							<el-tabs v-model="activeName" @tab-click="handleClick" class="login_form" style="margin:0 75px;text-align:left">
 								<el-tab-pane label="登录" name="first">
-									<el-form :model="loginUser" :rules="rules2" ref="loginUser">
+									<el-form :model="loginUser" :rules="rules2" ref="loginUser" label-width="50px">
 										<el-form-item label="账号" prop="id">
-											<el-input v-model="loginUser.id" placeholder="请输入账号，账号为注册时的邮箱" style="width:400px"></el-input>
+											<el-input v-model="loginUser.id" placeholder="请输入账号，账号为注册时的邮箱"></el-input>
 										</el-form-item>
 										<el-form-item label="密码" prop="pwd">
-											<el-input v-model="loginUser.pwd" placeholder="请输入密码" style="width:400px"></el-input>
+											<el-input v-model="loginUser.pwd" placeholder="请输入密码"></el-input>
 										</el-form-item>
 									</el-form>
 									<div class="dialog-footer">
-										<el-button type="primary" @click="login">登录</el-button>
+										<el-button type="primary" @click="login('loginUser')">登录</el-button>
 										<el-button @click="dialogFormVisible = false">取 消</el-button>
 										<div style="margin-top:20px">
 											<router-link tag="a" to="/user/findpwd" style="text-decoration:none;out-line: none;">
@@ -32,30 +32,30 @@
 									</div>
 								</el-tab-pane>
 								<el-tab-pane label="注册" name="second">
-									<el-form :model="registerUser" :rules="rules" ref="registerUser">
-										<el-form-item label="昵称" prop="name" style="padding-left:30px">
-											<el-input v-model="registerUser.name" placeholder="请输入昵称" style="width:400px"></el-input>
+									<el-form :model="registerUser" :rules="rules" ref="registerUser" label-width="85px">
+										<el-form-item label="昵称" prop="name">
+											<el-input v-model="registerUser.name" placeholder="请输入昵称"></el-input>
 										</el-form-item>
-										<el-form-item label="邮箱" prop="id" style="padding-left: 30px">
-											<el-input v-model="registerUser.id" placeholder="请输入邮箱" style="width:400px"></el-input>
+										<el-form-item label="邮箱" prop="id">
+											<el-input v-model="registerUser.id" placeholder="请输入邮箱"></el-input>
 										</el-form-item>
-										<el-form-item label="性别" prop="gender" style="padding-left: 30px">
+										<el-form-item label="性别" prop="gender">
 											<el-radio-group v-model="registerUser.gender">
 												<el-radio label="男"></el-radio>
 												<el-radio label="女"></el-radio>
 											</el-radio-group>
 										</el-form-item>
-										<el-form-item label="密码" prop="pwd" style="padding-left: 30px">
-											<el-input v-model="registerUser.pwd" placeholder="请输入密码" style="width:400px"></el-input>
+										<el-form-item label="密码" prop="pwd">
+											<el-input v-model="registerUser.pwd" placeholder="请输入密码"></el-input>
 										</el-form-item>
 										<el-form-item label="密保问题" prop="securityQuestion">
-											<el-select v-model="registerUser.securityQuestion" placeholder="请选择密保问题" style="width:400px">
+											<el-select v-model="registerUser.securityQuestion" placeholder="请选择密保问题">
 												<el-option label="问题一" value="question1"></el-option>
 												<el-option label="问题二" value="question2"></el-option>
 											</el-select>
 										</el-form-item>
 										<el-form-item label="密保答案" prop="securityAnswer">
-											<el-input v-model="registerUser.securityAnswer" placeholder="请输入密保问题的答案" style="width:400px"></el-input>
+											<el-input v-model="registerUser.securityAnswer" placeholder="请输入密保问题的答案"></el-input>
 										</el-form-item>
 									</el-form>
 									<div class="dialog-footer">
@@ -89,7 +89,7 @@
 				if (value === '') {
 					callback(new Error('请输入密码'));
 				} else if(!reg.test(value)) {
-					callback(new Error('输入密码要6-20位,要包含字母和数字'));
+					callback(new Error('请输入6-20位密码,且包含字母和数字'));
 				} else {
 					callback();
 				}
@@ -166,8 +166,33 @@
 			}
 		},
 		methods: {
-			login: function() {
-				this.dialogFormVisible = false;
+			login: function(_loginUser) {
+				alert(this.submitForm(_loginUser));
+				if(bool) {
+					this.axios.get(this.serverUrl + "/user/login", {
+						params: {
+							loginUser: this.loginUser,
+						}
+					})
+					.then(res => {
+						var tip = res.data;
+						if(tip == 1) {
+							alert("登录成功");
+							this.dialogFormVisible = false;
+						}
+						else if(tip == 2) {
+							alert("用户不存在");
+						}
+						else if(tip == 3) {
+							alert("账号密码不正确");
+						}
+
+					})
+					.catch(function (error) {
+						console.log(error);
+					});
+					this.dialogFormVisible = false;
+				}
 			},
 			register: function(registerUser) {
 				this.submitForm(registerUser);
@@ -176,15 +201,17 @@
 				this.dialogFormVisible = true;
 				this.activeName = 'first';
 			},
-			submitForm(formName) {
+			submitForm: function(formName) {
 				this.$refs[formName].validate((valid) => {
+					var flag = false;
 					if (valid) {
-						alert('submit!');
-						this.dialogFormVisible = false;
+						flag = true;
+						// this.dialogFormVisible = false;
 					} else {
 						console.log('error submit!!');
-						return false;
+						flag = false;
 					}
+					return flag;
 				});
 			},
 		}
@@ -215,5 +242,6 @@
 	}
 	.dialog-footer {
 		text-align: center;
+		margin-top: 30px;
 	}
 </style>
