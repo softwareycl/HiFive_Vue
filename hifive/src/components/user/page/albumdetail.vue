@@ -4,7 +4,7 @@
     <v-nav></v-nav>
     <div id="albumdetail" :data="album">
       <el-row :gutter="50">
-        <el-col :span="4" :offset="4">
+        <el-col :span="4" :offset="3">
           <div>
             <img align=right style="width:230px;height:230px;margin-top:20px" :src=album.image>
           </div>
@@ -39,19 +39,19 @@
           </div>
         </el-col>
       </el-row>
-      <el-row :gutter="50">
-        <el-col :span="13" :offset="3">
+      <el-row>
+        <el-col :span="16" :offset="2">
           <div>
-            <el-table :data="songList" :stripe=true style="height:600px;width: 100%;" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">
+            <el-table :data="songList" :stripe=true style="height:600px;width:100%;" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">
               <el-table-column type="index" label=" " :index="indexMethod"></el-table-column>
-              <el-table-column label="歌曲">
+              <el-table-column label="歌曲" width=300>
                 <template slot-scope="scope">
                   <router-link :to="{ path: '/user/songdetail', query: { id: scope.row.id }}">
                     <p style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.name}}</p>
                   </router-link>
                 </template>
               </el-table-column>
-              <el-table-column label=" ">
+              <el-table-column label=" " width=200>
                 <template slot-scope="scope">
                   <span v-if="scope.row.Flag"> <el-button icon="el-icon-caret-right" circle v-on:click="playSong(scope.row)"></el-button> </span>
                   <span v-if="scope.row.Flag"> 
@@ -85,14 +85,14 @@
                   <span v-if="scope.row.Flag"> <el-button icon="el-icon-download" circle v-on:click="downloadSong(scope.row)"></el-button> </span>
                 </template>
               </el-table-column>
-              <el-table-column label="歌手">
+              <el-table-column label="歌手" width=120>
                 <template slot-scope="scope">
                   <router-link :to="{ path: '/user/artistdetail', query: { id: scope.row.artistId }}">
                     <p style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.artistName}}</p>
                 </router-link>
                 </template>
               </el-table-column>
-              <el-table-column prop="duration" label="时长">
+              <el-table-column prop="duration" label="时长" width=80>
               </el-table-column>
             </el-table>
           </div>
@@ -145,8 +145,9 @@
         isOverflow:'',
         isLogin:false,
         album:{
+          intro:''
         },
-        songList: [],
+        songList: [{}],
         playlistList:[{
           id:'1',
           name:'1',
