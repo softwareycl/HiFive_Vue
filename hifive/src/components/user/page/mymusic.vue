@@ -1,10 +1,9 @@
 <template>
     <div class="wrapper">
         <v-head></v-head>
-        <v-nav></v-nav>
         <div style="width:100%;height:1500px;">
             <div :data="user" class="background" :style="background">
-                <img src="../../../assets/周杰伦.jpg" class="userImage">
+                <img :src="user.image" class="userImage">
             	<p align=center style="font-size: x-large;color:white;">{{user.name}}</p>
                 <el-dialog title="创建歌单" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
                     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
@@ -217,6 +216,7 @@ export default {
                 ]
             },
             user:{
+                id:'',
                 name:'周杰伦',
                 image:'',
             },
@@ -669,19 +669,69 @@ export default {
             }
           });
         },
+        timestampToTime: function(timestamp) {
+          var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+          var Y = date.getFullYear() + '-';
+          var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+          var D = date.getDate();
+          if(D < 10) D = '0' + D;
+          return Y+M+D;
+        },
         getMyMusic:function(){
-            
+            this.axios.get(this.serverUrl+'/user/showMyMusic',{
+                params:{
+                    id:'1@qq.com'
+                }
+            })
+            .then(response =>{
+                this.user=response.data;
+                this.user.image=this.serverUrl + this.user.image;
+                this.songList=this.user.songList;
+                for(var i=0;i<this.songList.length;i++){
+                    this.songList[i].filePath = this.serverUrl+this.songList[i].filePath;
+                    this.songList[i].lyricsPath = this.serverUrl+this.songList[i].lyricsPath;
+                    this.songList[i].image = this.serverUrl+this.songList[i].image;
+                    this.$set(this.songList[i],'Flag',false);
+                    this.$set(this.songList[i],'isopen',false);
+                }
+                this.albumList=this.user.albumList;
+                for(var i=0;i<this.albumList.length;i++){
+                    this.albumList[i].releaseDate = this.timestampToTime(this.albumList[i].releaseDate);
+                    this.albumList[i].image = this.serverUrl+this.albumList[i].image;
+                    this.$set(this.songList[i],'Flag',false);
+                    this.$set(this.songList[i],'isopen',false);
+                }
+                this.playlistList=this.user.playlistList;
+                for(var i=0;i<this.playlistList.length;i++){
+                    this.$set(this.playlistList[i],'Flag',false);
+                    this.$set(this.playlistList[i],'isopen',false);
+                }
+            })
+            .catch(function(err){
+              console.log(err);
+            });
         },
-        songPaginationChange:function(){
+        songPaginationChange:function(page){
 
         },
-        albumPaginationChange:function(){
+        albumPaginationChange:function(page){
 
         },
-        playlistPaginationChange:function(){
+        playlistPaginationChange:function(page){
 
         },
     },
+    created(){
+        this.user.id=this.$route.query.id;
+    },
+    computed:{
+        serverUrl(){
+          return this.$store.state.serverUrl;
+        }
+    },
+    mounted(){
+        this.getMyMusic();
+    }
 }
 </script>
 
