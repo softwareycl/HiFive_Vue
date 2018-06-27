@@ -21,7 +21,7 @@
 					<el-dropdown-menu slot="dropdown">
 						<el-dropdown-item>
 							<img :src="user.image" class="inner_userImage">
-							<span style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">user.name</span>
+							<span style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{user.name}}</span>
 						</el-dropdown-item>
 						<el-dropdown-item style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">修改个人资料</el-dropdown-item>
 						<el-dropdown-item style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">修改密码</el-dropdown-item>

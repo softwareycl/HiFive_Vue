@@ -40,18 +40,18 @@
 											<el-input v-model="registerUser.id" placeholder="请输入邮箱"></el-input>
 										</el-form-item>
 										<el-form-item label="性别" prop="gender">
-											<el-radio-group v-model="registerUser.gender">
-												<el-radio label="男"></el-radio>
-												<el-radio label="女"></el-radio>
-											</el-radio-group>
+											<el-radio v-model="registerUser.gender" label="1">男</el-radio>
+											<el-radio v-model="registerUser.gender" label="2">女</el-radio>
 										</el-form-item>
 										<el-form-item label="密码" prop="pwd">
 											<el-input v-model="registerUser.pwd" placeholder="请输入密码"></el-input>
 										</el-form-item>
 										<el-form-item label="密保问题" prop="securityQuestion">
 											<el-select v-model="registerUser.securityQuestion" placeholder="请选择密保问题">
-												<el-option label="问题一" value="question1"></el-option>
-												<el-option label="问题二" value="question2"></el-option>
+												<el-option label="你的家乡在哪里？" value="你的家乡在哪里？"></el-option>
+												<el-option label="你的父亲名字？" value="你的父亲名字？"></el-option>
+												<el-option label="你的母亲名字？" value="你的母亲名字？"></el-option>
+												<el-option label="你的生日？" value="你的生日？"></el-option>
 											</el-select>
 										</el-form-item>
 										<el-form-item label="密保答案" prop="securityAnswer">
@@ -81,6 +81,11 @@
 		components: {
 			vHead,
 			vFoot
+		},
+		computed: {
+			state () {
+				return this.$store.state
+			}
 		},
 		data () {
 			var validatePass = (rule, value, callback) => {
@@ -114,6 +119,7 @@
 			return {
 				dialogFormVisible: false,
 				activeName: 'first',
+				flag: 'false',
 				mymusic_main: {
 					backgroundImage: 'url(' + require("../../../assets/unlogin.jpg") + ')',
 					backgroundRepeat: "no-repeat",
@@ -126,7 +132,7 @@
 				registerUser: {
 					id: '',
 					name: '',
-					gender: '',
+					gender: 0,
 					pwd: '',
 					securityQuestion: '',
 					securityAnswer: '',
@@ -167,18 +173,24 @@
 		},
 		methods: {
 			login: function(_loginUser) {
-				alert(this.submitForm(_loginUser));
-				if(bool) {
-					this.axios.get(this.serverUrl + "/user/login", {
-						params: {
-							loginUser: this.loginUser,
-						}
+				this.submitForm(_loginUser);
+				if(this.flag) {
+					this.flag = false;
+					this.axios.post(this.$store.state.serverUrl + "/user/login", {
+						id: this.loginUser.id,
+						pwd: this.loginUser.pwd
 					})
 					.then(res => {
 						var tip = res.data;
+						if(tip == 0) {
+							alert("管理员登录成功");
+							this.dialogFormVisible = false;
+							this.$router.push('/admin/artist');
+						}
 						if(tip == 1) {
 							alert("登录成功");
 							this.dialogFormVisible = false;
+							this.$router.push('/user/mymusic');
 						}
 						else if(tip == 2) {
 							alert("用户不存在");
@@ -186,32 +198,55 @@
 						else if(tip == 3) {
 							alert("账号密码不正确");
 						}
-
 					})
 					.catch(function (error) {
 						console.log(error);
 					});
-					this.dialogFormVisible = false;
 				}
 			},
-			register: function(registerUser) {
-				this.submitForm(registerUser);
+			register: function(_registerUser) {
+				this.submitForm(_registerUser);
+				if(this.flag) {
+					this.flag = false;
+					this.axios.post(this.$store.state.serverUrl + "/user/register", {
+						id: this.registerUser.id,
+						name: this.registerUser.name,
+						gender: parseInt(this.registerUser.gender),
+						pwd: this.registerUser.pwd,
+						securityQuestion: this.registerUser.securityQuestion,
+						securityAnswer: this.registerUser.securityAnswer
+					})
+					.then(res => {
+						var tip = res.data;
+						if(tip == true) {
+							alert("注册成功");
+							this.dialogFormVisible = false;
+							this.$router.push('/user/unlogin');
+						}
+						else if(tip == false) {
+							alert("注册失败，请重新注册");
+						}
+					})
+					.catch(function (error) {
+						console.log(error);
+					});
+				}
 			},
 			change_dialogFormVisible: function() {
 				this.dialogFormVisible = true;
 				this.activeName = 'first';
 			},
-			submitForm: function(formName) {
+			submitForm(formName) {
 				this.$refs[formName].validate((valid) => {
-					var flag = false;
 					if (valid) {
-						flag = true;
+						this.flag = true;
+						return true;
 						// this.dialogFormVisible = false;
 					} else {
 						console.log('error submit!!');
-						flag = false;
+						this.flag = false;
+						return false;
 					}
-					return flag;
 				});
 			},
 		}
