@@ -439,40 +439,31 @@ export default {
                     rank[i].filePath = this.serverUrl + rank[i].filePath;
                     rank[i].lyricsPath = this.serverUrl + rank[i].lyricsPath;
                 }
+                for(var i = rank.length; i < 4; i++){
+                    rank.push(song);
+                }
                 if(index == 1){
-                    for(var i=this.list1.length;i<4;i++){
-                        this.list1.push(song);
-                    }
+                    this.list1=rank;
                 } 
                 else if(index == 2)
                 {
-                    for(var i=this.list2.length;i<4;i++){
-                        this.list2.push(song);
-                    }
+                    this.list2=rank;
                 } 
                 else if(index == 3)
                 {
-                    for(var i=this.list3.length;i<4;i++){
-                        this.list3.push(song);
-                    }
+                    this.list3=rank;
                 } 
                 else if(index == 4)
                 {
-                    for(var i=this.list4.length;i<4;i++){
-                        this.list4.push(song);
-                    }
+                    this.list4=rank;
                 } 
                 else if(index == 5)
                 {
-                    for(var i=this.list5.length;i<4;i++){
-                        this.list5.push(song);
-                    }
+                    this.list5=rank;
                 } 
                 else if(index == 6)
                 {
-                    for(var i=this.list6.length;i<4;i++){
-                        this.list6.push(song);
-                    }
+                    this.list6=rank;
                 }
               })
               .catch(function(err){
