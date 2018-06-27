@@ -189,12 +189,22 @@
           row.Flag=event;
           row.isopen=event;
         },
+        handleOverflow:function(){
+          var offsetWidth = document.getElementById("albumIntro").offsetHeight;  
+          var scrollWidth = document.getElementById("albumIntro").scrollHeight;
+          if (offsetWidth < scrollWidth) {
+            this.isOverflow=true;
+          }
+          else{
+            this.isOverflow=false;
+          }
+        },
         playAllSong:function(){
           //传递歌曲id给player
         },
         collect:function(){
           if(this.isLogin){
-            this.axios.get('',{
+            this.axios.get(this.serverUrl+'/user/likeAlbum',{
               params:{
                 id:this.album.id
               }
@@ -231,8 +241,8 @@
             });
           }
         },
-        cancelCollect:function(albumId){ 
-          this.axios.get('',{
+        cancelCollect:function(){ 
+          this.axios.get(this.serverUrl+'/user/unlikeAlbum',{
             params:{
               id:this.album.id
             }
@@ -269,9 +279,9 @@
             //传递所有歌曲id给player.vue
           }
           else{
-            this.axios.get('',{
+            this.axios.get(this.serverUrl+'/playlist/addAlbum',{
               params:{
-                id:this.album.id,
+                albumId:this.album.id,
                 playlistId:command.params
               }
             })
@@ -310,9 +320,9 @@
             //传递歌曲id给player.vue
           }
           else{
-            this.axios.get('',{
+            this.axios.get(this.serverUrl+'/playlist/addSong',{
               params:{
-                id:command.param2.id,
+                songId:command.param2.id,
                 playlistId:command.param1
               }
             })
@@ -340,11 +350,10 @@
         submitForm:function(formname){
           this.$refs[formname].validate((valid) => {
             if (valid) {
-              this.axios.get('',{
+              this.axios.get(this.serverUrl+'/playlist/create',{
                 params:{
-                  playlist:{
-
-                  }
+                  name:formname.name,
+                  intro:formname.intro,
                 }
               })
               .then(response =>{
@@ -382,7 +391,7 @@
         },
         downloadSong:function(row){
           if(this.isLogin){
-            this.axios.get('',{
+            this.axios.get(this.serverUrl+'/download/downloadSong',{
               params:{
                 id:row.id
               }
@@ -426,10 +435,10 @@
           if(D < 10) D = '0' + D;
           return Y+M+D;
         },
-        getAlbumInfo:function(albumId){
+        getAlbumInfo:function(){
           this.axios.get(this.serverUrl+'/album/getInfo',{
                 params:{
-                  id:albumId
+                  id:this.album.id
                 }
               })
               .then(response => {
@@ -461,19 +470,9 @@
             console.log(err);
           });
         },
-        handleOverflow:function(){
-          var offsetWidth = document.getElementById("albumIntro").offsetHeight;  
-          var scrollWidth = document.getElementById("albumIntro").scrollHeight;
-          if (offsetWidth < scrollWidth) {
-            this.isOverflow=true;
-          }
-          else{
-            this.isOverflow=false;
-          }
-        }
       },
       created(){
-        this.id=this.$route.query.id;
+        this.album.id=this.$route.query.id;
       },
       computed:{
         serverUrl(){
@@ -481,7 +480,7 @@
         }
       },
       mounted(){
-        this.getAlbumInfo(this.id);
+        this.getAlbumInfo();
         this.handleOverflow();
         this.getPlaylistList();
       }
