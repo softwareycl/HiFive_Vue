@@ -18,7 +18,9 @@
                         </el-tabs>
                     </el-col>
                 </el-row>
-                <el-carousel :autoplay=false indicator-position="outside" arrow="hover" height="350px" trigger="click" style="z-index: 0">
+                <div v-if="songList.length<36" v-loading="true" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background=transparent style="width:100%;height:350px;z-index:0;">
+                </div>
+                <el-carousel v-else :autoplay=false indicator-position="outside" arrow="hover" height="350px" trigger="click" style="z-index: 0">
                     <el-carousel-item v-for="page in 4" :key="page">
                         <el-row v-for="i in 3" :key="i" style="margin-top:20px;">
                             <el-col v-for="j in 3" :key="j" :offset="j > 1 ? 0 : 2" style="width:380px;">
@@ -69,7 +71,9 @@
                         </el-tabs>
                     </el-col>
                 </el-row>
-                <el-carousel :autoplay=false indicator-position="outside" arrow="hover" height="500px" trigger="click" style="z-index: 0">
+                <div v-if="albumList.length<40" v-loading="true" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background=transparent style="width:100%;height:500px;z-index:0;">
+                </div>
+                <el-carousel v-else :autoplay=false indicator-position="outside" arrow="hover" height="500px" trigger="click" style="z-index: 0">
                     <el-carousel-item v-for="page in 4" :key="page">
                         <el-row v-for="i in 2" :key="i" style="margin-top:20px;">
                             <el-col v-for="j in 5" :key="j" :offset="j > 1 ? 1 : 2" style="width:180px;">
@@ -106,7 +110,9 @@
                 <el-row>
                     <p align=center class="font_Menu">排行榜</p>
                 </el-row>
-                <el-row style="height:550px;">
+                <div v-if="list6.length<4" v-loading="true" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background=transparent style="width:100%;height:550px;z-index:0;">
+                </div>
+                <el-row v-else style="height:550px;">
                     <el-col :offset="2" style="width:175px;">
                         <el-card :body-style="{ padding: '0px'}" shadow="never" style="width:100%;">
                             <div class="listCard" data="list1" style="background:#D97C95;height:470px;" @mouseover="enterList('listButton1')" @mouseout="leaveList('listButton1')">
@@ -369,10 +375,6 @@ export default {
         getSongList: function(index){
             var song={id:'',name:'暂无数据',artistName:'',duration:'',image:emptyImage};
             this.songList=[];
-            for(var i=this.songList.length ; i < 36; i++)
-                {
-                    this.songList.push(song);
-                }
             this.axios.get(this.serverUrl+'/song/getNewSongs',{
                 params:{
                   region:index
@@ -397,10 +399,6 @@ export default {
         getAlbumList: function(index){
             var album={id:'',name:'暂无数据',artistName:'',image:emptyImage};
             this.albumList=[];
-            for(var i=this.albumList.length ; i < 40; i++)
-                {
-                    this.albumList.push(album);
-                }
             this.axios.get(this.serverUrl+'/album/getNewAlbums',{
                 params:{
                   region:index
@@ -422,33 +420,6 @@ export default {
         },
         getRank: function(index){
             var song={id:'',name:'暂无数据',artistName:''};
-            var emptyRank=[];
-            for(var i = emptyRank.length; i < 4; i++){
-                    emptyRank.push(song);
-            }
-            if(index == 1){
-                this.list1=emptyRank;
-            } 
-            else if(index == 2)
-            {
-                this.list2=emptyRank;
-            } 
-            else if(index == 3)
-            {
-                this.list3=emptyRank;
-            } 
-            else if(index == 4)
-            {
-                this.list4=emptyRank;
-            } 
-            else if(index == 5)
-            {
-                this.list5=emptyRank;
-            } 
-            else if(index == 6)
-            {
-                this.list6=emptyRank;
-            }
             this.axios.get(this.serverUrl+'/song/rank',{
                 params:{
                   type:index,
