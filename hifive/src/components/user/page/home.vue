@@ -3,7 +3,7 @@
         <v-head></v-head>
         <v-nav></v-nav>
         <div id="home">
-            <div :data="songList" v-loading="songList[0].id==''" style="background: linear-gradient(#F2F2F2, #FFFFFF);">
+            <div :data="songList" style="background: linear-gradient(#F2F2F2, #FFFFFF);">
                 <el-row>
                     <p align=center class="font_Menu">新歌首发</p>
                 </el-row>
@@ -55,7 +55,7 @@
                     </el-carousel-item>
                 </el-carousel>
             </div>
-            <div :data="albumList" v-loading="albumList[0].id==''" style="margin-top:30px;background: linear-gradient(#F2F2F2, #FFFFFF);">
+            <div :data="albumList" style="margin-top:30px;background: linear-gradient(#F2F2F2, #FFFFFF);">
                 <el-row>
                     <p align=center class="font_Menu">新碟首发</p>
                 </el-row>
@@ -102,7 +102,7 @@
                     </el-carousel-item>
                 </el-carousel>
             </div>
-            <div v-loading="list6[0].id==''" style="margin-top:30px;background: linear-gradient(#F2F2F2, #FFFFFF);">
+            <div style="margin-top:30px;background: linear-gradient(#F2F2F2, #FFFFFF);">
                 <el-row>
                     <p align=center class="font_Menu">排行榜</p>
                 </el-row>
@@ -381,11 +381,6 @@ export default {
         },
         getSongList: function(index){
             var song={id:'',name:'暂无数据',artistName:'',duration:'',image:emptyImage};
-            this.songList=[];
-            for(var i=this.songList.length ; i < 36; i++)
-            {
-                this.songList.push(song);
-            }
             this.axios.get(this.serverUrl+'/song/getNewSongs',{
                 params:{
                   region:index
@@ -409,11 +404,6 @@ export default {
         },
         getAlbumList: function(index){
             var album={id:'',name:'暂无数据',artistName:'',image:emptyImage};
-            this.albumList=[];
-            for(var i=this.albumList.length ; i < 40; i++)
-            {
-                this.albumList.push(album);
-            }
             this.axios.get(this.serverUrl+'/album/getNewAlbums',{
                 params:{
                   region:index
