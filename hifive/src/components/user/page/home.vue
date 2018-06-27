@@ -283,7 +283,7 @@ export default {
     },
     data(){
         return{
-            songList:[{id:''}],
+            songList:[],
         	albumList:[],
             list1:[],
             list2:[],
@@ -291,19 +291,6 @@ export default {
             list4:[],
             list5:[],
             list6:[],
-            emptyList:[{
-                name:'暂无数据',
-                artistName:'暂无数据',
-            },{
-                name:'暂无数据',
-                artistName:'暂无数据',
-            },{
-                name:'暂无数据',
-                artistName:'暂无数据',
-            },{
-                name:'暂无数据',
-                artistName:'暂无数据',
-            },]
         }
 
     },
@@ -414,7 +401,7 @@ export default {
                 for(var i = 0; i < this.albumList.length; i++){
                     this.albumList[i].image = this.serverUrl + this.albumList[i].image;
                 }
-                for(var i=this.songList.length ; i < 40; i++)
+                for(var i=this.albumList.length ; i < 40; i++)
                 {
                     this.albumList.push(album);
                 }
