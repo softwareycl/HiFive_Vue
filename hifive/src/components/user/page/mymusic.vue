@@ -25,7 +25,7 @@
                         <span class="tab1" slot="label">我喜欢</span>
                         <el-tabs value="1" style="width:100%;">
                             <el-tab-pane  name="1">
-                                <span class="tab2" slot="label">歌曲{{songList.length}}</span>
+                                <span class="tab2" slot="label">歌曲 {{songList.length}}</span>
                                 <div>
                                     <el-button type="primary" icon="el-icon-caret-right" style="background-color:#31C27C;margin-top:30px;" onmouseover="this.style.backgroundColor='#2CAF6F';" onmouseout="this.style.backgroundColor='#31C27C';" v-on:click="playAllSong">播放全部</el-button>
                                     <el-dropdown trigger="click" @command="handleCommand">
@@ -87,11 +87,11 @@
                                 </div>
                             </el-tab-pane>
                             <el-tab-pane name="2">
-                                <span class="tab2" slot="label">专辑{{albumList.length}}</span>
+                                <span class="tab2" slot="label">专辑 {{albumList.length}}</span>
                                 <div>
                                     <el-table :data="albumList" :stripe=true style="width: 100%;margin-top:30px;" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">    <el-table-column label="专辑">
                                             <template slot-scope="scope">
-                                                <router-link :to="{ path: '/user/songdetail', query: { id: scope.row.id }}">
+                                                <router-link :to="{ path: '/user/albumdetail', query: { id: scope.row.id }}">
                                                     <span class="font_link" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.name}}</span>
                                                 </router-link>
                                             </template>
@@ -119,7 +119,7 @@
                                         </el-table-column>
                                         <el-table-column label="歌手">
                                             <template slot-scope="scope">
-                                                <router-link :to="{ path: '/user/albumdetail', query: { id: scope.row.albumId }}">
+                                                <router-link :to="{ path: '/user/artistdetail', query: { id: scope.row.artistId }}">
                                                     <span class="font_link" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.artistName}}</span>
                                                 </router-link>
                                             </template>
@@ -143,7 +143,7 @@
                            <el-table :data="playlistList" :stripe=true style="width: 100%;margin-top:10px;" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">    
                             <el-table-column label="歌单">
                                 <template slot-scope="scope">
-                                    <router-link :to="{ path: '/user/songdetail', query: { id: scope.row.id }}">
+                                    <router-link :to="{ path: '/user/playlistdetail', query: { id: scope.row.id }}">
                                         <span class="font_link" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.name}}</span>
                                     </router-link>
                                 </template>
