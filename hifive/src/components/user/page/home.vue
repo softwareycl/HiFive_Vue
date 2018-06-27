@@ -283,7 +283,7 @@ export default {
     },
     data(){
         return{
-            songList:[],
+            songList:[{id:''}],
         	albumList:[],
             list1:[],
             list2:[],
@@ -381,10 +381,6 @@ export default {
         },
         getSongList: function(index){
             var song={id:'',name:'暂无数据',artistName:'',duration:'',image:emptyImage};
-            for(var i=this.songList.length ; i < 36; i++)
-            {
-                this.songList.push(song);
-            }
             this.axios.get(this.serverUrl+'/song/getNewSongs',{
                 params:{
                   region:index
@@ -408,10 +404,6 @@ export default {
         },
         getAlbumList: function(index){
             var album={id:'',name:'暂无数据',artistName:'',image:emptyImage};
-            for(var i=this.albumList.length ; i < 40; i++)
-            {
-                this.albumList.push(album);
-            }
             this.axios.get(this.serverUrl+'/album/getNewAlbums',{
                 params:{
                   region:index
@@ -433,41 +425,6 @@ export default {
         },
         getRank: function(index){
             var song={id:'',name:'',artistName:''};
-            if(index == 1){
-                for(var i=this.list1.length;i<4;i++){
-                    this.list1.push(song);
-                }
-            } 
-            else if(index == 2)
-            {
-                for(var i=this.list2.length;i<4;i++){
-                    this.list2.push(song);
-                }
-            } 
-            else if(index == 3)
-            {
-                for(var i=this.list3.length;i<4;i++){
-                    this.list3.push(song);
-                }
-            } 
-            else if(index == 4)
-            {
-                for(var i=this.list4.length;i<4;i++){
-                    this.list4.push(song);
-                }
-            } 
-            else if(index == 5)
-            {
-                for(var i=this.list5.length;i<4;i++){
-                    this.list5.push(song);
-                }
-            } 
-            else if(index == 6)
-            {
-                for(var i=this.list6.length;i<4;i++){
-                    this.list6.push(song);
-                }
-            }
             this.axios.get(this.serverUrl+'/song/rank',{
                 params:{
                   type:index,
