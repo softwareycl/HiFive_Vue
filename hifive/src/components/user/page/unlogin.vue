@@ -48,10 +48,10 @@
 										</el-form-item>
 										<el-form-item label="密保问题" prop="securityQuestion">
 											<el-select v-model="registerUser.securityQuestion" placeholder="请选择密保问题">
-												<el-option label="你的家乡在哪里？" value="你的家乡在哪里？"></el-option>
-												<el-option label="你的父亲名字？" value="你的父亲名字？"></el-option>
-												<el-option label="你的母亲名字？" value="你的母亲名字？"></el-option>
-												<el-option label="你的生日？" value="你的生日？"></el-option>
+												<el-option label="你的家乡在哪里？" value="1"></el-option>
+												<el-option label="你的父亲名字？" value="2"></el-option>
+												<el-option label="你的母亲名字？" value="3"></el-option>
+												<el-option label="你的生日？" value="4"></el-option>
 											</el-select>
 										</el-form-item>
 										<el-form-item label="密保答案" prop="securityAnswer">
@@ -188,7 +188,6 @@
 							this.$router.push('/admin/artist');
 						}
 						if(tip == 1) {
-							alert("登录成功");
 							this.dialogFormVisible = false;
 							this.$router.push('/user/mymusic');
 						}
@@ -213,7 +212,7 @@
 						name: this.registerUser.name,
 						gender: parseInt(this.registerUser.gender),
 						pwd: this.registerUser.pwd,
-						securityQuestion: this.registerUser.securityQuestion,
+						securityQuestion: parseInt(this.registerUser.securityQuestion),
 						securityAnswer: this.registerUser.securityAnswer
 					})
 					.then(res => {
@@ -221,7 +220,7 @@
 						if(tip == true) {
 							alert("注册成功");
 							this.dialogFormVisible = false;
-							this.$router.push('/user/unlogin');
+							this.$router.push('/');
 						}
 						else if(tip == false) {
 							alert("注册失败，请重新注册");
