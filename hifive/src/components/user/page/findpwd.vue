@@ -20,38 +20,38 @@
 		</div>
 		<div class="Step">
 			<template>
-<!-- 				<div id = '1' style="width: 400px; height: 50px; margin: auto;">
-				<el-form>
-					<el-form-item label="邮箱：">
-						<el-input  style="width: 300px;" placeholder="请输入邮箱" prefix-icon="el-icon-search" v-model="input" clearable></el-input>
-					</el-form-item>
-				</el-form>
-				</div>  -->
-<!-- 				<div id = '2' style="width: 400px; height: 100px; margin: auto;">
-					<el-form>
-						<el-form-item label="密保问题：">
-							<li style="list-style-type:none">您母亲的名字是?</li>
-						</el-form-item>
-						<el-form-item label="密保答案：">
-							<el-input  style="width: 300px;" placeholder="请输入答案" prefix-icon="el-icon-search" v-model="input" clearable></el-input>
+				<div id = 'div1' style="width: 400px; height: 50px; margin: auto; display: block;">
+					<el-form :model="email" :rules="rules1" ref="email" label-width="85px">
+						<el-form-item label="邮箱" prop="id">
+							<el-input style="width: 300px" v-model="email.id" placeholder="请输入邮箱" prefix-icon="el-icon-search" clearable></el-input>
 						</el-form-item>
 					</el-form>
-				</div>  -->
-				<div id = '3' style="width: 390px; height: 100px; margin: auto;">
-					<el-form>
-						<el-form-item label="新密码：">
-							<el-input  style="width: 300px; float: right;" placeholder="请输入新密码" prefix-icon="el-icon-search" v-model="input" clearable></el-input>
+				</div> 
+				<div id = 'div2' style="width: 400px; height: 100px; margin: auto; display: none;">
+					<el-form :model="security" :rules="rules2" ref="security">
+						<el-form-item label="密保问题：" prop="securityQuestion">
+							<li style="list-style-type:none">{{security.securityQuestion}}</li>
 						</el-form-item>
-						<el-form-item label="确认密码：">
-							<el-input  style="width: 300px; float: right;" placeholder="请确认新密码" prefix-icon="el-icon-search" v-model="input" clearable></el-input>
+						<el-form-item label="密保答案：" prop="securityAnswer">
+							<el-input  style="width: 300px;" placeholder="请输入答案"  v-model="security.securityAnswer" clearable></el-input>
+						</el-form-item>
+					</el-form>
+				</div>
+				<div id = 'div3' style="width: 400px; height: 100px; margin: auto; display: none;">
+					<el-form :model="password" :rules="rules3" ref="password">
+						<el-form-item label="新密码：" prop="newPwd">
+							<el-input  style="width: 300px; float: right;" placeholder="请输入新密码" v-model="password.newPwd" clearable></el-input>
+						</el-form-item>
+						<el-form-item label="确认密码：" prop="confirmedNewPwd">
+							<el-input  style="width: 300px; float: right;" placeholder="请确认新密码" v-model="password.confirmedNewPwd" clearable></el-input>
 						</el-form-item>
 					</el-form>
 				</div>
 			</template>
 		</div>
-		<div style="width: 200px; margin: auto; margin-top: 100px">
-			<el-button @click="last">上一步</el-button>
-			<el-button @click="next">下一步</el-button>			
+		<div style="width: 200px; margin: auto; margin-top: 50px">
+			<el-button @click="last()">上一步</el-button>
+			<el-button @click="next()">下一步</el-button>			
 		</div>
 	</div>
 	<v-foot></v-foot>
@@ -66,22 +66,225 @@
       vFoot
     },
 
-    data() {
+    data() {		
+     	var validatePass = (rule, value, callback) => {
+			var reg = /^(?=.*?[A-Za-z])(?=.*?[0-9]).{6,20}$/
+				// alert(reg.test(value));
+			if (value === '') {
+				callback(new Error('请输入密码'));
+			} else if(!reg.test(value)) {
+				callback(new Error('输入密码要6-20位,要包含字母和数字'));
+			} else {
+				callback();
+			}
+		};
+		var validatePass2 = (rule, value, callback) => {
+			if (value === '') {
+				callback(new Error('请再次输入密码'));
+			} else if (value !== this.password.newPwd) {
+				callback(new Error('两次输入密码不一致!'));
+			} else {
+				callback();
+			}
+		};
       return {
         active: 0,
-        input: '',
-      };
-    },
+        flag: 'false',
+        email: {
+			id: '',
+		},
+		security: {
+			securityQuestion: '你的家乡在哪里?',
+			securityAnswer: '',
+		},
+		password: {
+		    newPwd: '',
+		    confirmedNewPwd: '',
+		},
+		rules1: {
+			id: [
+			{ required: true, message: '请输入邮箱', trigger: 'blur' },
+			{ type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
+			],
+		},
+		rules2: {
+			securityQuestion: [{required: true}],
+			securityAnswer: [
+			{ required: true, message: '请输入答案', trigger: ['blur', 'change'] },
+			],
+		},
+		rules3: {
+			newPwd:[{required: true, validator: validatePass, trigger: ['blur', 'change']}],
+			confirmedNewPwd:[{required:true, validator: validatePass2, trigger: ['blur', 'change']}],
+		}
+		}
+      },
+    
+    mounted(){
+        this.getArtistInfo(this.artist.id);
+      },
 
     methods: {
       next() {
-        if (this.active++ > 2) this.active = 0;
+      	if(this.active == 0) this.checkUserExisted(this.email.id);
+      	if(this.active == 1) this.checkAnswer(this.email.id, this.security.securityAnswer);
+      	if(this.active == 2) this.resetPassword(this.password.newPwd);
+        if (this.active++ > 2) this.active = 3;
+        //alert(act);
+        this.hidden(this.active);
       },
       last() {
       	if (this.active-- < 1) this.active = 0;
-      }
+      	this.hidden(this.active);
+      },
+      hidden: function(_active){
+      	//alert(111111);
+      	if(_active == 0) {
+        	document.getElementById('div1').style.display = 'block';
+        	document.getElementById('div2').style.display = 'none';
+        	document.getElementById('div3').style.display = 'none';
+      	} else if(_active == 1) {
+        	document.getElementById('div2').style.display = 'block';
+        	document.getElementById('div1').style.display = 'none';
+        	document.getElementById('div3').style.display = 'none';
+        } else if(_active == 2) {
+        	document.getElementById('div3').style.display = 'block';
+        	document.getElementById('div1').style.display = 'none';
+        	document.getElementById('div2').style.display = 'none';
+        } else if(_active == 3) {
+        	this.$message({
+          		message: '密码修改成功！页面将在5秒后跳转',
+          		type: 'success'
+        	});
+        	setTimeout(function () { this.location.href = "../../unlogin.vue" }, 4000);
+        }
+      },
+
+      checkUserExisted: function(_email){
+      	this.checkInput('email')
+      	// if(_email != '') {
+      		if(this.flag){
+		  		this.flag = false;
+		  	    this.axios.get(this.serverUrl+'/user/checkUserExisted',{
+		            params:{
+		              id:_email,
+		            }
+		          })
+		  		  .then(res => {
+		  		  	var tip = res.data;
+		  		  	if(!tip) {
+		  		  		this.$message({
+          					message: '用户不存在！',
+          					type: 'error'
+        				});
+		  		  		this.active = -1;
+		  		  	}
+		  		  	//
+		  		  	//可能有问题
+		  		  	//
+		  		  	var ID = this.email.id;
+		  		  	this.getQuestion(ID);
+		  		  })
+		  		  .catch(function (error) {
+							console.log(error);
+						});
+      		} else{
+      			this.active = -1;
+      			}
+      	// } else {
+      	// 		this.active = -1;
+      	// 	}
+      },
+
+      getQuestion: function(_email){
+      	this.axios.get(this.serverUrl+'/user/getQuestion',{
+                params:{
+                  id:_email,
+                }
+              })
+      		.then(res => {
+      			this.security.securityQuestion = res.data;
+      		})
+      		.catch(function (error) {
+						console.log(error);
+					});
+      },
+
+      checkAnswer: function(_id, _answer){
+      	this.checkInput('security');
+      	// if(_answer != ''){
+      		if(this.flag){
+      			this.flag = false;
+      			this.axios.post(this.$store.state.serverUrl+'/user/checkAnswer',{
+                  id:_id,
+                  securityAnswer:_answer,
+              })
+      		.then(res => {
+      			var isright = res.data;
+      			if(!isright){
+      				this.$message({
+      					message: '答案错误！',
+      					type: 'error'
+    				});
+      				this.active = 0;
+      			}
+      		})
+      		.catch(function (error) {
+				console.log(error);
+			});
+      	} else {
+      		this.active = 0;
+      		}
+      	// } else {
+      	// 	this.active = 0;
+      	// }
+      },
+
+      resetPassword: function(_newPwd){
+      	this.checkInput('password');
+      	if(this.flag){
+      		this.flag = false;
+  			this.axios.post(this.$store.state.serverUrl + '/user/resetPassword',{
+              newPwd:this.password.newPwd, 
+          })
+  		.then(res => {
+  			var isright = res.data;
+  			if(!isright){
+  				this.$message({
+  					message: '密码修改失败！',
+  					type: 'error'
+				});
+  				this.active = 1;
+  			} else {
+  				this.$message({
+  					message: '密码修改成功！',
+  					type: 'success'
+				});
+  			}
+  		})
+  		.catch(function (error) {
+					console.log(error);
+				});
+      	} else {
+      		this.active = 1;
+      		}
+      },
+
+      checkInput: function(formName){
+      	this.$refs[formName].validate((valid) => {
+      		if(valid) {
+      			this.flag = true;
+      			return true;
+      		} else {
+      			console.log('error submit!!');
+      			this.flag = false;
+      			return false;
+      		}
+      	});
+      },
     }
-  }
+}
+
 </script>
 
 <style>
@@ -90,7 +293,6 @@
 		margin-bottom: 50px;
 	}
 	.Nav{
-		width: 1500px;
 		height: 60px;
 		background-color: #d3dce6;
 		margin-bottom: 50px;
