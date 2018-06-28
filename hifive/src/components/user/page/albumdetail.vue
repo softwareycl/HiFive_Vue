@@ -446,7 +446,7 @@
               this.$set(this.songList[i],'isopen',false);
             }
             this.$set(this.album,'isCollected',false);
-            if(isLogin){
+            if(this.isLogin){
               this.getIsCollected();
             }
           })
@@ -455,7 +455,7 @@
           });
         },
         getPlaylistList:function(){
-          if(isLogin){
+          if(this.isLogin){
             this.playlistList=this.$store.state.playlistList;
           }
           else{
