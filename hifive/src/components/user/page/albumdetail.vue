@@ -463,11 +463,13 @@
           }
         },
         getIsCollected:function(){
+          var flag=false;
           for(var i=0;i<this.$store.state.likeAlbums.length;i++){
             if(this.album.id==this.$store.state.likeAlbums[i].id){
-              this.album.isCollected=true;
+              flag=true;
               break;
             }
+            this.album.isCollected=flag;
           }
         },
       },
