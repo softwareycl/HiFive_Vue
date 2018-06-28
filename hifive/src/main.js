@@ -9,6 +9,15 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import Vuex from 'vuex'
 import store from './store/index'
+import './theme/button.css'
+import './theme/slider.css'
+import './theme/menu.css'
+import './theme/menu-item.css'
+import './theme/tabs.css'
+import './theme/pagination.css'
+import './theme/dropdown.css'
+import './theme/dropdown-item.css'
+import './theme/dropdown-menu.css'
 
 Vue.config.productionTip = false
 Vue.use(VueAxios, axios)
