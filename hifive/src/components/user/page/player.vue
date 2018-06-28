@@ -25,13 +25,19 @@
       </el-col>
       <el-col :span="2">
         <div class="songImg" >
-          <img height="50" width="50" :src="currentSong.image" alt="" onerror="this.style.display='none'"/>
+          <router-link :to="{path:'/user/songdetail',query:{id:currentSong.id}}">
+            <img id="img" height="50" width="50" :src="currentSong.image" alt="" onerror="this.style.display='none'"/>
+          </router-link>
         </div>
       </el-col>
       <el-col :span="13">
       <div class="songInfo">  
-        <el-button class="songInfo2" type="text" @click="songdetail">{{currentSong.name}}</el-button>
-        <el-button class="songInfo2" type="text" @click="artistdetail">{{currentSong.artistName}}</el-button>
+        <router-link :to="{path:'/user/songdetail',query:{id:currentSong.id}}">
+          <el-button class="songInfo2" type="text">{{currentSong.name}}</el-button>
+        </router-link>
+        <router-link :to="{path:'/user/artistdetail',query:{id:currentSong.artistId}}">
+          <el-button class="songInfo2" type="text">{{currentSong.artistName}}</el-button>
+        </router-link>
       </div>
       <div class="tooltip">
         <el-slider v-model="sliderTime" :format-tooltip="formatProcessToolTip" @change="changeCurrentTime" class="slider"></el-slider>
@@ -42,22 +48,32 @@
       </el-col>
       <!--以下为弹出框内容-->
       <el-popover
+      ref=""
         placement="top-start"
         width="1250"
-        trigger="click">
+        trigger="click"
+        @show="showLyrics">
         <div class="bg">
-        <div class="box">
         <el-container>
 
           <el-main>
             <div class="playlist">
-              <h2 class="playlistLabel">播放列表</h2>
+              <div class="playlistLabel">
+                <el-col :span="20">
+                  <h2>播放列表</h2>
+                </el-col>
+                <el-col :span="4">
+                  <el-button class="el-icon-delete" @click="deleteAll" circle></el-button>
+                </el-col>
+
+            </div>
               <!--播放列表表格-->
               <div class="songTable">
               <el-table
                 :data="songList"
                 style="width: 100%"
-                max-height="500" min-height="500">
+                max-height="455" min-height="455"
+                @row-dblclick="clickSongRow">
               <el-table-column prop="index" width="50" type="index">
               </el-table-column>
               <el-table-column               
@@ -81,14 +97,13 @@
           </el-main>
           <el-aside width="40%">
             <div class="lyrics">
-              <h3>{{currentSong.name}}</h3>
+              <h2 id="lyricsTitle">{{currentSong.name}}</h2>
               <div>
-                <textarea id="lyrics">{{currentSong.lyricsPath}}</textarea>
+                <textarea id="lyrics" disabled="disabled" ></textarea>
               </div>
             </div>
           </el-aside>
         </el-container>
-      </div>
       </div>
       <el-button class="playlistbtn" slot="reference" icon="el-icon-document" circle></el-button>
 
@@ -140,34 +155,10 @@ export default {
       },
     },
     mounted() {
-      // this.axios.get("http://localhost:8080/hifive/lyrics/Maroon5/Red%20Pill%20Blues/Whiskey.txt", {
-      //     params: {
-      //     }
-      //   })
-      //     .then(res => {
-      //     console.log(res.data);
-
-      //   })
-      //   .catch(function (error) {
-      //     console.log(error);
-      //   });
-
-
-      // var xmlhttp=new XMLHttpRequest();
-      // xmlhttp.onreadystatechange=function()
-      // {
-      //   var textHTML=xmlhttp.responseText;
-      //   alert(textHTML);
-      //   textHTML=textHTML.replace(/(\n)+|(\r\n)+/g,"<br>");
-      //   document.getElementById("lyrics").innerHTML=textHTML;
-      // }
-      // xmlhttp.open("GET","http://localhost:8080/hifive/lyrics/Maroon5/Red%20Pill%20Blues/Whiskey.txt",true);
-      // xmlhttp.overrideMimeType("text/html;charset=gb2312");
-      // xmlhttp.send();
- 
     },
 
    methods: {
+
     // 控制音频的播放与暂停
     startPlayOrPause () {
       return this.audio.playing ? this.pause() : this.play()
@@ -216,12 +207,6 @@ export default {
     index = parseInt(this.audio.maxTime / 100 * index)
     return '进度条: ' + realFormatSecond(index)
     }, 
-    //点击单曲名跳转至单曲详情
-    songdetail(){
-      this.$router.push({
-          path: '/page/songdetail'
-      });
-    },
     //点击歌手名跳转至歌手详情
     artistdetail(){
       this.$router.push({
@@ -246,30 +231,43 @@ export default {
         this.nextSong()
       },
       showLyrics: function(){
-        this.axios.get(this.serverUrl + "/song/getInfo", {
+        if(this.currentSong.name === undefined){
+          document.getElementById("lyricsTitle").innerHTML="无播放歌曲";
+        }
+        this.axios.get(this.currentSong.lyricsPath, {
           params: {
-            id: _id,
           }
         })
-          .then(res => {
+        .then(res => {
+          document.getElementById("lyrics").innerHTML=res.data;
           console.log(res.data);
-          this.song = res.data;
-          this.song.lyricsPath = this.serverUrl + this.song.lyricsPath;
 
-          var xmlhttp=new XMLHttpRequest();
-          xmlhttp.onreadystatechange=function()
-          {
-            var textHTML=xmlhttp.responseText;
-            textHTML=textHTML.replace(/(\n)+|(\r\n)+/g,"<br>");
-            document.getElementById("lyr").innerHTML=textHTML;
-          }
-          xmlhttp.open("GET",this.song.lyricsPath,true);
-          xmlhttp.overrideMimeType("text/html;charset=gb2312");
-          xmlhttp.send();
         })
         .catch(function (error) {
           console.log(error);
         });
+
+      },
+      clickSongRow: function(row, event){
+        var songId = row.id;
+        var index;
+        for(var i = 0; i < this.$store.state.songList.length; i++){
+          if(this.$store.state.songList[i].id == songId){
+            index = i;
+            break;
+          }
+        }
+        this.$store.state.currentSong = this.$store.state.songList[index];
+        this.$store.state.currentIndex = index;
+      },
+      deleteAll: function(){
+        this.$store.state.songList = [];
+        this.$store.state.currentSong = {filePath: ""};
+        this.$store.state.currentIndex = 0;
+        this.onPause();
+        this.audio.maxTime = 0;
+        document.getElementById("lyricsTitle").innerHTML="无播放歌曲";
+        document.getElementById("lyrics").innerHTML = "暂无歌词";
       }
   },
   filters: {
@@ -292,10 +290,12 @@ export default {
   margin-bottom:50px;
 }
 .bg{
-  height:100%;
+  height:550px;
   width:100%;
   background:url("http://publicdomainarchive.com/wp-content/uploads/2016/01/public-domain-images-free-stock-photos-002.jpg") 0 0 no-repeat;
+
 }
+
 .playerFooter {
     color: #333;
     text-align: center;
@@ -314,26 +314,30 @@ export default {
     margin-left:10px;
   }
 .playlistLabel {
-  padding-top: 0px;
-  margin-top: 0px;
+  padding-left:41%;
+  padding-top: 1px;
+  margin: 0 auto;
 }
 .songTable{
-  margin-top:20px;
+  margin-top:56px;
   text-align:left;
   margin-left:0px;
 }
   .lyrics {
     color: #333;
     text-align: center;
-    line-height: 10px;
-    margin-top:30px;
+    margin:0 auto;
   }
   .songImg{
   border-color:white;
   padding-top:5px;
   padding-left:25px;
 }
-
+#img{
+  border-color:white;
+  border-width: 0;
+  border-style: none;
+}
 .time{    
   width:50px;
   height:40px;
@@ -348,6 +352,7 @@ export default {
   padding-left:10px;
   font-size:18px;
   text-align: left;
+  color: #31C27C;
 }
 
 .btn{
@@ -355,12 +360,22 @@ export default {
   width:40px;
   height:40px;
   margin-left:20px;
+  color: #31C27C;
 }
 #lyrics{
-  margin:0,auto;
-  width:80%;
-  min-height:300px;
-  max-height:300px;
+  margin-right:20px;
+  width:90%;
+  min-height:450px;
+  max-height:450px;
+  background-color: white;
+  border: none;
+  font: Microsoft YaHei, 黑体, PingFang SC;
+}
+#lyricsTitle{
+  padding-bottom:15px;
+  margin-right:20px;
+  margin-top:28px;
+  margin-bottom:5px;
 }
 .tooltip{
   margin-top:-20px;
@@ -371,5 +386,7 @@ export default {
   margin-left:-80px;
   margin-top:0.8%;
 }
-
+.slider{
+  color:#31c27c;
+}
 </style>

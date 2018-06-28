@@ -14,10 +14,7 @@
                 <el-menu
                 default-active="1"
                 class="rankMenu"
-                mode="vertical"
-                background-color="#f5fffa"
-                text-color="#2CAF6F"
-                active-text-color="#d02090">
+                mode="vertical">
                     <el-menu-item index="1" @click="rankDisplay(1)">
                         新歌榜
                     </el-menu-item>
@@ -54,15 +51,17 @@
                 <el-dropdown trigger="click" id="dropdown" @command="handleAlbumCommand">
                 <el-button icon="el-icon-plus" v-on:click="getPlaylistList" >添加到<i class="el-icon-arrow-down el-icon--right"></i>
                 </el-button>
+
                 <el-dropdown-menu slot="dropdown" :data="playlistList">
-                    <el-dropdown-item command="playqueue">播放队列</el-dropdown-item>
-                    <div v-if="state">
-                    <el-dropdown-item disabled divided>我喜欢</el-dropdown-item>
-                    <el-dropdown-item v-for="playlist in playlistList" :key="playlist.ID" :command='{type:"playlist",params:playlist.ID}'>{{playlist.name}}</el-dropdown-item>
-                    <el-dropdown-item command="newplaylist" divided>添加到新歌单</el-dropdown-item>
+                    <el-dropdown-item command="playqueue" @click.native ="addAllToSongList()">播放队列</el-dropdown-item>
+                    <div v-if="isLogin">
+                      <el-dropdown-item disabled divided>我喜欢</el-dropdown-item>
+                      <el-dropdown-item v-for="playlist in playlistList" :key="playlist.id" :command='{type:"playlist",params:playlist.id}'>{{playlist.name}}</el-dropdown-item>
+                      <el-dropdown-item command="newplaylist" divided>添加到新歌单</el-dropdown-item>
                     </div>
                     <el-dropdown-item v-else command="login" divided>登录后添加到歌单</el-dropdown-item>
                 </el-dropdown-menu>
+
                 </el-dropdown>
 
                 <el-table
@@ -75,7 +74,7 @@
                     <el-table-column prop="index" width="50" type="index" :index="indexMethod"></el-table-column>
                     <el-table-column prop="name" label="歌曲" width="250">
                         <template slot-scope="scope">
-                            <router-link to="/user/songdetail">
+                            <router-link :to="{path:'/user/songdetail',query:{id:songs[scope.$index].id}}">
                                 <el-button type="text" style="color:black;cursor:pointer;text-decoration: none" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.name}}</el-button>
                             </router-link>
                         </template>
@@ -91,7 +90,7 @@
                                     <el-button icon="el-icon-plus" circle></el-button>
                                     <el-dropdown-menu slot="dropdown" :data="playlistList">
                                     <el-dropdown-item command="playqueue" @click.native ="addToSongList(scope.$index)">播放队列</el-dropdown-item>
-                                    <div v-if="state">
+                                    <div v-if="isLogin">
                                         <el-dropdown-item disabled divided>我喜欢</el-dropdown-item>
                                         <el-dropdown-item v-for="playlist in playlistList" :key="playlist.ID" :command='{type:"playlist",param1:playlist.ID,param2:scope.row}'>{{playlist.name}}</el-dropdown-item>
                                         <el-dropdown-item command="newplaylist" divided>添加到新歌单</el-dropdown-item>
@@ -122,7 +121,7 @@
 
                     <el-table-column prop="artist" label="歌手" width="200">
                         <template slot-scope="scope">            
-                            <router-link to="/user/artistdetail">
+                            <router-link :to="{path:'/user/artistdetail',query:{id:songs[scope.$index].artistId}}">
                                 <el-button type="text" style="color:black;cursor:pointer;text-decoration:none" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.artistName}}
                                 </el-button>
                             </router-link>
@@ -180,15 +179,15 @@ export default{
             userID:'',
             state:true,
             playlistList:[{
-                ID:'1',
+                id:'1',
                 name:'1'
               },
               {
-                ID:'2',
+                id:'2',
                 name:'2'
               },
               {
-                ID:'3',
+                id:'3',
                 name:'3'
             }],
         }
@@ -201,6 +200,9 @@ export default{
     computed: {
       serverUrl() {
         return this.$store.state.serverUrl;
+      },
+      isLogin(){
+        return this.$store.state.isLogin;
       }
     },
     mounted() {
@@ -274,7 +276,18 @@ export default{
             });
         },
         downloadSong:function(row){
-        //提交歌曲ID，无返回
+            if(this.isLogin){
+                window.location.href = this.serverUrl + "/download/downloadSong?id=" + row.id;
+            } else {
+                //询问要不要登录
+                this.$confirm('还未登录,是否现在登录?', '提示', {
+                  confirmButtonText: '确定',
+                  cancelButtonText: '取消',
+                }).then(() => {
+                  window.location.href='/';
+                }).catch(() => {
+                });
+            }
         },
         handleSongCommand:function(command){
             if(command=="login"){
@@ -293,14 +306,20 @@ export default{
             }
         },
         playAllSong:function(){
-        //传递所有歌曲ID给player.vue
+            //传递所有歌曲ID给player.vue
+            this.$store.state.songList = [];
+            for(var i = 0; i < this.songs.length; i++){
+                this.$store.state.songList.push(this.songs[i]);
+            }
+            this.$store.state.currentSong = this.songs[0];
+            this.$store.state.currentIndex = 0;
         },
         handleClose(done) {
-        this.$confirm('确认关闭？')
-            .then(_ => {
-              done();
-            })
-            .catch(_ => {});
+            this.$confirm('确认关闭？')
+                .then(_ => {
+                  done();
+                })
+                .catch(_ => {});
         },
         handleMouseEnter:function(row, column, cell, event){
             // alert(row.id);
@@ -357,6 +376,33 @@ export default{
                     }
                 }
                 this.$store.state.songList.push(song);
+            }
+        },
+
+        addAllToSongList: function(){
+            if(this.$store.state.songList.length == 0){
+                this.$store.state.songList = [];
+                for(var i = 0; i < this.songs.length; i++){
+                    this.$store.state.songList.push(this.songs[i]);
+                }
+                this.$store.state.currentSong = this.$store.state.songList[0];
+                this.$store.state.currentIndex = 0;
+            } else {
+                for(var m = 0; m < this.songs.length; m++){
+                    var song = this.songs[m];
+                    var songId = song.id;
+                    if(this.$store.state.currentSong.id != songId){
+                        for(var i = 0; i < this.$store.state.songList.length; i++){
+                            if(this.$store.state.songList[i].id == songId){
+                                this.$store.state.songList.splice(i, 1);
+                                if(i < this.$store.state.currentIndex)
+                                    this.$store.state.currentIndex=this.$store.state.currentIndex-1;
+                                break;
+                            }
+                        }
+                        this.$store.state.songList.push(song);
+                    }
+                }
             }
         },
 
