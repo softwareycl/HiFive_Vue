@@ -3,10 +3,10 @@ const state = {
   userId: "",
   likeSongs: [],
   likeAlbums: [],
+  playlist: [],
   
   song: {},
   album: {},
-  playlist: {},
   artist: {},
 
   serverUrl: "http://192.168.20.95:8080/hifive",
