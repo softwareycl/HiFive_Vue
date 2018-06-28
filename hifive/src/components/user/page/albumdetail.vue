@@ -241,7 +241,7 @@
                   break;
                 }
               }
-              this.album.isCollected=true;
+              this.album.isCollected=false;
               this.$message({
                 showClose: true,
                 message: '取消收藏成功',
