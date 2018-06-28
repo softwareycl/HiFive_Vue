@@ -259,6 +259,7 @@ export default {
         }
         this.$store.state.currentSong = this.$store.state.songList[index];
         this.$store.state.currentIndex = index;
+        this.showLyrics();
       },
       deleteAll: function(){
         this.$store.state.songList = [];
