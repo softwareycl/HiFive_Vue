@@ -192,7 +192,7 @@
           if(this.isLogin){
             this.axios.get(this.serverUrl+'/user/likeAlbum',{
               params:{
-                id:this.album.id
+                albumId:this.album.id
               }
             })
             .then(response =>{
@@ -203,6 +203,7 @@
                   message: '收藏专辑成功',
                   type: 'success'
                 });
+                this.$store.state.likeAlbums.push(this.album);
               }
               else{
                 this.$message({
@@ -230,7 +231,7 @@
         cancelCollect:function(){ 
           this.axios.get(this.serverUrl+'/user/unlikeAlbum',{
             params:{
-              id:this.album.id
+              albumId:this.album.id
             }
           })
           .then(response =>{
@@ -241,6 +242,12 @@
                 message: '取消收藏成功',
                 type: 'success'
               });
+              for(var i=0;i<this.$store.state.likeAlbums.length;i++){
+                if(this.$store.state.likeAlbums[i].id==this.album.id){
+                  this.$store.state.likeAlbums.splice(i,1);
+                  break;
+                }
+              }
             }
             else{
               this.$message({
