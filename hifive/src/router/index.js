@@ -99,6 +99,10 @@ export default new Router({
       component: resolve => require(['../components/user/page/black.vue'], resolve)
     },
     {
+      path: '/user/black_login',
+      component: resolve => require(['../components/user/page/black_login.vue'], resolve)
+    },
+    {
       path: '/admin/black',
       component: resolve => require(['../components/admin/black.vue'], resolve)
     },
