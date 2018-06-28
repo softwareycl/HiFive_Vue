@@ -3,10 +3,10 @@
       <v-head></v-head>
       <v-nav></v-nav>
       <div class="main" id="artistdetail" :data="artist">
-      	<el-row :gutter="50">
+      	<el-row :gutter="100">
       		<el-col :span="4" :offset="4">
       			<div>
-      				<img align=right style="float:left;margin-top:30px; border-radius:70%; height: 230px; overflow:hidden;" :src=artist.image>
+      				<img align=right style="float:left;margin-top:30px; border-radius:100%; width:230px; height: 230px; overflow:hidden;" :src=artist.image>
       			</div>
       		</el-col>
       		<el-col :span="8">
@@ -36,7 +36,7 @@
       	<el-row :gutter="50">
       		<el-col :span="15" :offset="4">
       			<div style="margin: auto; ">
-      				<el-table :data="songListView" style="height: 690px;width: 100%; margin-left:50px;" stripe="true" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">
+      				<el-table :data="songListView" style="height: 100%; width: 100%; margin-left:50px;" stripe="true" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">
       					<el-table-column type="index" label= " " :index="indexMethod"></el-table-column>
       					<el-table-column label="歌曲">
       						<template slot-scope="scope">
@@ -81,7 +81,7 @@
                  		 		<span v-if="scope.row.Flag"> <el-button icon="el-icon-download" circle v-on:click="downloadSong(scope.row)"></el-button> </span>
                 		</template>
               </el-table-column>
-       					<el-table-column label="专辑">
+       					<el-table-column label="专辑" width=300>
       						<template slot-scope="scope">
                     <router-link :to="{path:'/user/albumdetail',query:{id:scope.row.albumId}}">
       							<a href="" style="margin-right: 50px; color:black;cursor:pointer;text-decoration:none" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.albumName}}</a>
@@ -97,9 +97,9 @@
         <div style="width:900px; margin: auto;">
           <p style="font-family:'Microsoft YaHei'; font-size:x-large;">专辑</p>
         </div>
-        <el-row style="width:1000px; height: 200px; margin: auto">
+        <el-row style="width:1100px; height: 200px; margin: auto; margin-left: 250px;">
           <ul id="albumlist" data="albumView">
-            <li v-for="item in albumView" class="albumli" style="list-style: none; width: 150px">
+            <li v-for="item in albumView" class="albumli" style="list-style: none;">
               <div class="album">
                 <router-link :to="{path:'/user/albumdetail',query:{id:item.id}}">
                   <img class="albumImage" :src=item.image alt=""  @click="setAlbum(item)">
@@ -188,34 +188,40 @@
       /*每页显示十行*/
       S_pagination: function(_page, _songList){
         this.songPageCount = Math.ceil(parseFloat(_songList.length) / 10);
-
         if(_page != this.songPage){
           this.songPage = _page;
           this.songListView.splice(0,this.songListView.length);
         } 
+  
         var len = _songList.length < 10 ? _songList.length : 10;
         for(var i = 0; i < len; i++){
-            var song = _songList[((this.songPage - 1)*10) + i];
+          if(_songList[((this.songPage - 1)*10) + i] != null){
+            //var list = [];
+            
+            var song = _songList[((_page - 1)*10) + i];
             this.songListView.push(song);
+          }
         }
+
       },
       A_pagination: function(_albums,_albumPage){
-        this.albumPageCount = Math.ceil(parseFloat(_albums.length) / 5);
+        this.albumPageCount = Math.ceil(parseFloat(_albums.length) / 4);
         if(_albumPage != this.albumPage){
           this.albumPage = _albumPage;
           this.albumView.splice(0,this.albumView.length);
         }
-        var len = _albums.length < 5 ? _albums.length : 5;
-        for (var i = 0; i < 5; i++) {
-            var album = _albums[((this.albumPage - 1)*5)+i];
-            album.image = this.serverUrl + album.image;
+        for (var i = 0; i < 4; i++) {
+          if(_albums[((this.albumPage - 1)*4)+i] != null){
+            var album = _albums[((this.albumPage - 1)*4)+i];
             this.albumView.push(album);
-        }
+          }
+        } 
       },
       setAlbum: function(item){
         this.$store.state.albums = item
       },
     	indexMethod(index) {
+        
           return (this.songPage - 1)*10 + index + 1;
     	},
 
@@ -283,7 +289,7 @@
 		playSong:function(row){
 		//传递歌曲ID给player.vue
 	},
-		handleSongCommand:function(command){
+        handleSongCommand:function(command){
           if(command=="login"){
             window.location.href='/';
           }
@@ -291,16 +297,16 @@
             this.dialogVisible=true;
           }
           else if(command=="playqueue"){
-            //传递歌曲ID给player.vue
+            //传递歌曲id给player.vue
           }
           else{
-            this.$axios.get('',{
+            this.axios.get('',{
               params:{
                 id:command.param2.id,
                 playlistId:command.param1
               }
             })
-            .then(function(response){
+            .then(response =>{
               if(response){
                 this.$message({
                   showClose: true,
@@ -317,10 +323,10 @@
               }
             })
             .catch(function(err){
-              console.log(err)
+              console.log(err);
             });
           }
-	},
+        },
 		submitForm:function(formname){
 		//提交playlist对象，包括歌单名称和简介，返回-1用户会话超时
 			this.$refs[formname].validate((valid) => {
@@ -390,6 +396,16 @@
               });
 		},
 
+    timestampToTime: function(timestamp) {
+        var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+        var Y = date.getFullYear() + '-';
+        var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+        var D = date.getDate();
+        if(D < 10)
+          D = '0' + D;
+        return Y+M+D;
+      },
+
 		getArtistInfo:function(artistId){
           this.axios.get(this.serverUrl+'/artist/getInfo',{
                 params:{
@@ -401,11 +417,18 @@
                 this.artist = response.data;
                 console.log(this.artist);
                 this.artist.image = this.serverUrl + this.artist.image;
+                this.artist.birthday = this.timestampToTime(this.artist.birthday);
+                for (var i = 0; i < this.artist.albumList.length; i++) {
+                  this.artist.albumList[i].image = this.serverUrl + this.artist.albumList[i].image;
+                 }
                 // this.artist.songList = response.data.songList
                 // this.artist.albumList = response.data.albumList;
                 for(var i = 0; i < this.artist.songList.length; i++){
-                   this.$set(this.artist.songList[i],'Flag',false);
-                   this.$set(this.artist.songList[i],'isopen',false);
+                  this.artist.songList[i].image = this.serverUrl + this.artist.songList[i].image;
+                  this.artist.songList[i].filePath = this.serverUrl + this.artist.songList[i].filePath;
+                  this.artist.songList[i].lyricsPath = this.serverUrl + this.artist.songList[i].lyricsPath;
+                  this.$set(this.artist.songList[i],'Flag',false);
+                  this.$set(this.artist.songList[i],'isopen',false);
                  }
                 this.$set(this.artist,'isCollected',false);
                 this.S_pagination(this.songPage,this.artist.songList);
@@ -429,6 +452,7 @@
   a {text-decoration: none;}
 
 	.main {
+      width: 1450px;
    		height: 1500px;
     	opacity: 0.95;
     	position: relative;
