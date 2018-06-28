@@ -42,7 +42,7 @@
       <el-row>
         <el-col :span="16" :offset="2">
           <div>
-            <el-table :data="songList" :stripe=true style="height:600px;width:100%;" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">
+            <el-table :data="songList" :stripe=true style="height:600px;width:95%;" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">
               <el-table-column type="index" label=" " :index="indexMethod"></el-table-column>
               <el-table-column label="歌曲" width=300>
                 <template slot-scope="scope">
@@ -85,14 +85,14 @@
                   <span v-if="scope.row.Flag"> <el-button icon="el-icon-download" circle v-on:click="downloadSong(scope.row)"></el-button> </span>
                 </template>
               </el-table-column>
-              <el-table-column label="歌手" width=120>
+              <el-table-column label="歌手" width=150>
                 <template slot-scope="scope">
                   <router-link :to="{ path: '/user/artistdetail', query: { id: scope.row.artistId }}">
                     <p style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.artistName}}</p>
                 </router-link>
                 </template>
               </el-table-column>
-              <el-table-column prop="duration" label="时长" width=80>
+              <el-table-column prop="duration" label="时长">
               </el-table-column>
             </el-table>
           </div>
@@ -145,7 +145,6 @@
         isOverflow:'',
         isLogin:false,
         album:{
-          intro:''
         },
         songList: [{}],
         playlistList:[{
