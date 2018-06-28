@@ -58,11 +58,11 @@
                     <el-dropdown trigger="click" placement="bottom-start" @visible-change="handle(scope.row,$event)" @command="handleSongCommand">
                       <el-button icon="el-icon-plus" circle></el-button>
                       <el-dropdown-menu slot="dropdown" :data="playlistList">
-                        <el-dropdown-item command="playqueue">播放队列</el-dropdown-item>
+                        <el-dropdown-item :command='{type:"playqueue",params:scope.$index}'>播放队列</el-dropdown-item>
                         <div v-if="isLogin">
                           <el-dropdown-item disabled divided>我喜欢</el-dropdown-item>
                           <el-dropdown-item v-for="playlist in playlistList" :key="playlist.id" :command='{type:"playlist",param1:playlist.id,param2:scope.row}'>{{playlist.name}}</el-dropdown-item>
-                          <el-dropdown-item command="newplaylist" divided>添加到新歌单</el-dropdown-item>
+                          <el-dropdown-item :command='{type:"newplaylist",params:scope.row}' divided>添加到新歌单</el-dropdown-item>
                         </div>
                         <el-dropdown-item v-else command="login" divided>登录后添加到歌单</el-dropdown-item>
                       </el-dropdown-menu>
@@ -130,9 +130,11 @@
       style: ['', 'POP 流行', 'ROCK 摇滚', 'FOLK 民谣', 'ELECTRONIC 电子', 'LIGHT 轻音乐', 'RAP RAP', 'COUNTRY 乡村','DANCE 舞曲', '其他'],
       dialogVisible:false,
       newPlaylist: {
-        id:0,
+        id:'',
         name: '',
-        intro: ''
+        intro: '',
+        type:'',
+        info:''
       },
       rules: {
         name: [
@@ -267,15 +269,21 @@
           }
           else if(command=="newplaylist"){
             this.dialogVisible=true;
+            this.newPlaylist.type="album";
+            this.newPlaylist.info=this.album.id;
           }
           else if(command=="playqueue"){
-            this.state.songList.concat(this.songList);
+            this.state.songList=this.state.songList.concat(this.songList);
           }
           else{
-            this.axios.get(this.serverUrl+'/playlist/addAlbum',{
+            this.addAlbumToPlaylist(command.params);
+          }
+        },
+        addAlbumToPlaylist:function(playlistId){
+          this.axios.get(this.serverUrl+'/playlist/addAlbum',{
               params:{
                 albumId:this.album.id,
-                playlistId:command.params
+                playlistId:playlistId
               }
             })
             .then(response =>{
@@ -297,26 +305,32 @@
             .catch(function(err){
               console.log(err);
             });
-          }
         },
         playSong:function(index){
-          this.state.songList=this.songList[index];
+          this.state.songList=[];
+          this.state.songList.push(this.songList[index]);
         },
         handleSongCommand:function(command){
           if(command=="login"){
             window.location.href='/';
           }
-          else if(command=="newplaylist"){
-            this.dialogVisible=true;
+          else if(command.type=="playqueue"){
+            this.state.songList.push(this.songList[command.params]);
           }
-          else if(command=="playqueue"){
-            this.state.songList.push(this.songList[index]);
+          else if(command.type=="newplaylist"){
+            this.dialogVisible=true;
+            this.newPlaylist.type="song";
+            this.newPlaylist.info=command.params.id;
           }
           else{
-            this.axios.get(this.serverUrl+'/playlist/addSong',{
+            this.addSongToPlaylist(command.param2.id,command.param1);
+          }
+        },
+        addSongToPlaylist:function(songId,playlistId){
+          this.axios.get(this.serverUrl+'/playlist/addSong',{
               params:{
-                songId:command.param2.id,
-                playlistId:command.param1
+                songId:songId,
+                playlistId:playlistId
               }
             })
             .then(response =>{
@@ -338,7 +352,6 @@
             .catch(function(err){
               console.log(err);
             });
-          }
         },
         submitForm:function(){
           this.$refs["newPlaylist"].validate((valid) => {
@@ -349,11 +362,17 @@
               })
               .then(response =>{
                 if(response.data!=-1){
-                  this.newPlaylist.id=response.data;
-                  this.state.playlistList.push(this.newPlaylist);
+                  var thisPlaylist={id:response.data,name:this.newPlaylist.name,intro:this.newPlaylist.intro};
+                  this.state.playlistList.push(thisPlaylist);
                   this.getPlaylistList();
                   this.dialogVisible=false;
                   this.$refs["newPlaylist"].resetFields();
+                  if(this.newPlaylist.type=="album"){
+                    this.addAlbumToPlaylist(response.data);
+                  }
+                  else{
+                    this.addSongToPlaylist(this.newPlaylist.info,response.data);
+                  }
                   this.$message({
                     showClose: true,
                     message: '已成功添加到新歌单',
