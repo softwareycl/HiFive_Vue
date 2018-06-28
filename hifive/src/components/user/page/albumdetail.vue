@@ -143,9 +143,8 @@
         ]
       },
       isOverflow:'',
-      isLogin:false,
-      album:{
-      },
+      isLogin:'',
+      album:{},
       songList: [],
       playlistList:[],
     }
@@ -198,7 +197,7 @@
             .then(response =>{
               if(response){
                 this.$store.state.likeAlbums.push(this.album);
-                this.getIsCollected();
+                this.album.isCollected=true;
                 this.$message({
                   showClose: true,
                   message: '收藏专辑成功',
@@ -242,7 +241,7 @@
                   break;
                 }
               }
-              this.getIsCollected();
+              this.album.isCollected=true;
               this.$message({
                 showClose: true,
                 message: '取消收藏成功',
@@ -469,8 +468,8 @@
               flag=true;
               break;
             }
-            this.album.isCollected=flag;
           }
+          this.album.isCollected=flag;
         },
       },
       created(){
@@ -485,9 +484,9 @@
         }
       },
       mounted(){
+        this.isLogin=this.$store.state.isLogin;
         this.getAlbumInfo();
         this.handleOverflow();
-        this.isLogin=this.$store.state.isLogin;
         this.getPlaylistList();
       },
 }
