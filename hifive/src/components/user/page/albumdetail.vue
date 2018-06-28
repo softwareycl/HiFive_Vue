@@ -186,7 +186,7 @@
         }
       },
       playAllSong:function(){
-          this.$store.state.songList=this.songList;
+          this.state.songList=this.songList;
         },
         collect:function(){
           if(this.isLogin){
@@ -197,7 +197,7 @@
             })
             .then(response =>{
               if(response){
-                this.$store.state.likeAlbums.push(this.album);
+                this.state.likeAlbums.push(this.album);
                 this.album.isCollected=true;
                 this.$message({
                   showClose: true,
@@ -236,9 +236,9 @@
           })
           .then(response =>{
             if(response){
-              for(var i=0;i<this.$store.state.likeAlbums.length;i++){
-                if(this.$store.state.likeAlbums[i].id==this.album.id){
-                  this.$store.state.likeAlbums.splice(i,1);
+              for(var i=0;i<this.state.likeAlbums.length;i++){
+                if(this.state.likeAlbums[i].id==this.album.id){
+                  this.state.likeAlbums.splice(i,1);
                   break;
                 }
               }
@@ -269,7 +269,7 @@
             this.dialogVisible=true;
           }
           else if(command=="playqueue"){
-            this.$store.state.songList.concat(this.songList);
+            this.state.songList.concat(this.songList);
           }
           else{
             this.axios.get(this.serverUrl+'/playlist/addAlbum',{
@@ -300,7 +300,7 @@
           }
         },
         playSong:function(index){
-          this.$store.state.songList=this.songList[index];
+          this.state.songList=this.songList[index];
         },
         handleSongCommand:function(command){
           if(command=="login"){
@@ -310,7 +310,7 @@
             this.dialogVisible=true;
           }
           else if(command=="playqueue"){
-            this.$store.state.songList.push(this.songList[index]);
+            this.state.songList.push(this.songList[index]);
           }
           else{
             this.axios.get(this.serverUrl+'/playlist/addSong',{
@@ -343,24 +343,22 @@
         submitForm:function(){
           this.$refs["playlist"].validate((valid) => {
             if (valid) {
-              this.axios.get(this.serverUrl+'/playlist/create',{
-                params:{
-                  name:this.playlist.name,
-                  intro:this.playlist.intro
-                }
+              this.axios.post(this.serverUrl+'/playlist/create',{
+                name:this.playlist.name,
+                intro:this.playlist.intro
               })
               .then(response =>{
-                if(response!=-1){
+                if(response.data!=-1){
                   this.playlist.id=response.data;
-                  this.$store.state.playlistList.push(this.playlist);
+                  this.state.playlistList.push(this.playlist);
                   this.getPlaylistList();
+                  this.dialogVisible=false;
+                  this.$refs["playlist"].resetFields();
                   this.$message({
                     showClose: true,
                     message: '已成功添加到新歌单',
                     type: 'success'
                   });
-                  this.dialogVisible=false;
-                  this.$refs["playlist"].resetFields();
                 }
                 else{
                   this.$message({
@@ -458,7 +456,7 @@
         },
         getPlaylistList:function(){
           if(this.isLogin){
-            this.playlistList=this.$store.state.playlistList;
+            this.playlistList=this.state.playlistList;
           }
           else{
             return false;
@@ -466,8 +464,8 @@
         },
         getIsCollected:function(){
           var flag=false;
-          for(var i=0;i<this.$store.state.likeAlbums.length;i++){
-            if(this.album.id==this.$store.state.likeAlbums[i].id){
+          for(var i=0;i<this.state.likeAlbums.length;i++){
+            if(this.album.id==this.state.likeAlbums[i].id){
               flag=true;
               break;
             }
@@ -487,7 +485,7 @@
         }
       },
       mounted(){
-        this.isLogin=this.$store.state.isLogin;
+        this.isLogin=this.state.isLogin;
         this.getAlbumInfo();
         this.handleOverflow();
         this.getPlaylistList();
