@@ -14,22 +14,61 @@
 			</el-input>
 		</div>
 		<div class="head_image">
-			<span v-if="isLogin" style="color:black;cursor:pointer;" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">登录</span>
-			<div v-if="!isLogin">
-				<el-dropdown placement="bottom-start">
+			<span v-if="!isLogin" style="color:black;cursor:pointer;" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">登录</span>
+			<div v-if="isLogin">
+				<el-dropdown placement="bottom-start" @command="handleCommand">
 					<img :src="user.image" class="user_image">
 					<el-dropdown-menu slot="dropdown">
-						<el-dropdown-item>
+						<el-dropdown-item command="a">
 							<img :src="user.image" class="inner_userImage">
 							<span style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{user.name}}</span>
 						</el-dropdown-item>
-						<el-dropdown-item style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">修改个人资料</el-dropdown-item>
-						<el-dropdown-item style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">修改密码</el-dropdown-item>
-						<el-dropdown-item style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">退出登录</el-dropdown-item>
+
+						<el-dropdown-item command="b" style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">修改个人资料</el-dropdown-item>
+
+						<el-dropdown-item command="c" style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">修改密码</el-dropdown-item>
+
+						<el-dropdown-item command="d" style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">退出登录</el-dropdown-item>
 					</el-dropdown-menu>
 				</el-dropdown>
 			</div>
 		</div>
+		<el-dialog title="修改密码" :visible.sync="modifyPwdVisible" style="font-weight:bold;text-align:center;" width="40%">
+			<el-form :model="modifyPwd" :rules="rules" ref="modifyPwd" label-width="100px">
+				<el-form-item label="旧密码" prop="oldPwd">
+					<el-input v-model="modifyPwd.oldPwd"></el-input>
+				</el-form-item>
+				<el-form-item label="新密码" prop="newPwd">
+					<el-input v-model="modifyPwd.newPwd"></el-input>
+				</el-form-item>
+				<el-form-item label="确认密码" prop="checkPass">
+					<el-input v-model="modifyPwd.checkPass"></el-input>
+				</el-form-item>
+				<el-form-item style="text-align:left">
+					<el-button>提交</el-button>
+					<el-button @click="modifyPwdVisible = false">取消</el-button>
+				</el-form-item>
+			</el-form>
+		</el-dialog>
+
+		<el-dialog title="修改个人资料" :visible.sync="modifyDataVisible" style="font-weight:bold;text-align:center;" width="40%">
+			<el-form :model="modifyData" :rules="rules1" ref="modifyData" label-width="100px" style="text-align:left">
+				<el-form-item label="昵称" prop="name">
+					<el-input v-model="modifyData.name" style="width:70%"></el-input>
+				</el-form-item>
+				<el-form-item label="头像" prop="image">
+					<img src="../../../assets/周杰伦.jpg" style="width:120px;height:120px">
+				</el-form-item>
+				<el-form-item label="性别" prop="gender">
+					<el-radio v-model="modifyData.gender" label="1">男</el-radio>
+					<el-radio v-model="modifyData.gender" label="2">女</el-radio>
+				</el-form-item>
+				<el-form-item>
+					<el-button>完成</el-button>
+					<el-button @click="modifyDataVisible = false">取消</el-button>
+				</el-form-item>
+			</el-form>
+		</el-dialog>
 		<div style="clear: both;"></div>
 	</div>
 </template>
@@ -52,9 +91,51 @@
 				this.curTitle = '音乐馆';
 		},
 		data () {
+			var checkOldPwd = (rule, value, callback) => {
+				if (!value) {
+					return callback(new Error('旧密码不能为空'));
+				} else {
+					callback();
+				}
+			};
+			var validatePass = (rule, value, callback) => {
+				var reg = /^(?=.*?[A-Za-z])(?=.*?[0-9]).{6,20}$/
+				if (value === '') {
+					callback(new Error('请输入密码'));
+				} else if(!reg.test(value)) {
+					callback(new Error('请输入6-20位密码,且包含字母和数字'));
+				} else {
+					callback();
+				}
+			};
+			var validatePass2 = (rule, value, callback) => {
+				if (value === '') {
+					callback(new Error('请再次输入密码'));
+				} else if (value !== this.modifyPwd.pass) {
+					callback(new Error('两次输入密码不一致!'));
+				} else {
+					callback();
+				}
+			};
+			var validateName = (rule, value, callback) => {
+				if (value === '') {
+					callback(new Error('请输入昵称'));
+				} else {
+					callback();
+				}
+			};
+			var validateGender = (rule, value, callback) => {
+				if (value === '') {
+					callback(new Error('请选择性别'));
+				} else {
+					callback();
+				}
+			};
 			return {
 				isLogin: '',
 				curTitle: '',
+				modifyPwdVisible: false,
+				modifyDataVisible: false,
 				user: {
 					id: '',
 					name: '',
@@ -69,7 +150,40 @@
 					title:"我的音乐"                   
 				}
 				],
+				modifyPwd: {
+					oldPwd: '',
+					newPwd: '',
+					checkPass: '',
+				},
+				modifyData: {
+					id: '',
+					name: '',
+					gender: '',
+					image: ''
+				},
 				inputTxt: '',
+
+				rules: {
+					newPwd: [
+					{ validator: validatePass, trigger: 'blur' }
+					],
+					checkPass: [
+					{ validator: validatePass2, trigger: 'blur' }
+					],
+					oldPwd: [
+					{ validator: checkOldPwd, trigger: 'blur' }
+					]
+				},
+				rules1: {
+					name: [
+					{ validator: validateName, trigger: 'blur' },
+					{ max: 5, message: '最多5个字符', trigger: 'blur'}
+					],
+					gender: [
+					{ validator: validateGender, trigger: 'blur' }
+					],
+				},
+
 			}
 		},
 		methods: {
@@ -101,7 +215,7 @@
 					return;
 				}
 				this.$store.state.search.name = this.inputTxt;
-				this.$router.push('/user/black');		
+				this.$router.push('/user/black');
 			},
 			getUserMesg: function() {
 				this.axios.get(this.serverUrl + "/user/getInfo", {
@@ -118,6 +232,20 @@
 				.catch(function (error) {
 					console.log(error);
 				});
+			},
+			handleCommand: function(command) {
+				if(command == 'a') {
+
+				} else if(command == 'b') {
+					this.modifyDataVisible = true;
+
+				} else if(command == 'c') {
+					this.modifyPwdVisible = true;
+				} else {
+					this.$store.state.userId = '';
+					this.$store.state.isLogin = false;
+					this.$router.push('/user/black_login');
+				}
 			}
 		},
 		computed: {

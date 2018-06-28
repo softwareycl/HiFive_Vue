@@ -189,6 +189,8 @@
 						}
 						if(tip == 1) {
 							this.dialogFormVisible = false;
+							this.$store.state.userId = this.loginUser.id;
+							this.$store.state.isLogin = true;
 							this.$router.push('/user/mymusic');
 						}
 						else if(tip == 2) {

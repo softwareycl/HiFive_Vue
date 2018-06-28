@@ -34,6 +34,7 @@
 							<el-button type="primary" icon="el-icon-caret-right" style="background-color:#31C27C" onmouseover="this.style.backgroundColor='#2CAF6F';" onmouseout="this.style.backgroundColor='#31C27C';" v-on:click="playSong">播放</el-button>
 							<el-button v-if="song.isCollected" icon="el-icon-star-on" v-on:click="cancelCollect">已收藏</el-button>
 							<el-button v-else icon="el-icon-star-off" v-on:click="collect">收藏</el-button>
+							<el-button icon="el-icon-download" v-on:click="downloadSong">下载</el-button>
 							<el-dropdown trigger="click" id="dropdown" @command="handleSongCommand">
 								<el-button icon="el-icon-plus" v-on:click="getPlaylistList">添加到<i class="el-icon-arrow-down el-icon--right"></i>
 								</el-button>
@@ -128,19 +129,19 @@
 				isfold: true,
 				id: '',
 				song:{
-					id:'001',
-					name:'心之科学',
-					artistId: '01',
-					artistName:'容祖儿',
-					language: '中文',
-					style:'Pop流行',
-					albumId: '01',
-					albumName:'污污污',
-					duration: '03:55',
-					releaseDate:'2018-06-16',
-					lyricsPath: "/static/lyr.txt",
+					id:'',
+					name:'',
+					artistId: '',
+					artistName:'',
+					language: '',
+					style:'',
+					albumId: '',
+					albumName:'',
+					duration: '',
+					releaseDate:'',
+					lyricsPath: "",
 					filePath: '',
-					image: "/src/assets/logo.png",
+					image: "",
 					isCollected:false
 				},
 				playlistList:[{
@@ -233,16 +234,29 @@
 					this.song.releaseDate = this.timestampToTime(this.song.releaseDate);
 					this.song.style = this.style[this.song.style];
 
-					var xmlhttp=new XMLHttpRequest();
-					xmlhttp.onreadystatechange=function()
-					{
-						var textHTML=xmlhttp.responseText;
-						textHTML=textHTML.replace(/(\n)+|(\r\n)+/g,"<br>");
-						document.getElementById("lyr").innerHTML=textHTML;
-					}
-					xmlhttp.open("GET",this.song.lyricsPath,true);
-					xmlhttp.overrideMimeType("text/html;charset=gb2312");
-					xmlhttp.send();
+					this.axios.get(this.song.lyricsPath, {
+						params: {
+						}
+					})
+					.then(res => {
+						var textHTML=res.data;
+						document.getElementById("lyr").innerHTML=textHTML.replace(/(\n)+|(\r\n)+/g,"<br>");
+						console.log(res.data);
+
+					})
+					.catch(function (error) {
+						console.log(error);
+					});
+					// var xmlhttp=new XMLHttpRequest();
+					// xmlhttp.onreadystatechange=function()
+					// {
+					// 	var textHTML=xmlhttp.responseText;
+					// 	textHTML=textHTML.replace(/(\n)+|(\r\n)+/g,"<br>");
+					// 	document.getElementById("lyr").innerHTML=textHTML;
+					// }
+					// xmlhttp.open("GET",this.song.lyricsPath,true);
+					// xmlhttp.overrideMimeType("text/html;charset=gb2312");
+					// xmlhttp.send();
 				})
 				.catch(function (error) {
 					console.log(error);
@@ -257,6 +271,9 @@
 		        	D = '0' + D;
 		        return Y+M+D;
 	      	},
+	      	downloadSong: function(){
+	      		
+	      	}
 		},
 	};
 </script>
