@@ -1,9 +1,9 @@
 const state = {
   isLogin: false,
-  userId: "",
+  user: {},
   likeSongs: [],
   likeAlbums: [],
-  playlist: [],
+  playlistList: [],
   
   song: {},
   album: {},
