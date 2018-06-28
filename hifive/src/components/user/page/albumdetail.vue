@@ -467,6 +467,9 @@
       computed:{
         serverUrl(){
           return this.$store.state.serverUrl;
+        },
+        state(){
+          return this.$store.state;
         }
       },
       mounted(){
