@@ -95,12 +95,12 @@
         </el-col>
       </el-row>
       <el-dialog title="创建歌单" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
-        <el-form :model="playlist" :rules="rules" ref="playlist" label-width="100px">
+        <el-form :model="newPlaylist" :rules="rules" ref="newPlaylist" label-width="100px">
           <el-form-item label="歌单名称" prop="name">
-            <el-input v-model="playlist.name" placeholder="请输入歌单名称"></el-input>
+            <el-input v-model="newPlaylist.name" placeholder="请输入歌单名称"></el-input>
           </el-form-item>
           <el-form-item label="歌单简介" prop="intro">
-            <el-input type="textarea" v-model="playlist.intro" placeholder="请输入歌单简介"></el-input>
+            <el-input type="textarea" v-model="newPlaylist.intro" placeholder="请输入歌单简介"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="submitForm">完成</el-button>
@@ -129,7 +129,7 @@
       id: '',
       style: ['', 'POP 流行', 'ROCK 摇滚', 'FOLK 民谣', 'ELECTRONIC 电子', 'LIGHT 轻音乐', 'RAP RAP', 'COUNTRY 乡村','DANCE 舞曲', '其他'],
       dialogVisible:false,
-      playlist: {
+      newPlaylist: {
         id:0,
         name: '',
         intro: ''
@@ -341,19 +341,19 @@
           }
         },
         submitForm:function(){
-          this.$refs["playlist"].validate((valid) => {
+          this.$refs["newPlaylist"].validate((valid) => {
             if (valid) {
               this.axios.post(this.serverUrl+'/playlist/create',{
-                name:this.playlist.name,
-                intro:this.playlist.intro
+                name:this.newPlaylist.name,
+                intro:this.newPlaylist.intro
               })
               .then(response =>{
                 if(response.data!=-1){
-                  this.playlist.id=response.data;
-                  this.state.playlistList.push(this.playlist);
+                  this.newPlaylist.id=response.data;
+                  this.state.playlistList.push(this.newPlaylist);
                   this.getPlaylistList();
                   this.dialogVisible=false;
-                  this.$refs["playlist"].resetFields();
+                  this.$refs["newPlaylist"].resetFields();
                   this.$message({
                     showClose: true,
                     message: '已成功添加到新歌单',
