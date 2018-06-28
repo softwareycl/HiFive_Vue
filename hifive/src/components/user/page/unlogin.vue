@@ -18,7 +18,7 @@
 											<el-input v-model="loginUser.id" placeholder="请输入账号，账号为注册时的邮箱"></el-input>
 										</el-form-item>
 										<el-form-item label="密码" prop="pwd">
-											<el-input v-model="loginUser.pwd" placeholder="请输入密码"></el-input>
+											<el-input type="password" v-model="loginUser.pwd" placeholder="请输入密码"></el-input>
 										</el-form-item>
 									</el-form>
 									<div class="dialog-footer">
@@ -40,8 +40,10 @@
 											<el-input v-model="registerUser.id" placeholder="请输入邮箱"></el-input>
 										</el-form-item>
 										<el-form-item label="性别" prop="gender">
-											<el-radio v-model="registerUser.gender" label="1">男</el-radio>
-											<el-radio v-model="registerUser.gender" label="2">女</el-radio>
+											<el-radio-group v-model="registerUser.gender">
+												<el-radio label="1">男</el-radio>
+												<el-radio label="2">女</el-radio>
+											</el-radio-group>
 										</el-form-item>
 										<el-form-item label="密码" prop="pwd">
 											<el-input v-model="registerUser.pwd" placeholder="请输入密码"></el-input>
@@ -132,7 +134,7 @@
 				registerUser: {
 					id: '',
 					name: '',
-					gender: 0,
+					gender: '',
 					pwd: '',
 					securityQuestion: '',
 					securityAnswer: '',
@@ -147,7 +149,7 @@
 					{ type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
 					],
 					gender: [
-					{ required: true, message: '请选择性别', trigger: 'blur' },
+					{ required: true, message: '请选择性别', trigger: 'change' }
 					],
 					pwd: [
 					{ required: true, validator: validatePass, trigger: 'blur' },
@@ -189,8 +191,21 @@
 						}
 						if(tip == 1) {
 							this.dialogFormVisible = false;
-							this.$store.state.userId = this.loginUser.id;
 							this.$store.state.isLogin = true;
+							this.axios.get(this.serverUrl + "/user/showMyMusic", {
+								params: {
+									id: this.loginUser.id
+								}
+							})
+							.then(res => {
+								this.$store.state.user = res.data;
+								for(var i = 0; i < res.data.length; i++){
+									this.artistList[i].image = this.serverUrl + this.artistList[i].image;
+								}
+							})
+							.catch(function (error) {
+								console.log(error);
+							});
 							this.$router.push('/user/mymusic');
 						}
 						else if(tip == 2) {
