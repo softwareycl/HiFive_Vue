@@ -1,6 +1,8 @@
 const state = {
   isLogin: false,
   userId: "",
+  likeSongs: [],
+  likeAlbums: [],
   
   song: {},
   album: {},
@@ -10,7 +12,7 @@ const state = {
   serverUrl: "http://192.168.20.95:8080/hifive",
 
   search: {
-    name: "00"
+    name: ""
   },
 
   rankType:1,
