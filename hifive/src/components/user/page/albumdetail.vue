@@ -53,7 +53,7 @@
               </el-table-column>
               <el-table-column label=" " width=200>
                 <template slot-scope="scope">
-                  <span v-if="scope.row.Flag"> <el-button icon="el-icon-caret-right" circle v-on:click="playSong(scope.row)"></el-button> </span>
+                  <span v-if="scope.row.Flag"> <el-button icon="el-icon-caret-right" circle v-on:click="playSong(scope.$index)"></el-button> </span>
                   <span v-if="scope.row.Flag"> 
                     <el-dropdown trigger="click" placement="bottom-start" @visible-change="handle(scope.row,$event)" @command="handleSongCommand">
                       <el-button icon="el-icon-plus" circle></el-button>
@@ -89,7 +89,7 @@
                 <template slot-scope="scope">
                   <router-link :to="{ path: '/user/artistdetail', query: { id: scope.row.artistId }}">
                     <p style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.artistName}}</p>
-                </router-link>
+                  </router-link>
                 </template>
               </el-table-column>
               <el-table-column prop="duration" label="时长">
@@ -119,88 +119,74 @@
   import vFoot from '../common/footer.vue'
   
   export default {
-     components: {
-      vHead,
-      vNav,
-      vFoot
+   components: {
+    vHead,
+    vNav,
+    vFoot
+  },
+  data(){
+    return{
+      id: '',
+      style: ['', 'POP 流行', 'ROCK 摇滚', 'FOLK 民谣', 'ELECTRONIC 电子', 'LIGHT 轻音乐', 'RAP RAP', 'COUNTRY 乡村','DANCE 舞曲', '其他'],
+      dialogVisible:false,
+      ruleForm: {
+        name: '',
+        intro: ''
+      },
+      rules: {
+        name: [
+        { required: true, message: '请输入歌单名称', trigger: 'blur' },
+        { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
+        ],
+        intro: [
+        { min: 1, max: 140, message: '长度在 140 个字符以内', trigger: 'blur' }
+        ]
+      },
+      isOverflow:'',
+      isLogin:false,
+      album:{
+      },
+      songList: [],
+      playlistList:[],
+    }
+  },
+  methods: {
+    indexMethod(index) {
+      return index+1;
     },
-    data(){
-      return{
-        id: '',
-        style: ['', 'POP 流行', 'ROCK 摇滚', 'FOLK 民谣', 'ELECTRONIC 电子', 'LIGHT 轻音乐', 'RAP RAP', 'COUNTRY 乡村','DANCE 舞曲', '其他'],
-        dialogVisible:false,
-        ruleForm: {
-          name: '',
-          intro: ''
-        },
-        rules: {
-          name: [
-          { required: true, message: '请输入歌单名称', trigger: 'blur' },
-          { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
-          ],
-          intro: [
-          { min: 1, max: 140, message: '长度在 140 个字符以内', trigger: 'blur' }
-          ]
-        },
-        isOverflow:'',
-        isLogin:false,
-        album:{
-        },
-        songList: [{}],
-        playlistList:[{
-          id:'1',
-          name:'1',
-          count:'',
-        },
-        {
-          id:'2',
-          name:'2',
-          count:'',
-        },
-        {
-          id:'3',
-          name:'3',
-          count:'',
-        }]
-      }
+    handleClose(done) {
+      this.$confirm('确认关闭？')
+      .then(_ => {
+        done();
+      })
+      .catch(_ => {});
     },
-    methods: {
-      indexMethod(index) {
-        return index+1;
+    handleMouseEnter:function(row, column, cell, event){
+      row.Flag=true;
+    },
+    handleMouseOut:function(row, column, cell, event){
+      if(!row.isopen){
+        row.Flag=false;}
+        else{
+          return false;
+        }
       },
-      handleClose(done) {
-        this.$confirm('确认关闭？')
-        .then(_ => {
-          done();
-        })
-        .catch(_ => {});
+      handle:function(row,event){
+        row.Flag=event;
+        row.isopen=event;
       },
-      handleMouseEnter:function(row, column, cell, event){
-        row.Flag=true;
+      handleOverflow:function(){
+        var offsetWidth = document.getElementById("albumIntro").offsetHeight;  
+        var scrollWidth = document.getElementById("albumIntro").scrollHeight;
+        if (offsetWidth < scrollWidth) {
+          this.isOverflow=true;
+        }
+        else{
+          this.isOverflow=false;
+        }
       },
-      handleMouseOut:function(row, column, cell, event){
-        if(!row.isopen){
-          row.Flag=false;}
-          else{
-            return false;
-          }
-        },
-        handle:function(row,event){
-          row.Flag=event;
-          row.isopen=event;
-        },
-        handleOverflow:function(){
-          var offsetWidth = document.getElementById("albumIntro").offsetHeight;  
-          var scrollWidth = document.getElementById("albumIntro").scrollHeight;
-          if (offsetWidth < scrollWidth) {
-            this.isOverflow=true;
-          }
-          else{
-            this.isOverflow=false;
-          }
-        },
-        playAllSong:function(){
-          //传递歌曲id给player
+      playAllSong:function(){
+          this.$store.state.songList=this.songList;
         },
         collect:function(){
           if(this.isLogin){
@@ -276,7 +262,7 @@
             this.dialogVisible=true;
           }
           else if(command=="playqueue"){
-            //传递所有歌曲id给player.vue
+            this.$store.state.songList.concat(this.songList);
           }
           else{
             this.axios.get(this.serverUrl+'/playlist/addAlbum',{
@@ -306,8 +292,8 @@
             });
           }
         },
-        playSong:function(row){
-          //传递歌曲id给player.vue
+        playSong:function(index){
+          this.$store.state.songList=this.songList[index];
         },
         handleSongCommand:function(command){
           if(command=="login"){
@@ -317,7 +303,7 @@
             this.dialogVisible=true;
           }
           else if(command=="playqueue"){
-            //传递歌曲id给player.vue
+            this.$store.state.songList.push(this.songList[index]);
           }
           else{
             this.axios.get(this.serverUrl+'/playlist/addSong',{
@@ -381,9 +367,9 @@
             } 
             else {
               this.$message({
-                    showClose: true,
-                    message: '格式不正确',
-                    type: 'error'
+                showClose: true,
+                message: '格式不正确',
+                type: 'error'
               });
               return false;
             }
@@ -437,38 +423,42 @@
         },
         getAlbumInfo:function(){
           this.axios.get(this.serverUrl+'/album/getInfo',{
-                params:{
-                  id:this.album.id
-                }
-              })
-              .then(response => {
-                console.log(response.data);
-                this.album = response.data;
-                this.album.image = this.serverUrl + this.album.image;
-                this.album.releaseDate = this.timestampToTime(this.album.releaseDate);
-                this.album.style = this.style[this.album.style];
-                this.songList = this.album.songList;
-                for(var i = 0; i < this.songList.length; i++){
-                  this.$set(this.songList[i],'Flag',false);
-                  this.$set(this.songList[i],'isopen',false);
-                }
-                this.$set(this.album,'isCollected',false);
-              })
-              .catch(function(err){
-                console.log(err);
-              });
-        },
-        getPlaylistList:function(){
-          this.axios.get('',{
             params:{
+              id:this.album.id
             }
           })
-          .then(response =>{
-
+          .then(response => {
+            console.log(response.data);
+            this.album = response.data;
+            this.album.image = this.serverUrl + this.album.image;
+            this.album.releaseDate = this.timestampToTime(this.album.releaseDate);
+            this.album.style = this.style[this.album.style];
+            this.songList = this.album.songList;
+            for(var i = 0; i < this.songList.length; i++){
+              this.$set(this.songList[i],'Flag',false);
+              this.$set(this.songList[i],'isopen',false);
+            }
+            this.$set(this.album,'isCollected',false);
+            if(isLogin){
+              for(var i=0;i<this.$store.state.likeAlbums.length;i++){
+                if(this.album.id==this.$store.state.likeAlbums[i].id){
+                  this.$set(this.album,'isCollected',true);
+                  break;
+                }
+              }
+            }
           })
           .catch(function(err){
             console.log(err);
           });
+        },
+        getPlaylistList:function(){
+          if(isLogin){
+            this.playlistList=this.$store.state.playlistList;
+          }
+          else{
+            return false;
+          }
         },
       },
       created(){
@@ -482,9 +472,12 @@
       mounted(){
         this.getAlbumInfo();
         this.handleOverflow();
+        this.isLogin=this.$store.state.isLogin;
         this.getPlaylistList();
-      }
+      },
 }
+  
+
 </script>
 <style>
 #albumdetail{
@@ -518,7 +511,7 @@
   font-size:Medium;
 }
 a {
-     text-decoration:none;
-     out-line: none;
-  }
+ text-decoration:none;
+ out-line: none;
+}
 </style>
