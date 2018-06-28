@@ -68,20 +68,6 @@
                       </el-dropdown-menu>
                     </el-dropdown>
                   </span>
-                  <el-dialog title="创建歌单" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
-                    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
-                      <el-form-item label="歌单名称" prop="name">
-                        <el-input v-model="ruleForm.name" placeholder="请输入歌单名称"></el-input>
-                      </el-form-item>
-                      <el-form-item label="歌单简介" prop="intro">
-                        <el-input type="textarea" v-model="ruleForm.intro" placeholder="请输入歌单简介"></el-input>
-                      </el-form-item>
-                      <el-form-item>
-                        <el-button type="primary" @click="submitForm('ruleForm')">完成</el-button>
-                        <el-button @click="dialogVisible=false">取消</el-button>
-                      </el-form-item>
-                    </el-form>
-                  </el-dialog>
                   <span v-if="scope.row.Flag"> <el-button icon="el-icon-download" circle v-on:click="downloadSong(scope.row)"></el-button> </span>
                 </template>
               </el-table-column>
@@ -108,6 +94,20 @@
           </div>
         </el-col>
       </el-row>
+      <el-dialog title="创建歌单" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
+        <el-form :model="playlist" :rules="rules" ref="playlist" label-width="100px">
+          <el-form-item label="歌单名称" prop="name">
+            <el-input v-model="playlist.name" placeholder="请输入歌单名称"></el-input>
+          </el-form-item>
+          <el-form-item label="歌单简介" prop="intro">
+            <el-input type="textarea" v-model="playlist.intro" placeholder="请输入歌单简介"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="submitForm">完成</el-button>
+            <el-button @click="dialogVisible=false">取消</el-button>
+          </el-form-item>
+        </el-form>
+      </el-dialog>
     </div>
     <v-foot></v-foot>
   </div>
@@ -129,7 +129,8 @@
       id: '',
       style: ['', 'POP 流行', 'ROCK 摇滚', 'FOLK 民谣', 'ELECTRONIC 电子', 'LIGHT 轻音乐', 'RAP RAP', 'COUNTRY 乡村','DANCE 舞曲', '其他'],
       dialogVisible:false,
-      ruleForm: {
+      playlist: {
+        id:0,
         name: '',
         intro: ''
       },
@@ -145,7 +146,7 @@
       isOverflow:'',
       isLogin:'',
       album:{},
-      songList: [],
+      songList: [{}],
       playlistList:[],
     }
   },
@@ -339,23 +340,27 @@
             });
           }
         },
-        submitForm:function(formname){
-          this.$refs[formname].validate((valid) => {
+        submitForm:function(){
+          this.$refs["playlist"].validate((valid) => {
             if (valid) {
               this.axios.get(this.serverUrl+'/playlist/create',{
                 params:{
-                  name:formname.name,
-                  intro:formname.intro,
+                  name:this.playlist.name,
+                  intro:this.playlist.intro
                 }
               })
               .then(response =>{
-                if(response){
+                if(response!=-1){
+                  this.playlist.id=response.data;
+                  this.$store.state.playlistList.push(this.playlist);
                   this.getPlaylistList();
                   this.$message({
                     showClose: true,
                     message: '已成功添加到新歌单',
                     type: 'success'
                   });
+                  this.dialogVisible=false;
+                  this.$refs["playlist"].resetFields();
                 }
                 else{
                   this.$message({
@@ -368,8 +373,6 @@
               .catch(function(err){
                 console.log(err);
               });
-              this.dialogVisible=false;
-              this.$refs[formname].resetFields();
             } 
             else {
               this.$message({
