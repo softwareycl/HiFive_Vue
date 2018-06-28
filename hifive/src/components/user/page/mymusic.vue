@@ -1,10 +1,9 @@
 <template>
     <div class="wrapper">
         <v-head></v-head>
-        <v-nav></v-nav>
         <div style="width:100%;height:1500px;">
             <div :data="user" class="background" :style="background">
-                <img src="../../../assets/周杰伦.jpg" class="userImage">
+                <img :src="user.image" class="userImage">
             	<p align=center style="font-size: x-large;color:white;">{{user.name}}</p>
                 <el-dialog title="创建歌单" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
                     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
@@ -20,7 +19,7 @@
                         </el-form-item>
                     </el-form>
                 </el-dialog>
-                <el-tabs value="1" style="width:90%;position:relative;left:5%;bottom:-27px;">
+                <el-tabs value="1" style="width:90%;position:relative;left:5%;bottom:-84px;">
                     <el-tab-pane name="1">
                         <span class="tab1" slot="label">我喜欢</span>
                         <el-tabs value="1" style="width:100%;">
@@ -28,15 +27,6 @@
                                 <span class="tab2" slot="label">歌曲 {{songList.length}}</span>
                                 <div>
                                     <el-button type="primary" icon="el-icon-caret-right" style="background-color:#31C27C;margin-top:30px;" onmouseover="this.style.backgroundColor='#2CAF6F';" onmouseout="this.style.backgroundColor='#31C27C';" v-on:click="playAllSong">播放全部</el-button>
-                                    <el-dropdown trigger="click" @command="handleCommand">
-                                        <el-button icon="el-icon-plus">添加到<i class="el-icon-arrow-down el-icon--right"></i></el-button>
-                                        <el-dropdown-menu slot="dropdown" :data="playlistList">
-                                            <el-dropdown-item command="playqueue">播放队列</el-dropdown-item>
-                                            <el-dropdown-item disabled divided>我喜欢</el-dropdown-item>
-                                            <el-dropdown-item v-for="playlist in playlistList" :key="playlist.id" :command='{type:"playlist",params:playlist.id}'>{{playlist.name}}</el-dropdown-item>
-                                            <el-dropdown-item command="newplaylist" divided>添加到新歌单</el-dropdown-item>
-                                        </el-dropdown-menu>
-                                    </el-dropdown>
                                     <el-table :data="songList" :stripe=true style="width:100%;margin-top: 10px;" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">
                                         <el-table-column label="歌曲">
                                             <template slot-scope="scope">
@@ -217,6 +207,7 @@ export default {
                 ]
             },
             user:{
+                id:'',
                 name:'周杰伦',
                 image:'',
             },
@@ -432,6 +423,9 @@ export default {
                 Flag:false,
                 isopen:false,
             },],
+            allSong:[],
+            allAlbum:[],
+            allPlaylist:[],
         }
     },
     methods:{
@@ -456,49 +450,8 @@ export default {
             row.Flag=event;
             row.isopen=event;
         },
-        switchTab1:function(tab){
-
-        },
-        switchTab2:function(tab){
-
-        },
         playAllSong:function(){
 
-        },
-        handleCommand:function(command){
-          if(command=="newplaylist"){
-            this.dialogVisible=true;
-          }
-          else if(command=="playqueue"){
-            //传递歌曲id给player.vue
-          }
-          else{
-            this.axios.get('',{
-              params:{
-                id:command.param2.id,
-                playlistId:command.param1
-              }
-            })
-            .then(response =>{
-              if(response){
-                this.$message({
-                  showClose: true,
-                  message: '已成功添加到歌单',
-                  type: 'success'
-                });
-              }
-              else{
-                this.$message({
-                  showClose: true,
-                  message: '会话超时',
-                  type: 'error'
-                });
-              }
-            })
-            .catch(function(err){
-              console.log(err);
-            });
-          }
         },
         playSong:function(){
 
@@ -511,9 +464,9 @@ export default {
             //传递歌曲id给player.vue
           }
           else{
-            this.axios.get('',{
+            this.axios.get(this.serverUrl+'/playlist/addSong',{
               params:{
-                id:command.param2.id,
+                songId:command.param2.id,
                 playlistId:command.param1
               }
             })
@@ -538,11 +491,57 @@ export default {
             });
           }
         },
-        downloadSong:function(){
-
+        downloadSong:function(row){
+            this.axios.get(this.serverUrl+'/download/downloadSong',{
+              params:{
+                id:row.id
+              }
+            })
+            .then(response =>{
+              if(response){
+                this.$message({
+                  showClose: true,
+                  message: '下载成功',
+                  type: 'success'
+                });
+              }
+              else{
+                this.$message({
+                  showClose: true,
+                  message: '下载失败',
+                  type: 'error'
+                });
+              }
+            })
+            .catch(function(err){
+              console.log(err);
+            });
         },
-        deleteSong:function(){
-
+        deleteSong:function(row){
+            this.axios.get(this.serverUrl+'/user/unlikeSong',{
+              params:{
+                id:row.id
+              }
+            })
+            .then(response =>{
+              if(response){
+                this.$message({
+                  showClose: true,
+                  message: '歌曲已被取消收藏',
+                  type: 'success'
+                });
+              }
+              else{
+                this.$message({
+                  showClose: true,
+                  message: '会话超时',
+                  type: 'error'
+                });
+              }
+            })
+            .catch(function(err){
+              console.log(err);
+            });
         },
         playAlbum:function(){
 
@@ -555,9 +554,9 @@ export default {
             //传递歌曲id给player.vue
           }
           else{
-            this.axios.get('',{
+            this.axios.get(this.serverUrl+'/playlist/addAlbum',{
               params:{
-                id:command.param2.id,
+                albumId:command.param2.id,
                 playlistId:command.param1
               }
             })
@@ -582,8 +581,31 @@ export default {
             });
           }
         },
-        deleteAlbum:function(){
-        
+        deleteAlbum:function(row){
+            this.axios.get(this.serverUrl+'/user/unlikeAlbum',{
+              params:{
+                id:row.id
+              }
+            })
+            .then(response =>{
+              if(response){
+                this.$message({
+                  showClose: true,
+                  message: '专辑已被取消收藏',
+                  type: 'success'
+                });
+              }
+              else{
+                this.$message({
+                  showClose: true,
+                  message: '会话超时',
+                  type: 'error'
+                });
+              }
+            })
+            .catch(function(err){
+              console.log(err);
+            });
         },
         playPlaylist:function(){
 
@@ -596,10 +618,10 @@ export default {
             //传递歌曲id给player.vue
           }
           else{
-            this.axios.get('',{
+            this.axios.get(this.serverUrl+'/playlist/addPlaylistToPlaylist',{
               params:{
-                id:command.param2.id,
-                playlistId:command.param1
+                fromId:command.param2.id,
+                toId:command.param1
               }
             })
             .then(response =>{
@@ -623,17 +645,39 @@ export default {
             });
           }
         },
-        deletePlaylist:function(){
-
+        deletePlaylist:function(row){
+            this.axios.get(this.serverUrl+'/playlist/remove',{
+              params:{
+                id:row.id
+              }
+            })
+            .then(response =>{
+              if(response){
+                this.$message({
+                  showClose: true,
+                  message: '删除歌单成功',
+                  type: 'success'
+                });
+              }
+              else{
+                this.$message({
+                  showClose: true,
+                  message: '会话超时',
+                  type: 'error'
+                });
+              }
+            })
+            .catch(function(err){
+              console.log(err);
+            });
         },
         submitForm:function(formname){
           this.$refs[formname].validate((valid) => {
             if (valid) {
-              this.axios.get('',{
+              this.axios.get(this.serverUrl+'/playlist/create',{
                 params:{
-                  playlist:{
-
-                  }
+                  name:formname.name,
+                  intro:formname.intro,
                 }
               })
               .then(response =>{
@@ -669,19 +713,69 @@ export default {
             }
           });
         },
+        timestampToTime: function(timestamp) {
+          var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+          var Y = date.getFullYear() + '-';
+          var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+          var D = date.getDate();
+          if(D < 10) D = '0' + D;
+          return Y+M+D;
+        },
         getMyMusic:function(){
+            this.axios.get(this.serverUrl+'/user/showMyMusic',{
+                params:{
+                    id:this.user.id
+                }
+            })
+            .then(response =>{
+                this.user=response.data;
+                this.user.image=this.serverUrl + this.user.image;
+                this.allSong=this.user.songList;
+                for(var i=0;i<this.allSong.length;i++){
+                    this.allSong[i].filePath = this.serverUrl+this.allSong[i].filePath;
+                    this.allSong[i].lyricsPath = this.serverUrl+this.allSong[i].lyricsPath;
+                    this.allSong[i].image = this.serverUrl+this.allSong[i].image;
+                    this.$set(this.allSong[i],'Flag',false);
+                    this.$set(this.allSong[i],'isopen',false);
+                }
+                this.allAlbum=this.user.albumList;
+                for(var i=0;i<this.allAlbum.length;i++){
+                    this.allAlbum[i].releaseDate = this.timestampToTime(this.allAlbum[i].releaseDate);
+                    this.allAlbum[i].image = this.serverUrl+this.allAlbum[i].image;
+                    this.$set(this.allAlbum[i],'Flag',false);
+                    this.$set(this.allAlbum[i],'isopen',false);
+                }
+                this.allPlaylist=this.user.playlistList;
+                for(var i=0;i<this.allPlaylist.length;i++){
+                    this.$set(this.allPlaylist[i],'Flag',false);
+                    this.$set(this.allPlaylist[i],'isopen',false);
+                }
+            })
+            .catch(function(err){
+              console.log(err);
+            });
+        },
+        songPaginationChange:function(page){
             
         },
-        songPaginationChange:function(){
+        albumPaginationChange:function(page){
 
         },
-        albumPaginationChange:function(){
-
-        },
-        playlistPaginationChange:function(){
+        playlistPaginationChange:function(page){
 
         },
     },
+    created(){
+        this.user.id=this.$route.query.id;
+    },
+    computed:{
+        serverUrl(){
+          return this.$store.state.serverUrl;
+        }
+    },
+    mounted(){
+        this.getMyMusic();
+    }
 }
 </script>
 

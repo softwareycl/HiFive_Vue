@@ -13,6 +13,23 @@
 				<el-button slot="append" icon="el-icon-search" @click='onSearch'></el-button>
 			</el-input>
 		</div>
+		<div class="head_image">
+			<span v-if="isLogin" style="color:black;cursor:pointer;" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">登录</span>
+			<div v-if="!isLogin">
+				<el-dropdown placement="bottom-start">
+					<img :src="user.image" class="user_image">
+					<el-dropdown-menu slot="dropdown">
+						<el-dropdown-item>
+							<img :src="user.image" class="inner_userImage">
+							<span style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{user.name}}</span>
+						</el-dropdown-item>
+						<el-dropdown-item style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">修改个人资料</el-dropdown-item>
+						<el-dropdown-item style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">修改密码</el-dropdown-item>
+						<el-dropdown-item style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">退出登录</el-dropdown-item>
+					</el-dropdown-menu>
+				</el-dropdown>
+			</div>
+		</div>
 		<div style="clear: both;"></div>
 	</div>
 </template>
@@ -23,16 +40,27 @@
 		mounted () {
 			// if(sessionStorage.getItem('curTitle'))
 			// 	this.curTitle = sessionStorage.getItem('curTitle');
+			this.isLogin = this.$store.state.isLogin;
 			this.curTitle = this.$route.name;
+			if(this.isLogin == true) {
+				this.getUserMesg();
+			}
 			if(this.$route.name == '搜索') {
 				this.inputTxt = this.$store.state.search.name;
 			}
-			if(this.curTitle != '我的音乐')
+			if(this.curTitle != '我的音乐' && this.curTitle != '搜索')
 				this.curTitle = '音乐馆';
 		},
 		data () {
 			return {
-				curTitle: '音乐馆',
+				isLogin: '',
+				curTitle: '',
+				user: {
+					id: '',
+					name: '',
+					gender: '',
+					image: '',
+				},
 				headNav: [
 				{
 					title:"音乐馆"  
@@ -55,7 +83,7 @@
 					case '音乐馆': this.$router.push('/user/home') 
 					break
 					case '我的音乐': {
-						if(this.$store.state.isLogin == true)
+						if(this.isLogin == true)
 							this.$router.push('/user/mymusic')
 						else
 							this.$router.push('/')
@@ -74,6 +102,22 @@
 				}
 				this.$store.state.search.name = this.inputTxt;
 				this.$router.push('/user/black');		
+			},
+			getUserMesg: function() {
+				this.axios.get(this.serverUrl + "/user/getInfo", {
+					params: {
+						
+					}
+				})
+				.then(res => {
+					this.user = res.data;
+					for(var i = 0; i < res.data.length; i++){
+						this.user[i].image = this.serverUrl + this.user[i].image;
+					}
+				})
+				.catch(function (error) {
+					console.log(error);
+				});
 			}
 		},
 		computed: {
@@ -130,5 +174,26 @@
 	.search {
 		margin-top: 25px;
 		margin-left: 100px;
+	}
+	.head_image {
+		float: left;
+	}
+	.head_image span {
+		display: block;
+		margin-top: 30px;
+		margin-left: 25px;
+	}
+	.user_image{
+		width:40px;
+		height:40px;
+		border-radius:100%;
+		margin-top:22px;
+		margin-left:25px;
+		cursor: pointer;
+	}
+	.inner_userImage {
+		width:80px;
+		height:80px;
+		border-radius:100%;
 	}
 </style>

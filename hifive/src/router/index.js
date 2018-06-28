@@ -98,5 +98,13 @@ export default new Router({
       path: '/user/black',
       component: resolve => require(['../components/user/page/black.vue'], resolve)
     },
+    {
+      path: '/admin/black',
+      component: resolve => require(['../components/admin/black.vue'], resolve)
+    },
+    {
+      path: '/admin/search',
+      component: resolve => require(['../components/admin/search.vue'], resolve)
+    },
   ],
 })

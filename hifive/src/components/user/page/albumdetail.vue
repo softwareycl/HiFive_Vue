@@ -4,7 +4,7 @@
     <v-nav></v-nav>
     <div id="albumdetail" :data="album">
       <el-row :gutter="50">
-        <el-col :span="4" :offset="4">
+        <el-col :span="4" :offset="3">
           <div>
             <img align=right style="width:230px;height:230px;margin-top:20px" :src=album.image>
           </div>
@@ -39,19 +39,19 @@
           </div>
         </el-col>
       </el-row>
-      <el-row :gutter="50">
-        <el-col :span="13" :offset="3">
+      <el-row>
+        <el-col :span="16" :offset="2">
           <div>
-            <el-table :data="songList" :stripe=true style="height:600px;width: 100%;" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">
+            <el-table :data="songList" :stripe=true style="height:600px;width:95%;" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">
               <el-table-column type="index" label=" " :index="indexMethod"></el-table-column>
-              <el-table-column label="歌曲">
+              <el-table-column label="歌曲" width=300>
                 <template slot-scope="scope">
                   <router-link :to="{ path: '/user/songdetail', query: { id: scope.row.id }}">
                     <p style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.name}}</p>
                   </router-link>
                 </template>
               </el-table-column>
-              <el-table-column label=" ">
+              <el-table-column label=" " width=200>
                 <template slot-scope="scope">
                   <span v-if="scope.row.Flag"> <el-button icon="el-icon-caret-right" circle v-on:click="playSong(scope.row)"></el-button> </span>
                   <span v-if="scope.row.Flag"> 
@@ -85,7 +85,7 @@
                   <span v-if="scope.row.Flag"> <el-button icon="el-icon-download" circle v-on:click="downloadSong(scope.row)"></el-button> </span>
                 </template>
               </el-table-column>
-              <el-table-column label="歌手">
+              <el-table-column label="歌手" width=150>
                 <template slot-scope="scope">
                   <router-link :to="{ path: '/user/artistdetail', query: { id: scope.row.artistId }}">
                     <p style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.artistName}}</p>
@@ -146,7 +146,7 @@
         isLogin:false,
         album:{
         },
-        songList: [],
+        songList: [{}],
         playlistList:[{
           id:'1',
           name:'1',
@@ -189,12 +189,22 @@
           row.Flag=event;
           row.isopen=event;
         },
+        handleOverflow:function(){
+          var offsetWidth = document.getElementById("albumIntro").offsetHeight;  
+          var scrollWidth = document.getElementById("albumIntro").scrollHeight;
+          if (offsetWidth < scrollWidth) {
+            this.isOverflow=true;
+          }
+          else{
+            this.isOverflow=false;
+          }
+        },
         playAllSong:function(){
           //传递歌曲id给player
         },
         collect:function(){
           if(this.isLogin){
-            this.axios.get('',{
+            this.axios.get(this.serverUrl+'/user/likeAlbum',{
               params:{
                 id:this.album.id
               }
@@ -231,8 +241,8 @@
             });
           }
         },
-        cancelCollect:function(albumId){ 
-          this.axios.get('',{
+        cancelCollect:function(){ 
+          this.axios.get(this.serverUrl+'/user/unlikeAlbum',{
             params:{
               id:this.album.id
             }
@@ -269,9 +279,9 @@
             //传递所有歌曲id给player.vue
           }
           else{
-            this.axios.get('',{
+            this.axios.get(this.serverUrl+'/playlist/addAlbum',{
               params:{
-                id:this.album.id,
+                albumId:this.album.id,
                 playlistId:command.params
               }
             })
@@ -310,9 +320,9 @@
             //传递歌曲id给player.vue
           }
           else{
-            this.axios.get('',{
+            this.axios.get(this.serverUrl+'/playlist/addSong',{
               params:{
-                id:command.param2.id,
+                songId:command.param2.id,
                 playlistId:command.param1
               }
             })
@@ -340,11 +350,10 @@
         submitForm:function(formname){
           this.$refs[formname].validate((valid) => {
             if (valid) {
-              this.axios.get('',{
+              this.axios.get(this.serverUrl+'/playlist/create',{
                 params:{
-                  playlist:{
-
-                  }
+                  name:formname.name,
+                  intro:formname.intro,
                 }
               })
               .then(response =>{
@@ -382,7 +391,7 @@
         },
         downloadSong:function(row){
           if(this.isLogin){
-            this.axios.get('',{
+            this.axios.get(this.serverUrl+'/download/downloadSong',{
               params:{
                 id:row.id
               }
@@ -426,10 +435,10 @@
           if(D < 10) D = '0' + D;
           return Y+M+D;
         },
-        getAlbumInfo:function(albumId){
+        getAlbumInfo:function(){
           this.axios.get(this.serverUrl+'/album/getInfo',{
                 params:{
-                  id:albumId
+                  id:this.album.id
                 }
               })
               .then(response => {
@@ -461,19 +470,9 @@
             console.log(err);
           });
         },
-        handleOverflow:function(){
-          var offsetWidth = document.getElementById("albumIntro").offsetHeight;  
-          var scrollWidth = document.getElementById("albumIntro").scrollHeight;
-          if (offsetWidth < scrollWidth) {
-            this.isOverflow=true;
-          }
-          else{
-            this.isOverflow=false;
-          }
-        }
       },
       created(){
-        this.id=this.$route.query.id;
+        this.album.id=this.$route.query.id;
       },
       computed:{
         serverUrl(){
@@ -481,7 +480,7 @@
         }
       },
       mounted(){
-        this.getAlbumInfo(this.id);
+        this.getAlbumInfo();
         this.handleOverflow();
         this.getPlaylistList();
       }
