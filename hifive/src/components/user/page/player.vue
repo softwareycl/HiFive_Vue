@@ -50,7 +50,7 @@
       <el-popover
       ref=""
         placement="top-start"
-        width="1250"
+        width="1480"
         trigger="click"
         @show="showLyrics">
         <div class="bg">
@@ -396,5 +396,10 @@ export default {
 }
 .slider{
   color:#31c27c;
+}
+.el-popover{
+    position: absolute;
+    overflow: hidden;
+    margin: 0 auto;
 }
 </style>
