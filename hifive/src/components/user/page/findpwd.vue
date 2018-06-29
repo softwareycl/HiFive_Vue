@@ -290,7 +290,7 @@
 
 </script>
 
-<style>
+<style scoped>
 	.main{
 		height: 550px;
 		margin-bottom: 50px;
