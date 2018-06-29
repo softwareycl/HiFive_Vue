@@ -25,7 +25,7 @@
                         <el-row v-for="i in 3" :key="i" style="margin-top:20px;">
                             <el-col v-for="j in 3" :key="j" :offset="j > 1 ? 0 : 2" style="width:380px;">
                                 <el-card :body-style="{ padding: '0px'}" shadow="never" style="border-style:none;width:100%;borderRadius:0px;backgroundColor:transparent;">
-                                    <div style="height:100%;width:100%;">
+                                    <div v-if="songList[9*(page-1)+3*(i-1)+j-1]" style="height:100%;width:100%;">
                                         <el-row>  
                                             <el-col style="width:90px;">
                                                 <div style="width:90px;height:90px;border-style:none;overflow:hidden;">
@@ -71,14 +71,13 @@
                         </el-tabs>
                     </el-col>
                 </el-row>
-                <div v-if="albumList.length<40" v-loading="true" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background=transparent style="width:100%;height:500px;z-index:0;">
-                </div>
-                <el-carousel v-else :autoplay=false indicator-position="outside" arrow="hover" height="500px" trigger="click" style="z-index: 0">
+                
+                <el-carousel :autoplay=false indicator-position="outside" arrow="hover" height="500px" trigger="click" style="z-index: 0">
                     <el-carousel-item v-for="page in 4" :key="page">
                         <el-row v-for="i in 2" :key="i" style="margin-top:20px;">
                             <el-col v-for="j in 5" :key="j" :offset="j > 1 ? 1 : 2" style="width:180px;">
                                 <el-card :body-style="{ padding: '0px'}" shadow="never" style="border-style:none;width:100%;borderRadius:0px;backgroundColor:transparent;">
-                                    <div style="height:100%;width:100%;">  
+                                    <div v-if="albumList[10*(page-1)+5*(i-1)+j-1]" style="height:100%;width:100%;">  
                                         <el-row>  
                                             <div style="width:180px;height:180px;border-style:none;overflow:hidden;">
                                                 <router-link :to="{ path: '/user/albumdetail', query: { id: albumList[10*(page-1)+5*(i-1)+j-1].id }}">
@@ -124,14 +123,14 @@
                                     <el-button id="listButton1" class="listButton" icon="el-icon-caret-right" circle v-on:click="playList(1)"></el-button>
                                 </div>
                                 <ul class="list">
-                                    <li v-for="i in 4" :key="i" style="margin-top:30px;">
-                                        <div class="font_number">{{i}}</div>
+                                    <li v-for="(item,index) in list1" :key="item.id" style="margin-top:30px;">
+                                        <div class="font_number">{{index+1}}</div>
                                         <div class="font_listContent">
-                                        <router-link :to="{ path: '/user/songdetail', query: { id: list1[i-1].id }}">
-                                            <a style="color:white;cursor:pointer;">{{list1[i-1].name}}</a><br/>
+                                        <router-link :to="{ path: '/user/songdetail', query: { id: item.id }}">
+                                            <a style="color:white;cursor:pointer;">{{item.name}}</a><br/>
                                         </router-link>
-                                        <router-link :to="{ path: '/user/artistdetail', query: { id: list1[i-1].artistId }}">
-                                            <a style="color:white;cursor:pointer;">{{list1[i-1].artistName}}</a>
+                                        <router-link :to="{ path: '/user/artistdetail', query: { id: item.artistId }}">
+                                            <a style="color:white;cursor:pointer;">{{item.artistName}}</a>
                                         </router-link>
                                         </div>
                                     </li>
@@ -150,15 +149,15 @@
                                     <el-button id="listButton2" class="listButton" icon="el-icon-caret-right" circle v-on:click="playList(2)"></el-button>
                                 </div>
                                 <ul class="list">
-                                     <li v-for="i in 4" :key="i" style="margin-top:30px;">
-                                        <div class="font_number">{{i}}</div>
+                                     <li v-for="(item,index) in list2" :key="item.id" style="margin-top:30px;">
+                                        <div class="font_number">{{index+1}}</div>
                                         <div class="font_listContent">
-                                            <router-link :to="{ path: '/user/songdetail', query: { id: list2[i-1].id }}">
-                                                <a style="color:white;cursor:pointer;">{{list2[i-1].name}}</a><br/>
-                                            </router-link>
-                                            <router-link :to="{ path: '/user/artistdetail', query: { id: list2[i-1].artistId }}">
-                                                <a style="color:white;cursor:pointer;">{{list2[i-1].artistName}}</a>
-                                            </router-link>
+                                        <router-link :to="{ path: '/user/songdetail', query: { id: item.id }}">
+                                            <a style="color:white;cursor:pointer;">{{item.name}}</a><br/>
+                                        </router-link>
+                                        <router-link :to="{ path: '/user/artistdetail', query: { id: item.artistId }}">
+                                            <a style="color:white;cursor:pointer;">{{item.artistName}}</a>
+                                        </router-link>
                                         </div>
                                     </li>
                                 </ul>
@@ -176,15 +175,15 @@
                                     <el-button id="listButton3" class="listButton" icon="el-icon-caret-right" circle v-on:click="playList(3)"></el-button>
                                 </div>
                                 <ul class="list">
-                                    <li v-for="i in 4" :key="i" style="margin-top:30px;">
-                                        <div class="font_number">{{i}}</div>
+                                    <li v-for="(item,index) in list3" :key="item.id" style="margin-top:30px;">
+                                        <div class="font_number">{{index+1}}</div>
                                         <div class="font_listContent">
-                                            <router-link :to="{ path: '/user/songdetail', query: { id: list3[i-1].id }}">
-                                                <a style="color:white;cursor:pointer;">{{list3[i-1].name}}</a><br/>
-                                            </router-link>
-                                            <router-link :to="{ path: '/user/artistdetail', query: { id: list3[i-1].artistId }}">
-                                                <a style="color:white;cursor:pointer;">{{list3[i-1].artistName}}</a>
-                                            </router-link>
+                                        <router-link :to="{ path: '/user/songdetail', query: { id: item.id }}">
+                                            <a style="color:white;cursor:pointer;">{{item.name}}</a><br/>
+                                        </router-link>
+                                        <router-link :to="{ path: '/user/artistdetail', query: { id: item.artistId }}">
+                                            <a style="color:white;cursor:pointer;">{{item.artistName}}</a>
+                                        </router-link>
                                         </div>
                                     </li>
                                 </ul>
@@ -202,15 +201,15 @@
                                     <el-button id="listButton4" class="listButton" icon="el-icon-caret-right" circle v-on:click="playList(4)"></el-button>
                                 </div>
                                 <ul class="list">
-                                    <li v-for="i in 4" :key="i" style="margin-top:30px;">
-                                        <div class="font_number">{{i}}</div>
+                                    <li v-for="(item,index) in list4" :key="item.id" style="margin-top:30px;">
+                                        <div class="font_number">{{index+1}}</div>
                                         <div class="font_listContent">
-                                            <router-link :to="{ path: '/user/songdetail', query: { id: list4[i-1].id }}">
-                                                <a style="color:white;cursor:pointer;">{{list4[i-1].name}}</a><br/>
-                                            </router-link>
-                                            <router-link :to="{ path: '/user/artistdetail', query: { id: list4[i-1].id }}">
-                                                <a style="color:white;cursor:pointer;">{{list4[i-1].artistName}}</a>
-                                            </router-link>
+                                        <router-link :to="{ path: '/user/songdetail', query: { id: item.id }}">
+                                            <a style="color:white;cursor:pointer;">{{item.name}}</a><br/>
+                                        </router-link>
+                                        <router-link :to="{ path: '/user/artistdetail', query: { id: item.artistId }}">
+                                            <a style="color:white;cursor:pointer;">{{item.artistName}}</a>
+                                        </router-link>
                                         </div>
                                     </li>
                                 </ul>
@@ -228,15 +227,15 @@
                                     <el-button id="listButton5" class="listButton" icon="el-icon-caret-right" circle v-on:click="playList(5)"></el-button>
                                 </div>
                                 <ul class="list">
-                                    <li v-for="i in 4" :key="i" style="margin-top:30px;">
-                                        <div class="font_number">{{i}}</div>
+                                    <li v-for="(item,index) in list5" :key="item.id" style="margin-top:30px;">
+                                        <div class="font_number">{{index+1}}</div>
                                         <div class="font_listContent">
-                                            <router-link :to="{ path: '/user/songdetail', query: { id: list5[i-1].id }}">
-                                            <a style="color:white;cursor:pointer;">{{list5[i-1].name}}</a><br/>
-                                            </router-link>
-                                            <router-link :to="{ path: '/user/artistdetail', query: { id: list5[i-1].id }}">
-                                            <a style="color:white;cursor:pointer;">{{list5[i-1].artistName}}</a>
-                                            </router-link>
+                                        <router-link :to="{ path: '/user/songdetail', query: { id: item.id }}">
+                                            <a style="color:white;cursor:pointer;">{{item.name}}</a><br/>
+                                        </router-link>
+                                        <router-link :to="{ path: '/user/artistdetail', query: { id: item.artistId }}">
+                                            <a style="color:white;cursor:pointer;">{{item.artistName}}</a>
+                                        </router-link>
                                         </div>
                                     </li>
                                 </ul>
@@ -254,15 +253,15 @@
                                     <el-button id="listButton6" class="listButton" icon="el-icon-caret-right" circle v-on:click="playList(6)"></el-button>
                                 </div>
                                 <ul class="list">
-                                    <li v-for="i in 4" :key="i" style="margin-top:30px;">
-                                        <div class="font_number">{{i}}</div>
+                                    <li v-for="(item,index) in list6" :key="item.id" style="margin-top:30px;">
+                                        <div class="font_number">{{index+1}}</div>
                                         <div class="font_listContent">
-                                            <router-link :to="{ path: '/user/songdetail', query: { id: list6[i-1].id }}">
-                                                <a style="color:white;cursor:pointer;">{{list6[i-1].name}}</a><br/>
-                                            </router-link>
-                                            <router-link :to="{ path: '/user/artistdetail', query: { id: list6[i-1].id }}">
-                                                <a style="color:white;cursor:pointer;">{{list6[i-1].artistName}}</a>
-                                            </router-link>
+                                        <router-link :to="{ path: '/user/songdetail', query: { id: item.id }}">
+                                            <a style="color:white;cursor:pointer;">{{item.name}}</a><br/>
+                                        </router-link>
+                                        <router-link :to="{ path: '/user/artistdetail', query: { id: item.artistId }}">
+                                            <a style="color:white;cursor:pointer;">{{item.artistName}}</a>
+                                        </router-link>
                                         </div>
                                     </li>
                                 </ul>
