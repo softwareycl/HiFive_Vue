@@ -61,9 +61,9 @@
 					<img :src="this.$store.state.user.image" class="avatar">
 					<el-upload class="avatar-uploader" ref="upload" action="http://192.168.20.95:8080/hifive/upload/uploadUserImage" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload" :auto-upload="false">
 						<div style="margin-left:30px;">
+							<div>图片大小不超过2M</div>				
+							<div>上传图片格式为:jpg/jpeg/png</div>							
 							<el-button size="small" type="primary">点击更改头像</el-button>
-							<div>上传图片格式为:jpg/jpeg/png</div>
-							<div>图片大小不超过2M</div>
 						</div>						
 					</el-upload>
 					<div style="clear:both"></div>
@@ -422,6 +422,7 @@
 
 								for(var i=0; i<this.$store.state.likeAlbums.length; i++) {
 									this.$store.state.likeAlbums[i].image = this.$store.state.serverUrl + this.$store.state.likeAlbums[i].image;
+									this.$store.state.likeAlbums[i].releaseDate = this.timestampToTime(this.$store.state.likeAlbums[i].releaseDate);
 								}
 								this.$store.state.playlistList = this.user.playlistList;
 							})
@@ -514,6 +515,14 @@
 						return false;
 					}
 				});
+			},
+			timestampToTime: function(timestamp) {
+				var date = new Date(timestamp);
+				var Y = date.getFullYear() + '-';
+				var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+				var D = date.getDate();
+				if(D < 10) D = '0' + D;
+				return Y+M+D;
 			},
 		},
 		computed: {

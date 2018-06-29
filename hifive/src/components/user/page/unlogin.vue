@@ -199,22 +199,25 @@
 							})
 							.then(res => {
 								this.user = res.data;
-								console.log(res.data);
 								this.user.image = this.$store.state.serverUrl + this.user.image;
 								this.$store.state.user = this.user;
 
 								// this.$store.state.likeSongs = res.data.likeSongList;
-								this.$store.state.likeSongs = this.user;
-								for(var i=0; i<likeSongs.length; i++) {
+								this.$store.state.likeSongs = this.user.likeSongList;
+								this.$store.state.likeAlbums = this.user.likeAlbumList;
+								// for(var i=0; i<this.us)
+								
+								for(var i=0; i<this.$store.state.likeSongs.length; i++) {
 									this.$store.state.likeSongs[i].image = this.$store.state.serverUrl + this.$store.state.likeSongs[i].image;
 									this.$store.state.likeSongs[i].filePath = this.$store.state.serverUrl + this.$store.state.likeSongs[i].filePath;
 									this.$store.state.likeSongs[i].lyricsPath = this.$store.state.serverUrl + this.$store.state.likeSongs[i].lyricsPath;
 								}
-								this.$store.state.likeAlbums = res.data.likeAlbumList;
-								for(var i=0; i<likeSongs.length; i++) {
+
+								for(var i=0; i<this.$store.state.likeAlbums.length; i++) {
 									this.$store.state.likeAlbums[i].image = this.$store.state.serverUrl + this.$store.state.likeAlbums[i].image;
+									this.$store.state.likeAlbums[i].releaseDate = this.timestampToTime(this.$store.state.likeAlbums[i].releaseDate);
 								}
-								this.$store.state.playlistList = res.data.playlistList;
+								this.$store.state.playlistList = this.user.playlistList;
 							})
 							.catch(function (error) {
 								console.log(error);
@@ -277,6 +280,14 @@
 						return false;
 					}
 				});
+			},
+			timestampToTime: function(timestamp) {
+				var date = new Date(timestamp);
+				var Y = date.getFullYear() + '-';
+				var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+				var D = date.getDate();
+				if(D < 10) D = '0' + D;
+				return Y+M+D;
 			},
 		}
 	};
