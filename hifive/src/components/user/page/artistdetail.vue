@@ -79,21 +79,21 @@
       			</div>
       		</el-col>
       	</el-row>
-      	<el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-count="songPageCount" class="pagination"></el-pagination>
+      	<el-pagination style="margin-top: 30px; margin-bottom: 30px" layout="prev, pager, next" @current-change="handleCurrentChange" :page-count="songPageCount" class="pagination"></el-pagination>
         <el-dialog title="创建歌单" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
-                            <el-form :model="playlist" :rules="rules" ref="playlist" label-width="100px">
-                                <el-form-item label="歌单名称" prop="name">
-                                  <el-input v-model="playlist.name" placeholder="请输入歌单名称"></el-input>
-                                </el-form-item>
-                                <el-form-item label="歌单简介" prop="intro">
-                                  <el-input type="textarea" v-model="playlist.intro" placeholder="请输入歌单简介"></el-input>
-                                </el-form-item>
-                                <el-form-item>
-                                  <el-button type="primary" @click="submitForm">完成</el-button>
-                                  <el-button @click="dialogVisible=false">取消</el-button>
-                                </el-form-item>
-                            </el-form>
-                        </el-dialog>
+            <el-form :model="playlist" :rules="rules" ref="playlist" label-width="100px">
+                <el-form-item label="歌单名称" prop="name">
+                  <el-input v-model="playlist.name" placeholder="请输入歌单名称"></el-input>
+                </el-form-item>
+                <el-form-item label="歌单简介" prop="intro">
+                  <el-input type="textarea" v-model="playlist.intro" placeholder="请输入歌单简介"></el-input>
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="primary" @click="submitForm">完成</el-button>
+                  <el-button @click="dialogVisible=false">取消</el-button>
+                </el-form-item>
+            </el-form>
+        </el-dialog>
         <div style="width:900px; margin: auto;">
           <p style="font-family:'Microsoft YaHei'; font-size:x-large;">专辑</p>
         </div>
@@ -110,7 +110,7 @@
           </ul>          
         </el-row>
         <div style="clear: both;"></div>
-         <el-pagination layout="prev, pager, next" @current-change="handleCurrentChange2" :page-count="albumPageCount" class = "pagination">
+         <el-pagination style="margin-top: 30px; margin-bottom: 30px" layout="prev, pager, next" @current-change="handleCurrentChange2" :page-count="albumPageCount" class = "pagination">
            </el-pagination>
       </div>
       <v-foot></v-foot>
@@ -457,7 +457,7 @@
 
 	.main {
       width: 1450px;
-   		height: 1500px;
+   		height: auto;
     	opacity: 0.95;
     	position: relative;
       font-family: "Microsoft YaHei";
@@ -478,11 +478,11 @@
     }
 	.el-popover{
 		width:550px;
-  		height:400px;
-  		word-wrap: break-word; 
-        word-break: normal; 
-        overflow-x:hidden;
-        overflow-y:scroll;
+		height:400px;
+		word-wrap: break-word; 
+    word-break: normal; 
+    overflow-x:hidden;
+    overflow-y:scroll;
 	}
 	.font_artistName{
         font-family:"Microsoft YaHei";

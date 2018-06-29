@@ -23,14 +23,12 @@
               <ul class="album-nav-tag" id="style">
                 <li @click="style_change_bg(0);albumDisplay(0,0,1)" class="current">全部</li>
                 <li @click="style_change_bg(1);albumDisplay(0,1,1)">流行</li>
-                <li @click="style_change_bg(2);albumDisplay(0,2,1)">摇滚</li>
-                <li @click="style_change_bg(3);albumDisplay(0,3,1)">民谣</li>
-                <li @click="style_change_bg(4);albumDisplay(0,4,1)">电子</li>
-                <li @click="style_change_bg(5);albumDisplay(0,5,1)">轻音乐</li>
-                <li @click="style_change_bg(6);albumDisplay(0,6,1)">RAP</li>
-                <li @click="style_change_bg(7);albumDisplay(0,7,1)">乡村</li>
-                <li @click="style_change_bg(8);albumDisplay(0,8,1)">舞曲</li>
-                <li @click="style_change_bg(9);albumDisplay(0,9,1)">其他</li>
+                <li @click="style_change_bg(2);albumDisplay(0,2,1)">电子</li>
+                <li @click="style_change_bg(3);albumDisplay(0,3,1)">摇滚</li>
+                <li @click="style_change_bg(4);albumDisplay(0,4,1)">古典</li>
+                <li @click="style_change_bg(5);albumDisplay(0,5,1)">民谣</li>
+                <li @click="style_change_bg(6);albumDisplay(0,6,1)">R&B</li>
+                <li @click="style_change_bg(7);albumDisplay(0,7,1)">其他</li>
               </ul>
             </td>
           </tr>
