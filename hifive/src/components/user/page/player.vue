@@ -179,12 +179,14 @@ export default {
     onPause () {
       this.audio.playing = false
     },
+
     // 当timeupdate事件大概每秒一次，用来更新音频流的当前播放时间
-    onTimeupdate(res) {
-      console.log('timeupdate')
-      console.log(res)
-      this.audio.currentTime = res.target.currentTime
-    },
+    // onTimeupdate(res) {
+    //   console.log('timeupdate')
+    //   console.log(res)
+    //   this.audio.currentTime = res.target.currentTime
+    // },
+
     // 当加载语音流元数据完成后，会触发该事件的回调函数
     // 语音元数据主要是语音的长度之类的数据
     onLoadedmetadata(res) {
@@ -198,8 +200,9 @@ export default {
     },
     // 当音频当前时间改变后，进度条也要改变
     onTimeupdate(res) {
-    this.audio.currentTime = res.target.currentTime
-    this.sliderTime = parseInt(this.audio.currentTime / this.audio.maxTime * 100)
+      // console.log(res);
+      this.audio.currentTime = res.target.currentTime;
+      this.sliderTime = parseInt(this.audio.currentTime / this.audio.maxTime * 100);
     },
 
     // 进度条格式化toolTip
@@ -260,6 +263,7 @@ export default {
         this.$store.state.currentSong = this.$store.state.songList[index];
         this.$store.state.currentIndex = index;
         this.showLyrics();
+        this.play();
       },
       deleteAll: function(){
         this.$store.state.songList = [];
@@ -269,6 +273,9 @@ export default {
         this.audio.maxTime = 0;
         document.getElementById("lyricsTitle").innerHTML="无播放歌曲";
         document.getElementById("lyrics").innerHTML = "暂无歌词";
+      },
+      test: function(){
+        alert("in player.vue");
       }
   },
   filters: {
