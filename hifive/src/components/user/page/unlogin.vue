@@ -11,7 +11,7 @@
 					<el-button plain @click="change_dialogFormVisible" style="backgroundColor:#31C27C;color:white;font-size:20px;border:none">立即登录</el-button>
 					<el-dialog title="欢迎来到云音乐" :visible.sync="dialogFormVisible" style="font-weight:bold">
 						<template>
-							<el-tabs v-model="activeName" @tab-click="handleClick" class="login_form" style="margin:0 75px;text-align:left">
+							<el-tabs v-model="activeName" class="login_form" style="margin:0 75px;text-align:left">
 								<el-tab-pane label="登录" name="first">
 									<el-form :model="loginUser" :rules="rules2" ref="loginUser" label-width="50px">
 										<el-form-item label="账号" prop="id">
@@ -192,16 +192,28 @@
 						if(tip == 1) {
 							this.dialogFormVisible = false;
 							this.$store.state.isLogin = true;
-							this.axios.get(this.serverUrl + "/user/showMyMusic", {
+							this.axios.get(this.$store.state.serverUrl + "/user/showMyMusic", {
 								params: {
 									id: this.loginUser.id
 								}
 							})
 							.then(res => {
-								this.$store.state.user = res.data;
-								for(var i = 0; i < res.data.length; i++){
-									this.artistList[i].image = this.serverUrl + this.artistList[i].image;
+								this.$store.state.user = res.data.id;
+								this.$store.state.user = res.data.name;
+								this.$store.state.user = res.data.image;
+								this.$store.state.user = res.data.gender;
+								this.$store.state.user.image = this.$store.state.serverUrl + this.$store.state.user.image;
+								this.$store.state.likeSongs = res.data.likeSongList;
+								for(var i=0; i<likeSongs.length; i++) {
+									this.$store.state.likeSongs[i].image = this.$store.state.serverUrl + this.$store.state.likeSongs[i].image;
+									this.$store.state.likeSongs[i].filePath = this.$store.state.serverUrl + this.$store.state.likeSongs[i].filePath;
+									this.$store.state.likeSongs[i].lyricsPath = this.$store.state.serverUrl + this.$store.state.likeSongs[i].lyricsPath;
 								}
+								this.$store.state.likeAlbums = res.data.likeAlbumList;
+								for(var i=0; i<likeSongs.length; i++) {
+									this.$store.state.likeAlbums[i].image = this.$store.state.serverUrl + this.$store.state.likeAlbums[i].image;
+								}
+								this.$store.state.playlistList = res.data.playlistList;
 							})
 							.catch(function (error) {
 								console.log(error);

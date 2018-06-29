@@ -46,7 +46,7 @@
 					<el-input type="password" v-model="modifyPwd.checkPass"></el-input>
 				</el-form-item>
 				<el-form-item style="text-align:left">
-					<el-button>提交</el-button>
+					<el-button @click="modifyPwd('modifyPwd')">提交</el-button>
 					<el-button @click="modifyPwdVisible = false">取消</el-button>
 				</el-form-item>
 			</el-form>
@@ -65,14 +65,14 @@
 					<el-radio v-model="modifyData.gender" label="2">女</el-radio>
 				</el-form-item>
 				<el-form-item>
-					<el-button>完成</el-button>
+					<el-button @click="modifyData('modifyData')">完成</el-button>
 					<el-button @click="modifyDataVisible = false">取消</el-button>
 				</el-form-item>
 			</el-form>
 		</el-dialog>
 		<el-dialog title="欢迎来到云音乐" :visible.sync="dialogFormVisible" style="font-weight:bold">
 			<template>
-				<el-tabs v-model="activeName" @tab-click="handleClick" class="login_form" style="margin:0 75px;text-align:left">
+				<el-tabs v-model="activeName" class="login_form" style="margin:0 75px;text-align:left">
 					<el-tab-pane label="登录" name="first">
 						<el-form :model="loginUser" :rules="rules2" ref="loginUser" label-width="50px">
 							<el-form-item label="账号" prop="id">
@@ -127,25 +127,6 @@
 				</el-tabs>
 			</template>
 		</el-dialog>
-		<!-- <el-dialog title="欢迎登录云音乐" :visible.sync="dialogFormVisible" width="40%"  style="font-weight:bold;text-align:center">
-					<el-form :model="loginUser" :rules="rules2" ref="loginUser" label-width="50px">
-						<el-form-item label="账号" prop="id">
-							<el-input v-model="loginUser.id" placeholder="请输入账号，账号为注册时的邮箱"></el-input>
-						</el-form-item>
-						<el-form-item label="密码" prop="pwd">
-							<el-input v-model="loginUser.pwd" placeholder="请输入密码"></el-input>
-						</el-form-item>
-					</el-form>
-					<div>
-						<el-button type="primary" @click="login('loginUser')">登录</el-button>
-						<el-button @click="dialogFormVisible = false">取 消</el-button>
-						<div style="margin-top:20px">
-							<router-link tag="a" to="/user/findpwd" style="text-decoration:none;out-line: none;">
-								<span style="color:#848484;cursor:pointer">忘记密码</span>
-							</router-link>
-						</div>
-					</div>
-			</el-dialog> -->
 		<div style="clear: both;"></div>
 	</div>
 </template>
@@ -384,7 +365,11 @@
 				} else {
 					this.$store.state.userId = '';
 					this.$store.state.isLogin = false;
-					this.$router.push('/user/black_login');
+					if(this.$route.name == '我的音乐') {
+						this.$router.push('/');
+					}
+					else
+						this.$router.push('/user/black_login');
 				}
 			},
 			login: function(_loginUser) {
@@ -404,8 +389,33 @@
 						}
 						if(tip == 1) {
 							this.dialogFormVisible = false;
-							this.$store.state.userId = this.loginUser.id;
 							this.$store.state.isLogin = true;
+							this.axios.get(this.$store.state.serverUrl + "/user/showMyMusic", {
+								params: {
+									id: this.loginUser.id
+								}
+							})
+							.then(res => {
+								this.$store.state.user = res.data.id;
+								this.$store.state.user = res.data.name;
+								this.$store.state.user = res.data.image;
+								this.$store.state.user = res.data.gender;
+								this.$store.state.user.image = this.$store.state.serverUrl + this.$store.state.user.image;
+								this.$store.state.likeSongs = res.data.likeSongList;
+								for(var i=0; i<likeSongs.length; i++) {
+									this.$store.state.likeSongs[i].image = this.$store.state.serverUrl + this.$store.state.likeSongs[i].image;
+									this.$store.state.likeSongs[i].filePath = this.$store.state.serverUrl + this.$store.state.likeSongs[i].filePath;
+									this.$store.state.likeSongs[i].lyricsPath = this.$store.state.serverUrl + this.$store.state.likeSongs[i].lyricsPath;
+								}
+								this.$store.state.likeAlbums = res.data.likeAlbumList;
+								for(var i=0; i<likeSongs.length; i++) {
+									this.$store.state.likeAlbums[i].image = this.$store.state.serverUrl + this.$store.state.likeAlbums[i].image;
+								}
+								this.$store.state.playlistList = res.data.playlistList;
+							})
+							.catch(function (error) {
+								console.log(error);
+							});
 							if(this.$route.name == '我的音乐')
 								this.$router.push('/user/mymusic');
 							else
@@ -450,6 +460,12 @@
 						console.log(error);
 					});
 				}
+			},
+			modifyPwd: function(_modifyPwd) {
+				this.submitForm(_modifyPwd);
+			},
+			modifyData: function(_modifyData) {
+				this.submitForm(_modifyData);
 			},
 			submitForm(formName) {
 				this.$refs[formName].validate((valid) => {

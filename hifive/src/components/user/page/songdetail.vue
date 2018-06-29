@@ -95,16 +95,16 @@
 				this.state = true;
 			}
 
-			var xmlhttp=new XMLHttpRequest();
-			xmlhttp.onreadystatechange=function()
-			{
-				var textHTML=xmlhttp.responseText;
-				textHTML=textHTML.replace(/(\n)+|(\r\n)+/g,"<br>");
-				document.getElementById("lyr").innerHTML=textHTML;
-			}
-			xmlhttp.open("GET","/static/lyr.txt",true);
-			xmlhttp.overrideMimeType("text/html;charset=gb2312");
-			xmlhttp.send();
+			// var xmlhttp=new XMLHttpRequest();
+			// xmlhttp.onreadystatechange=function()
+			// {
+			// 	var textHTML=xmlhttp.responseText;
+			// 	textHTML=textHTML.replace(/(\n)+|(\r\n)+/g,"<br>");
+			// 	document.getElementById("lyr").innerHTML=textHTML;
+			// }
+			// xmlhttp.open("GET","/static/lyr.txt",true);
+			// xmlhttp.overrideMimeType("text/html;charset=gb2312");
+			// xmlhttp.send();
 
 			this.getIntro(this.id);  
 		},
