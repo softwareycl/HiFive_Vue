@@ -58,7 +58,15 @@
 					<el-input v-model="modifyData.name" style="width:70%"></el-input>
 				</el-form-item>
 				<el-form-item label="头像" prop="image">
-					<img src="../../../assets/周杰伦.jpg" style="width:120px;height:120px">
+					<img :src="this.$store.state.user.image" class="avatar">
+					<el-upload class="avatar-uploader" ref="upload" action="http://192.168.20.95:8080/hifive/upload/uploadUserImage" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload" :auto-upload="false">
+						<div style="margin-left:30px;">
+							<el-button size="small" type="primary">点击更改头像</el-button>
+							<div>上传图片格式为:jpg/jpeg/png</div>
+							<div>图片大小不超过2M</div>
+						</div>						
+					</el-upload>
+					<div style="clear:both"></div>
 				</el-form-item>
 				<el-form-item label="性别" prop="gender">
 					<el-radio v-model="modifyData.gender" label="1">男</el-radio>
@@ -139,6 +147,7 @@
 			// 	this.curTitle = sessionStorage.getItem('curTitle');
 			this.isLogin = this.$store.state.isLogin;
 			this.curTitle = this.$route.name;
+			this.modifyData = this.$store.state.user;
 			if(this.isLogin == true) {
 				// this.getUserMesg();
 			}
@@ -363,7 +372,7 @@
 				} else if(command == 'c') {
 					this.modifyPwdVisible = true;
 				} else {
-					this.$store.state.userId = '';
+					this.$store.state.user = {};
 					this.$store.state.isLogin = false;
 					if(this.$route.name == '我的音乐') {
 						this.$router.push('/');
@@ -397,28 +406,24 @@
 							})
 							.then(res => {
 								this.user = res.data;
-								// this.user = res.data.name;
-								// this.user = res.data.image;
-								// this.user = res.data.gender;
 								this.user.image = this.$store.state.serverUrl + this.user.image;
 								this.$store.state.user = this.user;
-								console.log(this.user.image);
-								console.log(this.$store.state.user.image);
 
 								// this.$store.state.likeSongs = res.data.likeSongList;
-								this.$store.state.likeSongs = this.user;
-								console.log(this.$store.state.likeSongs);
-								for(var i=0; i<likeSongs.length; i++) {
+								this.$store.state.likeSongs = this.user.likeSongList;
+								this.$store.state.likeAlbums = this.user.likeAlbumList;
+								// for(var i=0; i<this.us)
+								
+								for(var i=0; i<this.$store.state.likeSongs.length; i++) {
 									this.$store.state.likeSongs[i].image = this.$store.state.serverUrl + this.$store.state.likeSongs[i].image;
 									this.$store.state.likeSongs[i].filePath = this.$store.state.serverUrl + this.$store.state.likeSongs[i].filePath;
 									this.$store.state.likeSongs[i].lyricsPath = this.$store.state.serverUrl + this.$store.state.likeSongs[i].lyricsPath;
 								}
-								this.$store.state.likeAlbums = res.data.likeAlbumList;
-								for(var i=0; i<likeSongs.length; i++) {
+
+								for(var i=0; i<this.$store.state.likeAlbums.length; i++) {
 									this.$store.state.likeAlbums[i].image = this.$store.state.serverUrl + this.$store.state.likeAlbums[i].image;
 								}
-								this.$store.state.playlistList = res.data.playlistList;
-								this.user = this.$store.state.user;
+								this.$store.state.playlistList = this.user.playlistList;
 							})
 							.catch(function (error) {
 								console.log(error);
@@ -456,8 +461,8 @@
 						var tip = res.data;
 						if(tip == true) {
 							alert("注册成功");
-							this.dialogFormVisible = false;
-							this.$router.push('/');
+							// this.dialogFormVisible = false;
+							this.activeName = 'first';
 						}
 						else if(tip == false) {
 							alert("注册失败，请重新注册");
@@ -479,12 +484,14 @@
 					.then(res => {
 						var tip = res.data;
 						if(tip == true) {
-							alert("修改成功");
-							this.dialogFormVisible = false;
-							this.$router.push('/');
+							alert("修改成功，请重新登录");
+							this.$store.state.user = {};
+							this.$store.state.isLogin = false;
+							this.modifyPwdVisible = false;
+							this.dialogFormVisible = true;
 						}
 						else if(tip == false) {
-							alert("注册失败，请重新注册");
+							alert("修改密码失败");
 						}
 					})
 					.catch(function (error) {
@@ -588,5 +595,12 @@
 	.header-dialog-footer {
 		margin: 0;
 		padding: 0;
+	}
+
+	.avatar {
+		width: 120px;
+		height: 120px;
+		float: left;
+		display: block;
 	}
 </style>

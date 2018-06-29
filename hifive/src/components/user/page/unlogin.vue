@@ -198,12 +198,13 @@
 								}
 							})
 							.then(res => {
-								this.$store.state.user = res.data.id;
-								this.$store.state.user = res.data.name;
-								this.$store.state.user = res.data.image;
-								this.$store.state.user = res.data.gender;
-								this.$store.state.user.image = this.$store.state.serverUrl + this.$store.state.user.image;
-								this.$store.state.likeSongs = res.data.likeSongList;
+								this.user = res.data;
+								console.log(res.data);
+								this.user.image = this.$store.state.serverUrl + this.user.image;
+								this.$store.state.user = this.user;
+
+								// this.$store.state.likeSongs = res.data.likeSongList;
+								this.$store.state.likeSongs = this.user;
 								for(var i=0; i<likeSongs.length; i++) {
 									this.$store.state.likeSongs[i].image = this.$store.state.serverUrl + this.$store.state.likeSongs[i].image;
 									this.$store.state.likeSongs[i].filePath = this.$store.state.serverUrl + this.$store.state.likeSongs[i].filePath;
