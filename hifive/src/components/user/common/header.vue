@@ -18,10 +18,10 @@
 
 			<div v-if="isLogin">
 				<el-dropdown placement="bottom-start" @command="handleCommand">
-					<img :src="user.image" class="user_image">
+					<img :src="this.$store.state.user.image" class="user_image">
 					<el-dropdown-menu slot="dropdown">
 						<el-dropdown-item command="a">
-							<img :src="user.image" class="inner_userImage">
+							<img :src="this.$store.state.user.image" class="inner_userImage">
 							<span style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{user.name}}</span>
 						</el-dropdown-item>
 
@@ -46,7 +46,7 @@
 					<el-input type="password" v-model="modifyPwd.checkPass"></el-input>
 				</el-form-item>
 				<el-form-item style="text-align:left">
-					<el-button @click="modifyPwd('modifyPwd')">提交</el-button>
+					<el-button @click="finishModifyPwd('modifyPwd')">提交</el-button>
 					<el-button @click="modifyPwdVisible = false">取消</el-button>
 				</el-form-item>
 			</el-form>
@@ -65,7 +65,7 @@
 					<el-radio v-model="modifyData.gender" label="2">女</el-radio>
 				</el-form-item>
 				<el-form-item>
-					<el-button @click="modifyData('modifyData')">完成</el-button>
+					<el-button @click="finishModifyData('modifyData')">完成</el-button>
 					<el-button @click="modifyDataVisible = false">取消</el-button>
 				</el-form-item>
 			</el-form>
@@ -140,7 +140,7 @@
 			this.isLogin = this.$store.state.isLogin;
 			this.curTitle = this.$route.name;
 			if(this.isLogin == true) {
-				this.getUserMesg();
+				// this.getUserMesg();
 			}
 			if(this.$route.name == '搜索') {
 				this.inputTxt = this.$store.state.search.name;
@@ -396,12 +396,18 @@
 								}
 							})
 							.then(res => {
-								this.$store.state.user = res.data.id;
-								this.$store.state.user = res.data.name;
-								this.$store.state.user = res.data.image;
-								this.$store.state.user = res.data.gender;
-								this.$store.state.user.image = this.$store.state.serverUrl + this.$store.state.user.image;
-								this.$store.state.likeSongs = res.data.likeSongList;
+								this.user = res.data;
+								// this.user = res.data.name;
+								// this.user = res.data.image;
+								// this.user = res.data.gender;
+								this.user.image = this.$store.state.serverUrl + this.user.image;
+								this.$store.state.user = this.user;
+								console.log(this.user.image);
+								console.log(this.$store.state.user.image);
+
+								// this.$store.state.likeSongs = res.data.likeSongList;
+								this.$store.state.likeSongs = this.user;
+								console.log(this.$store.state.likeSongs);
 								for(var i=0; i<likeSongs.length; i++) {
 									this.$store.state.likeSongs[i].image = this.$store.state.serverUrl + this.$store.state.likeSongs[i].image;
 									this.$store.state.likeSongs[i].filePath = this.$store.state.serverUrl + this.$store.state.likeSongs[i].filePath;
@@ -412,6 +418,7 @@
 									this.$store.state.likeAlbums[i].image = this.$store.state.serverUrl + this.$store.state.likeAlbums[i].image;
 								}
 								this.$store.state.playlistList = res.data.playlistList;
+								this.user = this.$store.state.user;
 							})
 							.catch(function (error) {
 								console.log(error);
@@ -461,10 +468,31 @@
 					});
 				}
 			},
-			modifyPwd: function(_modifyPwd) {
+			finishModifyPwd: function(_modifyPwd) {
 				this.submitForm(_modifyPwd);
+				if(this.flag) {
+					this.flag = false;
+					this.axios.post(this.$store.state.serverUrl + "/user/modifyPassword", {
+						oldPwd: this.modifyPwd.oldPwd,
+						newPwd: this.modifyPwd.newPwd
+					})
+					.then(res => {
+						var tip = res.data;
+						if(tip == true) {
+							alert("修改成功");
+							this.dialogFormVisible = false;
+							this.$router.push('/');
+						}
+						else if(tip == false) {
+							alert("注册失败，请重新注册");
+						}
+					})
+					.catch(function (error) {
+						console.log(error);
+					});
+				}
 			},
-			modifyData: function(_modifyData) {
+			finishModifyData: function(_modifyData) {
 				this.submitForm(_modifyData);
 			},
 			submitForm(formName) {
