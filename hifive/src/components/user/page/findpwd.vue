@@ -94,7 +94,7 @@
 			id: '',
 		},
 		security: {
-			securityQuestion: '你的家乡在哪里?',
+			securityQuestion: '',
 			securityAnswer: '',
 		},
 		password: {
@@ -119,19 +119,21 @@
 		}
 		}
       },
-    
-    mounted(){
-        this.getArtistInfo(this.artist.id);
+
+    computed: {
+      serverUrl() {
+        return this.$store.state.serverUrl;
       },
+      state() {
+        return this.$store.state;
+      }
+    },
 
     methods: {
       next() {
       	if(this.active == 0) this.checkUserExisted(this.email.id);
       	if(this.active == 1) this.checkAnswer(this.email.id, this.security.securityAnswer);
-      	if(this.active == 2) this.resetPassword(this.password.newPwd);
-        if (this.active++ > 2) this.active = 3;
-        //alert(act);
-        this.hidden(this.active);
+      	if(this.active == 2) this.resetPassword(this.password.newPwd);    	
       },
       last() {
       	if (this.active-- < 1) this.active = 0;
@@ -152,10 +154,6 @@
         	document.getElementById('div1').style.display = 'none';
         	document.getElementById('div2').style.display = 'none';
         } else if(_active == 3) {
-        	this.$message({
-          		message: '密码修改成功！页面将在5秒后跳转',
-          		type: 'success'
-        	});
         	setTimeout(function () { this.location.href = "../../unlogin.vue" }, 4000);
         }
       },
@@ -177,11 +175,12 @@
           					message: '用户不存在！',
           					type: 'error'
         				});
-		  		  		this.active = -1;
-		  		  	}
-		  		  	//
-		  		  	//可能有问题
-		  		  	//
+        				this.active = -1;
+        			}
+        			if (this.active++ > 2) {
+        				this.active = 3;
+        			}
+        			this.hidden(this.active);
 		  		  	var ID = this.email.id;
 		  		  	this.getQuestion(ID);
 		  		  })
@@ -189,11 +188,8 @@
 							console.log(error);
 						});
       		} else{
-      			this.active = -1;
+      			this.active = 0;
       			}
-      	// } else {
-      	// 		this.active = -1;
-      	// 	}
       },
 
       getQuestion: function(_email){
@@ -203,11 +199,14 @@
                 }
               })
       		.then(res => {
-      			this.security.securityQuestion = res.data;
+      			if(res.data == 1) this.security.securityQuestion = '你的家乡在哪里';
+      			else if(res.data == 2) this.security.securityQuestion = '你的父亲名字？';
+      			else if(res.data == 3) this.security.securityQuestion = '你的母亲名字？';
+      			else if(res.data == 4) this.security.securityQuestion = '你的生日？';
       		})
       		.catch(function (error) {
-						console.log(error);
-					});
+				console.log(error);
+			});
       },
 
       checkAnswer: function(_id, _answer){
@@ -227,17 +226,18 @@
       					type: 'error'
     				});
       				this.active = 0;
-      			}
+        			}
+        		if (this.active++ > 2) {
+        			this.active = 3;
+        			}
+        		this.hidden(this.active);
       		})
       		.catch(function (error) {
 				console.log(error);
 			});
       	} else {
-      		this.active = 0;
+      		this.active = 1;
       		}
-      	// } else {
-      	// 	this.active = 0;
-      	// }
       },
 
       resetPassword: function(_newPwd){
@@ -245,7 +245,7 @@
       	if(this.flag){
       		this.flag = false;
   			this.axios.post(this.$store.state.serverUrl + '/user/resetPassword',{
-              newPwd:this.password.newPwd, 
+              newPwd:_newPwd, 
           })
   		.then(res => {
   			var isright = res.data;
@@ -254,19 +254,22 @@
   					message: '密码修改失败！',
   					type: 'error'
 				});
-  				this.active = 1;
   			} else {
   				this.$message({
-  					message: '密码修改成功！',
+  					message: '密码修改成功！页面将在5秒后跳转！',
   					type: 'success'
 				});
   			}
+  			if (this.active++ > 2) {
+				this.active = 3;
+			}
+			this.hidden(this.active);
   		})
   		.catch(function (error) {
 					console.log(error);
 				});
       	} else {
-      		this.active = 1;
+      		this.active = 2;
       		}
       },
 
