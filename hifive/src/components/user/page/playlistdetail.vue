@@ -1,0 +1,824 @@
+<template>
+    <div>
+        <v-header></v-header>
+    <div class="playlistDetail" :data="playlist">
+        <el-row :gutter="50">
+            <el-col :span="4" :offset="3">
+                <div>
+                    <img align=right style="width:230px;height:230px;margin-top:20px" :src="playlist.image" onerror="this.style.display='none'">
+                </div>
+            </el-col>
+            <el-col :span="12">
+                <div>
+                    <h2>{{playlist.name}}</h2>
+                    <div class="intro">
+                        <p>简介</p>
+                        <p id="playlistIntro">{{playlist.intro}}</p>
+                        <el-popover v-if="isOverflow" placement="left" title="歌单简介" trigger="click">
+                        <p>{{playlist.intro}}</p>
+                        <el-button type="text" slot="reference" style="color:black">[更多]</el-button>
+                        </el-popover>
+                    </div>  
+
+                    <el-button class="btn2" type="primary" icon="el-icon-caret-right" v-on:click="playAllSong">播放全部</el-button>
+
+                    <el-popover
+                    ref=""
+                    placement="right" width="500"
+                    trigger="click">
+                        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
+                            <el-form-item label="歌单名称" prop="name">
+                                <el-input v-model="ruleForm.name" placeholder="请输入歌单名称"></el-input>
+                            </el-form-item>
+                            <el-form-item label="歌单简介" prop="intro">
+                                <el-input type="textarea" v-model="ruleForm.intro" placeholder="请输入歌单简介"></el-input>
+                            </el-form-item>
+                            <el-form-item label="上传图片" prop="image">
+                                <el-upload
+                                action="https://jsonplaceholder.typicode.com/posts/"
+                                list-type="picture-card"
+                                :on-preview="handlePictureCardPreview"
+                                :on-remove="handleRemove">
+                                <i class="el-icon-plus"></i>
+                                </el-upload>
+                                <el-dialog :visible.sync="dialogVisible">
+                                <img width="100%" :src="dialogImageUrl" alt="">
+                                </el-dialog>
+                            </el-form-item>
+                            <el-form-item>
+                                <el-button type="primary" @click="submitForm('ruleForm')">完成</el-button>
+                                <el-button @click="dialogVisible=false">取消</el-button>
+                            </el-form-item>
+                        </el-form>
+
+                        <el-button class="btn2" slot="reference">编辑歌单</el-button>
+                    </el-popover>
+
+                    <el-dropdown trigger="click" @command="handlePlaylistCommand">
+                    <el-button class="btn2" icon="el-icon-plus">添加到<i class="el-icon-arrow-down el-icon--right"></i>
+                        </el-button>
+                        <el-dropdown-menu slot="dropdown" :data="playlistList">
+                            <el-dropdown-item command="playqueue" @click.native ="addAllToSongList()">播放队列</el-dropdown-item>
+                            <div v-if="isLogin">
+                                <el-dropdown-item disabled divided>我喜欢</el-dropdown-item>
+                                <el-dropdown-item v-for="playlist in playlistList" :key="playlist.id" 
+                                :command='{type:"playlist",params:playlist.id}'>{{playlist.name}}</el-dropdown-item>
+                                <el-dropdown-item command="newplaylist" divided>添加到新歌单</el-dropdown-item>
+                            </div>
+                            <el-dropdown-item v-else command="login" divided>登录后添加到歌单</el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+                </div>
+            </el-col>
+        </el-row>
+        <el-row>
+            <div class="playlistSongList">
+                <el-table :data="songsView" 
+                max-height="1350"
+                @cell-mouse-enter="handleMouseEnter" 
+                @cell-mouse-leave="handleMouseOut"               
+                class="songTable">
+                <el-table-column type="index" label=" " :index="indexMethod"></el-table-column>
+                <el-table-column label="歌曲" width="200">
+                    <template slot-scope="scope">
+                    <router-link :to="{ path: '/user/songdetail', query: {id:playlistSongList[scope.$index].id}}">
+                        <el-button type="text" style="color:black;cursor:pointer;text-decoration:none" 
+                        onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.name}}</el-button>
+                    </router-link>
+                    </template>
+                </el-table-column>
+                <el-table-column label=" " width="200" type="index">
+                    <template slot-scope="scope">
+                    <span v-if="scope.row.Flag"> <el-button icon="el-icon-caret-right" circle 
+                    v-on:click="playSong(scope.$index)"></el-button> </span>
+                    <span v-if="scope.row.Flag"> 
+                        <el-dropdown trigger="click" placement="bottom-start" 
+                        @visible-change="handle(scope.row,$event)" @command="handleSongCommand">
+                        <el-button icon="el-icon-plus" circle></el-button>
+                        <el-dropdown-menu slot="dropdown" :data="playlistList">
+                            <el-dropdown-item command="playqueue" @click.native ="addToSongList(scope.$index)">播放队列</el-dropdown-item>
+                            <div v-if="isLogin">
+                            <el-dropdown-item disabled divided>我喜欢</el-dropdown-item>
+                            <el-dropdown-item v-for="playlist in playlistList" :key="playlist.id" 
+                            :command='{type:"playlist",param1:playlist.id,param2:scope.row}'>{{playlist.name}}</el-dropdown-item>
+                            <el-dropdown-item command="newplaylist" divided>添加到新歌单</el-dropdown-item>
+                            </div>
+                            <el-dropdown-item v-else command="login" divided>登录后添加到歌单</el-dropdown-item>
+                        </el-dropdown-menu>
+                        </el-dropdown>
+                    </span>
+                    <el-dialog title="创建歌单" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
+                        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
+                        <el-form-item label="歌单名称" prop="name">
+                            <el-input v-model="ruleForm.name" placeholder="请输入歌单名称"></el-input>
+                        </el-form-item>
+                        <el-form-item label="歌单简介" prop="intro">
+                            <el-input type="textarea" v-model="ruleForm.intro" placeholder="请输入歌单简介"></el-input>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="submitForm('ruleForm')">完成</el-button>
+                            <el-button @click="dialogVisible=false">取消</el-button>
+                        </el-form-item>
+                        </el-form>
+                    </el-dialog>
+                    <span v-if="scope.row.Flag"> <el-button icon="el-icon-download" circle 
+                    v-on:click="downloadSong(scope.row)"></el-button> </span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="歌手" width="140">
+                    <template slot-scope="scope">
+                    <router-link :to="{ path: '/user/artistdetail', query: {id:playlistSongList[scope.$index].artistId }}">
+                        <el-button type="text" style="color:black;cursor:pointer;text-decoration:none"
+                        onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.artistName}}</el-button>
+                    </router-link>
+                    </template>
+                </el-table-column>
+                <el-table-column label="专辑" width="160">
+                    <template slot-scope="scope">
+                    <router-link :to="{ path: '/user/albumdetail', query: { id: scope.row.albumId }}">
+                        <el-button type="text" style="color:black;cursor:pointer;text-decoration:none"
+                        onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.albumName}}</el-button>
+                    </router-link>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="duration" label="时长" width="60">                                   
+                </el-table-column>
+                <el-table-column width="80">
+                    <template slot-scope="scope">
+                        <span v-if="scope.row.Flag">
+                            <el-button @click="deleteSong" icon="el-icon-delete" circle></el-button>
+                        </span>
+                    </template>
+                </el-table-column>
+                </el-table>
+                <br>
+                <el-pagination class="pagination" :page-count="pageCount" 
+                layout="prev, pager, next" 
+                @current-change="handleChange"></el-pagination>
+                <br>
+            </div>
+        </el-row>
+    </div>
+
+        <v-foot></v-foot>
+    </div>
+</template>
+    
+<script>
+  import vHeader from "../common/header.vue";
+  import vNav from "../common/navigation.vue";
+  import vFoot from "../common/footer.vue"
+export default {
+   components: {
+      vHeader,
+      vFoot
+    },
+    data(){
+        return{
+            id:'',
+            playlist:{          
+                name:"歌单", 
+                intro:'这是歌单简介',
+                //image:'',             
+            },
+            index:1,
+            songsView:[],
+            playlistSongList: [
+                {
+                name:'zzz',
+                artistName:'aaa',
+                albumName:'bbb',
+                duration:"04:30",
+                Flag:false,
+                isopen:false,
+                },
+                {
+                name:'zzz',
+                artistName:'aaa',
+                albumName:'bbb',
+                duration:"04:30",
+                },
+                {
+                name:'zzz',
+                artistName:'aaa',
+                albumName:'bbb',
+                duration:"04:30",
+                },
+                {
+                name:'zzz',
+                artistName:'aaa',
+                albumName:'bbb',
+                duration:"04:30",
+                },
+                {
+                name:'zzz',
+                artistName:'aaa',
+                albumName:'bbb',
+                duration:"04:30",
+                },
+                {
+                name:'zzz',
+                artistName:'aaa',
+                albumName:'bbb',
+                duration:"04:30",
+                },
+                {
+                name:'zzz',
+                artistName:'aaa',
+                albumName:'bbb',
+                duration:"04:30",
+                },
+                {
+                name:'zzz',
+                artistName:'aaa',
+                albumName:'bbb',
+                duration:"04:30",
+                },
+                {
+                name:'zzz',
+                artistName:'aaa',
+                albumName:'bbb',
+                duration:"04:30",
+                },
+                {
+                name:'zzz',
+                artistName:'aaa',
+                albumName:'bbb',
+                duration:"04:30",
+                },
+                {
+                name:'zzz',
+                artistName:'aaa',
+                albumName:'bbb',
+                duration:"04:30",
+                },
+                {
+                name:'zzz',
+                artistName:'aaa',
+                albumName:'bbb',
+                duration:"04:30",
+                },
+
+                {
+                name:'zzz',
+                artistName:'aaa',
+                albumName:'bbb',
+                duration:"04:30",
+                },
+                {
+                name:'zzz',
+                artistName:'aaa',
+                albumName:'bbb',
+                duration:"04:30",
+                },
+                {
+                name:'zzz',
+                artistName:'aaa',
+                albumName:'bbb',
+                duration:"04:30",
+
+                },
+                {
+                name:'zzz',
+                artistName:'aaa',
+                albumName:'bbb',
+                duration:"04:30",
+                },
+                {
+                name:'zzz',
+                artistName:'aaa',
+                albumName:'bbb',
+                duration:"04:30",
+                },
+                {
+                name:'zzz',
+                artistName:'aaa',
+                albumName:'bbb',
+                duration:"04:30",
+                },
+                {
+                name:'zzz',
+                artistName:'aaa',
+                albumName:'bbb',
+                duration:"04:30",
+                },
+                {
+                name:'zzz',
+                artistName:'aaa',
+                albumName:'bbb',
+                duration:"04:30",
+                },
+                {
+                name:'zzz',
+                artistName:'aaa',
+                albumName:'bbb',
+                duration:"04:30",
+                },
+                {
+                name:'zzz',
+                artistName:'aaa',
+                albumName:'bbb',
+                duration:"04:30",
+                },
+                {
+                name:'zzz',
+                artistName:'aaa',
+                albumName:'bbb',
+                duration:"04:30",
+                },
+                {
+                name:'zzz',
+                artistName:'aaa',
+                albumName:'bbb',
+                duration:"04:30",
+                },
+                {
+                name:'zzz',
+                artistName:'aaa',
+                albumName:'bbb',
+                duration:"04:30",
+                },
+                {
+                name:'zzz',
+                artistName:'aaa',
+                albumName:'bbb',
+                duration:"04:30",
+                },
+                {
+                name:'zzz',
+                artistName:'aaa',
+                albumName:'bbb',
+                duration:"04:30",
+                },
+                {
+                name:'zzz',
+                artistName:'aaa',
+                albumName:'bbb',
+                duration:"04:30",
+                },
+                {
+                name:'zzz',
+                artistName:'aaa',
+                albumName:'bbb',
+                duration:"04:30",
+                },
+                {
+                name:'zzz',
+                artistName:'aaa',
+                albumName:'bbb',
+                duration:"04:30",
+                },
+                {
+                name:'zzz',
+                artistName:'aaa',
+                albumName:'bbb',
+                duration:"04:30",
+                },
+                {
+                name:'zzz',
+                artistName:'aaa',
+                albumName:'bbb',
+                duration:"04:30",
+                },
+                {
+                name:'zzz',
+                artistName:'aaa',
+                albumName:'bbb',
+                duration:"04:30",
+                },
+                {
+                name:'zzz',
+                artistName:'aaa',
+                albumName:'bbb',
+                duration:"04:30",
+                },
+            ],
+            isOverflow:'',
+            //isLogin:false,
+            dialogVisible:false,
+            dialogImageUrl: '',
+            notDelete:false,
+            page: 1,
+            pageCount: 1,
+            rules: {
+                name: [
+                { required: true, message: '请输入歌单名称', trigger: 'blur' },
+                { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
+                ],
+                intro: [
+                { min: 1, max: 140, message: '长度在 140 个字符以内', trigger: 'blur' }
+                ]
+            },
+            ruleForm: {
+            name: '',
+            intro: '',
+            image:'',
+            },
+            playlistList:[{
+            id:'1',
+            name:'1',
+            count:'',
+            },
+            {
+            id:'2',
+            name:'2',
+            count:'',
+            },
+            {
+            id:'3',
+            name:'3',
+            count:'',
+            }],
+        }
+    },
+    computed: {
+      serverUrl() {
+        return this.$store.state.serverUrl;
+      },
+      isLogin(){
+        return this.$store.state.isLogin;
+      }
+    },
+    mounted() {
+        // this.getPlaylistList(this.userID);
+        this.handleOverflow();
+        this.pagination(1);
+        this.computePageCount();
+        //this.getPlaylistIntro();
+    },
+    methods: {
+        indexMethod(index) {
+            return (this.page - 1)* 20 + index + 1;
+        },
+        handleOverflow:function(){
+          var offsetWidth = document.getElementById("playlistIntro").offsetHeight;  
+          var scrollWidth = document.getElementById("playlistIntro").scrollHeight;
+          if (offsetWidth < scrollWidth) {
+            this.isOverflow=true;
+          }
+          else{
+            this.isOverflow=false;
+          }
+        },
+        playAllSong:function(){
+          //传递歌曲id给player
+            this.$store.state.songList = [];
+            for(var i = 0; i < this.playlistSongList.length; i++){
+                this.$store.state.songList.push(this.playlistSongList[i]);
+            }
+            this.$store.state.currentSong = this.playlistSongList[0];
+            this.$store.state.currentIndex = 0;
+        },
+        handlePlaylistCommand:function(command){
+          if(command=="login"){
+            window.location.href='/';
+          }
+          else if(command=="newplaylist"){
+            this.dialogVisible=true;
+          }
+          else if(command=="playqueue"){
+            //传递所有歌曲id给player.vue
+          }
+          else{
+            this.axios.get(this.serverUrl+'/playlist/addPlaylist',{
+              params:{
+                fromId:this.playlist.id,
+                toId:command.params
+              }
+            })
+            .then(response =>{
+              if(response){
+                this.$message({
+                  showClose: true,
+                  message: '已成功添加到歌单',
+                  type: 'success'
+                });
+              }
+              else{
+                this.$message({
+                  showClose: true,
+                  message: '会话超时',
+                  type: 'error'
+                });
+              }
+            })
+            .catch(function(err){
+              console.log(err);
+            });
+          }
+        },
+        handleMouseEnter:function(row, column, cell, event){
+            row.Flag=true;
+        },
+        handleMouseOut:function(row, column, cell, event){
+            if(!row.isopen){
+            row.Flag=false;}
+            else{
+                return false;
+            }
+        },
+        handle:function(row,event){
+          row.Flag=event;
+          row.isopen=event;
+        },
+        handleSongCommand:function(command){
+            if(command=="login"){
+                window.location.href='/';
+            }
+            else if(command=="newplaylist"){
+                this.dialogVisible=true;
+            }
+            else if(command=="playqueue"){
+                //传递歌曲id给player.vue
+            }
+            else{
+                this.axios.get(this.serverUrl+'/playlist/addSong',{
+                params:{
+                    songId:command.param2.id,
+                    playlistId:command.param1
+                }
+                })
+                .then(response =>{
+                if(response){
+                    this.$message({
+                    showClose: true,
+                    message: '已成功添加到歌单',
+                    type: 'success'
+                    });
+                }
+                else{
+                    this.$message({
+                    showClose: true,
+                    message: '会话超时',
+                    type: 'error'
+                    });
+                }
+                })
+                .catch(function(err){
+                console.log(err);
+                });
+            }
+        },
+        handleClose(done) {
+            this.$confirm('确认关闭？')
+            .then(_ => {
+            done();
+            })
+            .catch(_ => {});
+        },
+        downloadSong:function(row){
+            if(this.isLogin){
+                this.axios.get(this.serverUrl+'/download/downloadSong',{
+                params:{
+                    id:row.id
+                }
+                })
+                .then(response =>{
+                if(response){
+                    this.$message({
+                    showClose: true,
+                    message: '下载成功',
+                    type: 'success'
+                    });
+                }
+                else{
+                    this.$message({
+                    showClose: true,
+                    message: '下载失败',
+                    type: 'error'
+                    });
+                }
+                })
+                .catch(function(err){
+                console.log(err);
+                });
+          }
+          else{
+            //询问要不要登录
+            this.$confirm('还未登录,是否现在登录?', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+            }).then(() => {
+              window.location.href='/';
+            }).catch(() => {
+            });
+          }
+        },
+        getPlaylistList:function(){
+        //无提交，返回歌单列表
+        },
+        getPlaylistIntro: function(){
+            this.playlist.id = 1;
+          this.axios.get(this.serverUrl+'/playlist/getInfo',{
+                params:{
+                  id:this.playlist.id
+                }
+              })
+              .then(response => {
+                console.log(response.data);
+                this.playlist = response.data;
+                this.playlist.image = this.serverUrl + this.playlist.image;
+                this.playlistSongList = this.playlist.songList;
+                for(var i = 0; i < this.songList.length; i++){
+                    this.$set(this.playlistSongList[i],'Flag',false);
+                    this.$set(this.playlistSongList[i],'isopen',false);
+                }
+                this.computePageCount();
+                this.pagination(1);
+              })
+              .catch(function(err){
+                console.log(err);
+              });
+        },
+        submitForm:function(formname){
+          this.$refs[formname].validate((valid) => {
+            if (valid) {
+              this.axios.get(this.serverUrl+'/playlist/create',{
+                params:{
+                  name:formname.name,
+                  intro:formname.intro,
+                  image:formname.image,
+                }
+              })
+              .then(response =>{
+                if(response){
+                  this.getPlaylistList();
+                  this.$message({
+                    showClose: true,
+                    message: '已成功添加到新歌单',
+                    type: 'success'
+                  });
+                }
+                else{
+                  this.$message({
+                    showClose: true,
+                    message: '会话超时',
+                    type: 'error'
+                  });
+                }
+              })
+              .catch(function(err){
+                console.log(err);
+              });
+              this.dialogVisible=false;
+              this.$refs[formname].resetFields();
+            } 
+            else {
+              this.$message({
+                    showClose: true,
+                    message: '格式不正确',
+                    type: 'error'
+              });
+              return false;
+            }
+          });
+        },
+        handleChange: function(val){
+            if(val != this.page){
+                this.pagination(val);
+            }
+        },
+        pagination: function(_page){
+            this.page = _page;
+            this.songsView.splice(0,this.songsView.length);
+            for(var i = 0; i < 20; i++){
+                if(this.playlistSongList[((_page - 1)*20) + i] == null){
+                } else {
+                    var _songList = this.playlistSongList[((_page - 1)*20) + i];
+                    this.songsView.push(_songList);
+                }
+            }
+            
+        },
+        computePageCount: function(){
+            this.pageCount = Math.ceil(parseFloat(this.playlistSongList.length) / 20);
+        },
+        addAllToSongList: function(){
+            if(this.$store.state.songList.length == 0){
+                this.$store.state.songList = [];
+                for(var i = 0; i < this.playlistSongList.length; i++){
+                    this.$store.state.songList.push(this.playlistSongList[i]);
+                }
+                this.$store.state.currentSong = this.$store.state.songList[0];
+                this.$store.state.currentIndex = 0;
+            } else {
+                for(var m = 0; m < this.playlistSongList.length; m++){
+                    var song = this.playlistSongList[m];
+                    var songId = song.id;
+                    if(this.$store.state.currentSong.id != songId){
+                        for(var i = 0; i < this.$store.state.songList.length; i++){
+                            if(this.$store.state.songList[i].id == songId){
+                                this.$store.state.songList.splice(i, 1);
+                                if(i < this.$store.state.currentIndex)
+                                    this.$store.state.currentIndex=this.$store.state.currentIndex-1;
+                                break;
+                            }
+                        }
+                        this.$store.state.songList.push(song);
+                    }
+                }
+            }
+        },
+        addToSongList: function(index){
+            index = (this.page - 1) * 20 + index;
+            console.log(this.playlistSongList);
+            var song = this.playlistSongList[index];
+            var songId = song.id;
+            if(this.$store.state.songList.length == 0){
+                this.$store.state.songList = [];
+                this.$store.state.songList.push(song);
+                this.$store.state.currentSong = song;
+                this.$store.state.currentIndex = 0;
+            } else if(this.$store.state.currentSong.id != songId){
+                for(var i = 0; i < this.$store.state.songList.length; i++){
+                    if(this.$store.state.songList[i].id == songId){
+                        this.$store.state.songList.splice(i, 1);
+                        if(i < this.$store.state.currentIndex)
+                            this.$store.state.currentIndex=this.$store.state.currentIndex-1;
+                        break;
+                    }
+                }
+                this.$store.state.songList.push(song);
+            }
+        },
+        playSong:function(index){
+            //传递歌曲ID给player.vue
+            index = (this.page - 1) * 20 + index;
+
+            this.$store.state.songList = [];
+            for(var i = 0; i < this.playlistSongList.length; i++){
+                this.$store.state.songList.push(this.playlistSongList[i]);
+            }
+            this.$store.state.currentSong = this.playlistSongList[index];
+            this.$store.state.currentIndex = index;
+        },
+        deleteSong: function(val){
+            this.$confirm('确认删除？', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+                }).then(() => {
+
+                //删除歌曲    
+                this.$message({
+                    type: 'success',
+                    message: '删除成功!'
+                });
+                }).catch(() => {
+                this.$message({
+                    type: 'info',
+                    message: '已取消删除'
+                });          
+            });               
+        },
+        //上传图片
+        handleRemove(file, fileList) {
+            console.log(file, fileList);
+            },
+        handlePictureCardPreview(file) {
+            //图片url
+            this.dialogImageUrl = file.url;
+            this.dialogVisible = true;
+        },
+    }
+
+}
+</script>
+
+<style scoped>
+.playlistDetail{
+    width:90%;
+    height:100%;
+}
+
+#playlistIntro{
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    overflow: hidden;
+}
+.songTable{
+    width:80%;
+    margin-left:132px;
+    overflow:hidden;
+}
+.btn2{
+    margin-top:60px;
+    height:45px;
+    width:120px;
+    text-align:center;
+    margin-right:20px;
+}
+.pagination {
+    font-size: 30px;
+    margin-left:500px;
+}
+.el-popover{
+  width:550px;
+  height:400px;
+  word-wrap: break-word; 
+  word-break: normal; 
+  overflow-x:hidden;
+  overflow-y:scroll;
+}
+</style>
