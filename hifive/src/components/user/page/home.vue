@@ -30,7 +30,7 @@
                                             <el-col style="width:90px;">
                                                 <div style="width:90px;height:90px;border-style:none;overflow:hidden;">
                                                     <router-link :to="{ path: '/user/songdetail', query: { id: songList[9*(page-1)+3*(i-1)+j-1].id }}">
-                                                        <img :src="songList[9*(page-1)+3*(i-1)+j-1].image" class="songImage" @mouseenter="enterSongImage" @mouseleave="leaveSongImage" v-on:click="clickOnSongImage(9*(page-1)+3*(i-1)+j-1)">
+                                                        <img :src="songList[9*(page-1)+3*(i-1)+j-1].image" class="songImage" @mouseenter="enterSongImage" @mouseleave="leaveSongImage">
                                                     </router-link>
                                                     <el-button class="songButton" icon="el-icon-caret-right" circle v-on:click="clickOnSongButton(9*(page-1)+3*(i-1)+j-1)"></el-button>
                                                 </div>
@@ -81,7 +81,7 @@
                                         <el-row>  
                                             <div style="width:180px;height:180px;border-style:none;overflow:hidden;">
                                                 <router-link :to="{ path: '/user/albumdetail', query: { id: albumList[10*(page-1)+5*(i-1)+j-1].id }}">
-                                                    <img :src="albumList[10*(page-1)+5*(i-1)+j-1].image" class="albumImage" @mouseenter="enterAlbumImage" @mouseleave="leaveAlbumImage" v-on:click="clickOnAlbumImage(10*(page-1)+5*(i-1)+j-1)">
+                                                    <img :src="albumList[10*(page-1)+5*(i-1)+j-1].image" class="albumImage" @mouseenter="enterAlbumImage" @mouseleave="leaveAlbumImage">
                                                 </router-link>
                                                 <el-button class="albumButton" icon="el-icon-caret-right" circle v-on:click="clickOnAlbumButton(10*(page-1)+5*(i-1)+j-1)"></el-button>
                                             </div>
@@ -316,7 +316,7 @@ export default {
             }
         },
         enterAlbumImage:function(event){
-            event.target.style.transform='scale(1.5)';
+            event.target.style.transform='scale(1.3)';
             event.target.parentNode.parentNode.children[1].style.transform='scale(1.5)';
             event.target.parentNode.parentNode.children[1].style.opacity=1;
         },
@@ -348,18 +348,10 @@ export default {
             
             console.log(this.songList[index].id);
         },
-        clickOnSongImage:function(index){
-            
-            console.log(this.songList[index].id);
-        },
         switchAlbum(tab) {
             this.getAlbumList(tab.name);
         },
         clickOnAlbumButton:function(index){
-            
-            console.log(this.albumList[index].id);
-        },
-        clickOnAlbumImage:function(index){
             
             console.log(this.albumList[index].id);
         },

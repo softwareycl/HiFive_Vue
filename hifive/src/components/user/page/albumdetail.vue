@@ -86,8 +86,8 @@
         <el-col :span="4">
           <div>
             <p class="font_albumIntro">简介</p>
-            <p id="albumIntro" style="display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 4;overflow: hidden;" class="font_other">{{album.intro}}</p>
-            <el-popover v-if="isOverflow" placement="left" title="专辑简介" trigger="click">
+            <p id="albumIntro" style="text-overflow:ellipsis;display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 4;overflow: hidden;" class="font_other">{{album.intro}}</p>
+            <el-popover v-if="this.isOverflow" placement="left" title="专辑简介" trigger="click">
               <p class="font_other">{{album.intro}}</p>
               <el-button type="text" slot="reference" style="color:black" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">[更多]</el-button>
             </el-popover>
@@ -127,7 +127,7 @@
   data(){
     return{
       id: '',
-      style: ['', 'POP 流行', 'ROCK 摇滚', 'FOLK 民谣', 'ELECTRONIC 电子', 'LIGHT 轻音乐', 'RAP RAP', 'COUNTRY 乡村','DANCE 舞曲', '其他'],
+      style: ['', 'POP 流行', 'ELECTRONIC 电子','ROCK 摇滚' ,'CLASSIC 古典','FOLK 民谣', 'R&B', '其他'],
       dialogVisible:false,
       newPlaylist: {
         id:'',
@@ -178,9 +178,9 @@
         row.isopen=event;
       },
       handleOverflow:function(){
-        var offsetWidth = document.getElementById("albumIntro").offsetHeight;  
-        var scrollWidth = document.getElementById("albumIntro").scrollHeight;
-        if (offsetWidth < scrollWidth) {
+        var offsetHeight = document.getElementById("albumIntro").offsetHeight;  
+        var scrollHeight = document.getElementById("albumIntro").scrollHeight;
+        if (offsetHeight < scrollHeight) {
           this.isOverflow=true;
         }
         else{
@@ -363,21 +363,21 @@
               .then(response =>{
                 if(response.data!=-1){
                   var thisPlaylist={id:response.data,name:this.newPlaylist.name,intro:this.newPlaylist.intro};
-                  this.state.playlistList.push(thisPlaylist);
-                  this.getPlaylistList();
-                  this.dialogVisible=false;
+                    this.state.playlistList.push(thisPlaylist);
+                    this.getPlaylistList();
+                    this.dialogVisible=false;
                   this.$refs["newPlaylist"].resetFields();
+                  this.$message({
+                    showClose: true,
+                    message: '歌单创建成功',
+                    type: 'success'
+                  });
                   if(this.newPlaylist.type=="album"){
                     this.addAlbumToPlaylist(response.data);
-                  }
+                    }
                   else{
                     this.addSongToPlaylist(this.newPlaylist.info,response.data);
                   }
-                  this.$message({
-                    showClose: true,
-                    message: '已成功添加到新歌单',
-                    type: 'success'
-                  });
                 }
                 else{
                   this.$message({
@@ -454,7 +454,6 @@
             }
           })
           .then(response => {
-            console.log(response.data);
             this.album = response.data;
             this.album.image = this.serverUrl + this.album.image;
             this.album.releaseDate = this.timestampToTime(this.album.releaseDate);
@@ -513,7 +512,7 @@
   
 
 </script>
-<style>
+<style scoped>
 #albumdetail{
   padding: 30px;
 }

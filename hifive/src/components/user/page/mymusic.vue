@@ -553,16 +553,27 @@ export default {
           return Y+M+D;
         },
         getMyMusic:function(){
-                this.user=this.state.user;
-                this.allSong=this.state.likeSongs;
-                this.allAlbum=this.state.likeAlbums;
-                this.allPlaylist=this.state.playlistList;
-                console.log(this.allAlbum)
+            this.axios.get(this.serverUrl + "/user/showMyMusic", {
+                params: {
+                    id: this.user.id
+                }
+            })
+            .then(res => {
+                this.user = res.data;
+                this.user.image = this.state.serverUrl + this.user.image;
+                this.allSong=this.user.likeSongList;
+                this.allAlbum = this.user.likeAlbumList;
+                this.allPlaylist=this.user.playlistList;
                 for(var i=0;i<this.allSong.length;i++){
+                    this.allSong[i].image=this.serverUrl+this.allSong[i].image;
+                    this.allSong[i].filePath=this.serverUrl+this.allSong[i].filePath;
+                    this.allSong[i].lyricsPath=this.serverUrl+this.allSong[i].lyricsPath;
                     this.$set(this.allSong[i],'Flag',false);
                     this.$set(this.allSong[i],'isopen',false);
                 }
                 for(var i=0;i<this.allAlbum.length;i++){
+                    this.allAlbum[i].image=this.serverUrl+this.allAlbum[i].image;
+                    this.allAlbum[i].releaseDate=this.timestampToTime(this.allAlbum[i].releaseDate);
                     this.$set(this.allAlbum[i],'Flag',false);
                     this.$set(this.allAlbum[i],'isopen',false);
                 }
@@ -570,6 +581,13 @@ export default {
                     this.$set(this.allPlaylist[i],'Flag',false);
                     this.$set(this.allPlaylist[i],'isopen',false);
                 }
+                this.songPaginationChange(1);
+                this.albumPaginationChange(1);
+                this.playlistPaginationChange(1);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
         },
         songPaginationChange:function(page){
             if(this.allSong.length==0){
@@ -635,10 +653,8 @@ export default {
         }
     },
     mounted(){
+        this.user.id=this.state.user.id;
         this.getMyMusic();
-        this.songPaginationChange(1);
-        this.albumPaginationChange(1);
-        this.playlistPaginationChange(1);
     }
 }
 </script>
