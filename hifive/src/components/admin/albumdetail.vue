@@ -19,25 +19,27 @@
               <p class="font_other">流派 : {{album.style}}</p>
               <p class="font_other">发行时间 : {{album.releaseDate}}</p>
             </div>
-            <el-button icon="el-icon-edit" v-on:click="editDialogVisible=true">编辑专辑</el-button>
-            <el-button icon="el-icon-plus" v-on:click="addDialogVisible=true">添加歌曲</el-button>
+            <el-button icon="el-icon-edit" v-on:click="clickOnEdit">编辑专辑</el-button>
+            <el-button icon="el-icon-plus" v-on:click="addDialogVisible=true;">添加歌曲</el-button>
             <el-button icon="el-icon-delete" v-on:click="deleteAlbum">删除专辑</el-button>
           </div>
         </el-col>
       </el-row>
-      <el-dialog title="编辑专辑" :visible.sync="editDialogVisible" width="60%" :before-close="handleClose">
-        <el-form :model="album" ref="album" label-width="100px">
+      <el-dialog title="编辑专辑" :visible.sync="editDialogVisible" width="50%" :before-close="handleClose">
+        <el-form :model="editAlbum" :rules="editRules" ref="editAlbum" label-width="100px">
           <el-form-item label="专辑名称" prop="name">
-            <el-input v-model="album.name"></el-input>
+            <el-input v-model="editAlbum.name" style="width:50%;"></el-input>
           </el-form-item>
           <el-form-item label="专辑封面" prop="image">
-            <img src="../../assets/周杰伦.jpg">
+            <el-upload ref="upload1" :auto-upload="false" action="http://192.168.20.99:8080/hifive/upload/uploadAlbumImage" :data={id:album.id} :show-file-list="false" :on-change="editImage" :before-upload="beforeAvatarUpload">
+              <img :src="editAlbum.image" class="img">
+            </el-upload>
           </el-form-item>
-          <el-form-item label="歌手" prop="artistName">
-            <el-input disabled v-model="album.artistName"></el-input>
+          <el-form-item label="歌手" prop="artistName" style="float:left">
+            <el-input disabled v-model="editAlbum.artistName" style="width:100%;"></el-input>
           </el-form-item>
           <el-form-item label="流派" prop="style">
-            <el-select v-model="album.style" placeholder="请选择专辑流派">
+            <el-select v-model="editAlbum.style">
               <el-option
               v-for="item in styleOptions"
               :key="item.value"
@@ -46,42 +48,64 @@
             </el-option>
           </el-select>
           </el-form-item>
+          <el-form-item label="地区" prop="region">
+            <el-select v-model="editAlbum.region">
+              <el-option
+              v-for="item in regionOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+          </el-form-item>
           <el-form-item label="发行时间" prop="releaseDate">
-            <el-date-picker v-model="album.releaseDate" type="date" placeholder="请选择发行时间" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd">
+            <el-date-picker v-model="editAlbum.releaseDate" type="date" placeholder="请选择发行时间" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd">
             </el-date-picker>
           </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="submitForm('album')">完成</el-button>
+          <el-form-item label="简介" prop="intro">
+            <el-input v-model="editAlbum.intro" type="textarea" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" style="width:80%;"></el-input>
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item style="margin-left:25%;">
+            <el-button type="primary" @click="submitForm1">完成</el-button>
             <el-button @click="editDialogVisible=false">取消</el-button>
           </el-form-item>
         </el-form>
       </el-dialog>
-      <el-dialog title="添加歌曲" :visible.sync="addDialogVisible" width="60%" :before-close="handleClose">
-        <el-form :model="song" ref="song" label-width="100px">
+      <el-dialog title="添加歌曲" :visible.sync="addDialogVisible" width="50%" :before-close="handleClose">
+        <el-form :model="addSong" :rules="addRules" ref="addSong" label-width="100px">
           <el-form-item label="歌曲名称" prop="name">
-            <el-input v-model="song.name"></el-input>
+            <el-input v-model="addSong.name" style="width:50%;"></el-input>
           </el-form-item>
           <el-form-item label="歌曲图片" prop="image">
-            <img src="../../assets/周杰伦.jpg">
+            <el-upload ref="upload2" :auto-upload="false" action="http://192.168.20.99:8080/hifive/upload/uploadSongImage" :data={id:addSong.id} :show-file-list="false" :on-change="addImage" :before-upload="beforeAvatarUpload" style="float:left">
+              <img :src="addSong.image" class="img">
+            </el-upload>
+            <el-upload ref="upload3" :auto-upload="false" action="http://192.168.20.99:8080/hifive/upload/uploadSongFile" :data={id:addSong.id} :limit="1" :on-change="addFilePath" :on-exceed="handleExceed">
+              <el-button slot="trigger">选取歌曲文件</el-button>
+            </el-upload>
+            <el-upload ref="upload4" :auto-upload="false" action="http://192.168.20.99:8080/hifive/upload/uploadLyrics" :data={id:addSong.id} :limit="1" :on-change="addLyricsPath" :on-exceed="handleExceed">
+              <el-button slot="trigger">选取歌词文件</el-button>
+            </el-upload>
           </el-form-item>
-          <el-form-item label="歌手" prop="artistName">
-            <el-input disabled v-model="album.artistName"></el-input>
+          <el-form-item label="歌手" prop="artistName" style="float:left;">
+            <el-input disabled v-model="album.artistName" style="width:100%;"></el-input>
           </el-form-item>
-          <el-form-item label="所属专辑" prop="albumName">
-            <el-input disabled v-model="album.name"></el-input>
-          </el-form-item>
-          <el-form-item label="语种" prop="language">
-            <el-select v-model="song.style" placeholder="请选择歌曲语种">
+          <el-form-item label="地区" prop="region">
+            <el-select v-model="addSong.region">
               <el-option
-              v-for="item in languageOptions"
+              v-for="item in regionOptions"
               :key="item.value"
               :label="item.label"
               :value="item.value">
-            </el-option>
-          </el-select>
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="所属专辑" prop="albumName" style="float:left;">
+            <el-input disabled v-model="album.name" style="width:100%;"></el-input>
           </el-form-item>
           <el-form-item label="流派" prop="style">
-            <el-select v-model="song.style" placeholder="请选择歌曲流派">
+            <el-select v-model="addSong.style" placeholder="请选择歌曲流派">
               <el-option
               v-for="item in styleOptions"
               :key="item.value"
@@ -90,20 +114,23 @@
             </el-option>
           </el-select>
           </el-form-item>
+          <el-form-item label="语种" prop="language">
+            <el-input v-model="addSong.language" placeholder="请输入歌曲语种" style="width:35%;"></el-input>
+          </el-form-item>
           <el-form-item label="发行时间" prop="releaseDate">
-            <el-date-picker v-model="song.releaseDate" type="date" placeholder="请选择发行时间" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd">
+            <el-date-picker v-model="addSong.releaseDate" type="date" placeholder="请选择发行时间" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd">
             </el-date-picker>
           </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="submitForm('album')">完成</el-button>
-            <el-button @click="editDialogVisible=false">取消</el-button>
+          <el-form-item style="margin-left:25%;">
+            <el-button type="primary" @click="submitForm2">完成</el-button>
+            <el-button @click="addDialogVisible=false">取消</el-button>
           </el-form-item>
         </el-form>
       </el-dialog>
       <el-row>
         <el-col :span="16" :offset="2">
           <div>
-            <el-table :data="songList" :stripe=true style="height:600px;width:95%;" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">
+            <el-table :data="songList" :stripe=true style="width:95%;" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">
               <el-table-column type="index" label=" " :index="indexMethod"></el-table-column>
               <el-table-column label="歌曲" width=400>
                 <template slot-scope="scope">
@@ -132,7 +159,7 @@
           <div>
             <p class="font_albumIntro">简介</p>
             <p id="albumIntro" style="display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 4;overflow: hidden;" class="font_other">{{album.intro}}</p>
-            <el-popover v-if="isOverflow" placement="left" title="专辑简介" trigger="click">
+            <el-popover v-if="isOverflow" placement="left" title="专辑简介" trigger="click" width=500>
               <p class="font_other">{{album.intro}}</p>
               <el-button type="text" slot="reference" style="color:black" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">[更多]</el-button>
             </el-popover>
@@ -156,89 +183,122 @@
     data(){
       return{
         isOverflow:'',
-        album:{
-          id:'111',
-          name:'111',
-          artistName:'111',
-          image:'',
-          style:'111',
-          releaseDate:'2018-6-27',
+        editRules: {
+        name: [
+        { required: true, message: '请输入专辑名称', trigger: 'blur' },
+        { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
+        ],
+        style:[
+        {required: true, message: '请选择专辑流派', trigger: 'blur'},
+        ],
+        region:[
+        {required: true, message: '请选择专辑地区', trigger: 'blur'},
+        ],
+        releaseDate:[
+        {required: true, message: '请选择专辑发行时间', trigger: 'blur'},
+        ],
+        intro: [
+        { min: 1, max: 140, message: '长度在 140 个字符以内', trigger: 'blur' }
+        ]
         },
-        song:{
+        addRules: {
+        name: [
+        { required: true, message: '请输入歌曲名称', trigger: 'blur' },
+        { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
+        ],
+        image:[
+        {required: true, message: '请上传歌曲图片', trigger: 'blur'},
+        ],
+        language:[
+        {required: true, message: '请输入歌曲语种', trigger: 'blur'},
+        ],
+        style:[
+        {required: true, message: '请选择歌曲流派', trigger: 'blur'},
+        ],
+        region:[
+        {required: true, message: '请选择歌曲地区', trigger: 'blur'},
+        ],
+        releaseDate:[
+        {required: true, message: '请选择歌曲发行时间', trigger: 'blur'},
+        ],
+        filePath:[
+        {required: true, message: '请上传歌曲文件', trigger: 'blur'},
+        ],
+        lyricsPath:[
+        {required: true, message: '请上传歌词文件', trigger: 'blur'},
+        ],
+        },
+        album:{
+          id:'',
+          name:'',
+          artistId:'',
+          artistName:'',
+          image:'',
+          style:'',
+          releaseDate:'',
+          region:'',
+          count:'',
+          intro:'',
+        },
+        editAlbum:{
+        },
+        addSong:{
+          id:'',
           name:'',
           image:'',
+          artistId:'',
           artistName:'',
           albumName:'',
           language:'',
           style:'',
+          lyricsPath:'',
+          filePath:'',
+          region:'',
           releaseDate:'',
         },
         songList: [{}],
         editDialogVisible:false,
         addDialogVisible:false,
-        style: ['', 'POP 流行', 'ROCK 摇滚', 'FOLK 民谣', 'ELECTRONIC 电子', 'LIGHT 轻音乐', 'RAP RAP', 'COUNTRY 乡村','DANCE 舞曲', '其他'],
+        style: ['', 'POP 流行', 'ELECTRONIC 电子','ROCK 摇滚' ,'CLASSIC 古典','FOLK 民谣', 'R&B', '其他'],
+        region:['', '内地', '港台', '欧美', '日韩', '其他'],
         styleOptions: [{
-          value: '',
-          label: ''
-        }, {
-          value: 'POP 流行',
+          value: 1,
           label: 'POP 流行',
         }, {
-          value: 'ROCK 摇滚',
-          label: 'ROCK 摇滚',
-        }, {
-          value: 'FOLK 民谣',
-          label: 'FOLK 民谣',
-        }, {
-          value: 'ELECTRONIC 电子',
+          value: 2,
           label: 'ELECTRONIC 电子',
         }, {
-          value: 'LIGHT 轻音乐',
-          label: 'LIGHT 轻音乐',
+          value: 3,
+          label: 'ROCK 摇滚',
+        }, {
+          value: 4,
+          label: 'CLASSIC 古典',
+        }, {
+          value: 5,
+          label: 'FOLK 民谣',
         },{
-          value: 'RAP RAP',
-          label: 'RAP RAP',
+          value: 6,
+          label: 'R&B',
         }, {
-          value: 'COUNTRY 乡村',
-          label: 'COUNTRY 乡村',
-        }, {
-          value: 'DANCE 舞曲',
-          label: 'DANCE 舞曲',
-        }, {
-          value: '其他',
+          value: 7,
           label: '其他',
         },],
-        languageOptions:[{
-          value: '',
-          label: ''
+        regionOptions: [{
+          value: 1,
+          label: '内地',
         }, {
-          value: 'POP 流行',
-          label: 'POP 流行',
+          value: 2,
+          label: '港台',
         }, {
-          value: 'ROCK 摇滚',
-          label: 'ROCK 摇滚',
+          value: 3,
+          label: '欧美',
         }, {
-          value: 'FOLK 民谣',
-          label: 'FOLK 民谣',
+          value: 4,
+          label: '日韩',
         }, {
-          value: 'ELECTRONIC 电子',
-          label: 'ELECTRONIC 电子',
-        }, {
-          value: 'LIGHT 轻音乐',
-          label: 'LIGHT 轻音乐',
-        },{
-          value: 'RAP RAP',
-          label: 'RAP RAP',
-        }, {
-          value: 'COUNTRY 乡村',
-          label: 'COUNTRY 乡村',
-        }, {
-          value: 'DANCE 舞曲',
-          label: 'DANCE 舞曲',
-        }, {
-          value: '其他',
+          value: 5,
           label: '其他',
-        },]
+        },],
       }
     },
     methods: {
@@ -246,9 +306,9 @@
         return index+1;
       },
       handleOverflow:function(){
-        var offsetWidth = document.getElementById("albumIntro").offsetHeight;  
-        var scrollWidth = document.getElementById("albumIntro").scrollHeight;
-        if (offsetWidth < scrollWidth) {
+        var offsetHeight = document.getElementById("albumIntro").offsetHeight;  
+        var scrollHeight = document.getElementById("albumIntro").scrollHeight;
+        if (offsetHeight < scrollHeight) {
           this.isOverflow=true;
         }
         else{
@@ -268,11 +328,171 @@
       handleMouseOut:function(row, column, cell, event){
          row.Flag=false;
       },
+      clickOnEdit:function(){
+        this.editDialogVisible=true;
+        var temp={
+          id:this.album.id,
+          name:this.album.name,
+          artistId:this.album.artistId,
+          artistName:this.album.artistName,
+          image:this.album.image,
+          style:this.getStyleNumber(this.album.style),
+          releaseDate:this.album.releaseDate,
+          region:this.getRegionNumber(this.album.region),
+          count:this.album.count,
+          intro:this.album.intro,}
+        this.editAlbum=temp;
+      },
+      editImage:function(file){
+        this.editAlbum.image=file.url;
+      },
+      addImage:function(file,){
+        this.addSong.image=file.url;
+      },
+      addFilePath:function(file){
+        this.addSong.filePath=file.url;
+      },
+      addLyricsPath:function(file){
+        this.addSong.lyricsPath=file.url;
+      },
+      handleExceed:function(){
+        this.$message({
+          showClose: true,
+          message: '最多只能上传一个文件',
+          type: 'error'
+        });
+      },
       deleteAlbum:function(){
-
+        alert(this.album.id);
+        this.axios.get(this.serverUrl+'/album/removeAlbum',{
+              id:this.album.id,
+            })
+            .then(response =>{
+              if(response){
+                this.$message({
+                  showClose: true,
+                  message: '专辑删除成功',
+                  type: 'success'
+                });
+                this.$router.go(-1);
+              }
+              else{
+                this.$message({
+                  showClose: true,
+                  message: '会话超时',
+                  type: 'error'
+                });
+              }
+            })
+            .catch(function(err){
+              console.log(err);
+            });
       },
       deleteSong:function(row){
 
+      },
+      beforeAvatarUpload(file) {
+        const isJPG = file.type === 'image/jpeg';
+        const isLt2M = file.size / 1024 / 1024 < 2;
+
+        if (!isJPG) {
+          this.$message.error('上传头像图片只能是 JPG 格式!');
+        }
+        if (!isLt2M) {
+          this.$message.error('上传头像图片大小不能超过 2MB!');
+        }
+        return isJPG && isLt2M;
+      },
+      submitForm1:function(){
+        this.$refs["editAlbum"].validate((valid) => {
+          if (valid) {
+            this.$refs.upload1.submit();
+            this.axios.post(this.serverUrl+'/album/modifyAlbum',{
+              id:this.editAlbum.id,
+              name:this.editAlbum.name,
+              intro:this.editAlbum.intro,
+              region:this.editAlbum.region,
+              style:this.editAlbum.style,
+              releaseDate:this.editAlbum.releaseDate,
+            })
+            .then(response =>{
+              if(response){
+                this.getAlbumInfo();
+                this.editDialogVisible=false;
+                this.$message({
+                  showClose: true,
+                  message: '专辑编辑成功',
+                  type: 'success'
+                });
+              }
+              else{
+                this.$message({
+                  showClose: true,
+                  message: '会话超时',
+                  type: 'error'
+                });
+              }
+            })
+            .catch(function(err){
+              console.log(err);
+            });
+          } 
+          else {
+            this.$message({
+              showClose: true,
+              message: '格式不正确',
+              type: 'error'
+            });
+            return false;
+          }
+        });
+      },
+      submitForm2:function(){
+        this.$refs["addSong"].validate((valid) => {
+          if (valid) {
+            console.log(this.addSong);
+            this.axios.post(this.serverUrl+'/song/addSong',{
+              name:this.addSong.name,
+              albumId:this.album.id,
+              language:this.addSong.language,
+              style:this.addSong.style,
+              releaseDate:this.addSong.releaseDate,
+            })
+            .then(response =>{
+              if(response!=-1){
+                this.addSong.id=response.data;
+                this.$refs.upload2.submit();
+                this.$refs.upload3.submit();
+                this.$refs.upload4.submit();
+                this.getAlbumInfo();
+                this.editDialogVisible=false;
+                this.$message({
+                  showClose: true,
+                  message: '歌曲添加成功',
+                  type: 'success'
+                });
+              }
+              else{
+                this.$message({
+                  showClose: true,
+                  message: '会话超时',
+                  type: 'error'
+                });
+              }
+            })
+            .catch(function(err){
+              console.log(err);
+            });
+          } 
+          else {
+            this.$message({
+              showClose: true,
+              message: '格式不正确',
+              type: 'error'
+            });
+            return false;
+          }
+        });
       },
       timestampToTime: function(timestamp) {
         var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
@@ -289,11 +509,11 @@
           }
         })
         .then(response => {
-          console.log(response.data);
           this.album = response.data;
           this.album.image = this.serverUrl + this.album.image;
           this.album.releaseDate = this.timestampToTime(this.album.releaseDate);
           this.album.style = this.style[this.album.style];
+          this.album.region=this.region[this.album.region];
           this.songList = this.album.songList; 
           for(var i = 0; i < this.songList.length; i++){
             this.$set(this.songList[i],'Flag',false);
@@ -302,6 +522,24 @@
         .catch(function(err){
           console.log(err);
         });
+      },
+      getStyleNumber:function(style){
+        var number=-1;
+        for(var i=0;i<this.style.length;i++){
+           if(style==this.style[i]){
+            number=i;
+           }
+        }
+        return number;
+      },
+      getRegionNumber:function(region){
+        var number=-1;
+        for(var i=0;i<this.region.length;i++){
+          if(region==this.region[i]){
+            number=i;
+           }
+        }
+        return number;
       },
     },
     created(){
@@ -315,13 +553,21 @@
     mounted(){
       this.getAlbumInfo();
       this.handleOverflow();
+    },
+    updated: function (){
+    this.handleOverflow();
     }
 }
 </script>
-<style>
+<style scoped>
 #albumdetail{
   padding: 30px;
 }
+.img {
+    width: 178px;
+    height: 178px;
+    display: block;
+  }
 .spHeight td{
   height:65px;
 }
