@@ -9,7 +9,7 @@ const state = {
   album: {},
   artist: {},
 
-  serverUrl: "http://192.168.20.95:8080/hifive",
+  serverUrl: "http://192.168.20.99:8080/hifive",
 
   search: {
     name: ""
