@@ -74,7 +74,7 @@
       </el-dialog>
       <el-dialog title="添加歌曲" :visible.sync="addDialogVisible" width="50%" :before-close="handleClose">
         <el-form :model="addSong" :rules="addRules" ref="addSong" label-width="100px">
-          <el-form-item label="歌曲名称" prop="name">
+          <el-form-item label="歌曲名称" prop="name" placeholder="请输入歌曲名称">
             <el-input v-model="addSong.name" style="width:50%;"></el-input>
           </el-form-item>
           <el-form-item label="歌曲图片" prop="image">
@@ -256,7 +256,7 @@
           region:'',
           releaseDate:'',
         },
-        songList: [{}],
+        songList: [],
         editDialogVisible:false,
         addDialogVisible:false,
         style: ['', 'POP 流行', 'ELECTRONIC 电子','ROCK 摇滚' ,'CLASSIC 古典','FOLK 民谣', 'R&B', '其他'],
