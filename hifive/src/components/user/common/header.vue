@@ -217,6 +217,7 @@
 				modifyDataVisible: false,
 				dialogFormVisible: false,
 				flag: false,
+				img_change: false,
 				activeName: 'first',
 				user: {
 					id: '',
@@ -364,6 +365,7 @@
 
 				} else if(command == 'b') {
 					this.modifyDataVisible = true;
+					this.img_change = false;
 					this.modifyData.id = this.$store.state.user.id;
 					this.modifyData.name = this.$store.state.user.name;
 					this.modifyData.gender = this.$store.state.user.gender;
@@ -518,7 +520,10 @@
 				this.submitForm(_modifyData);
 				if(this.flag) {
 					this.flag = false;
-					this.$refs.upload.submit();
+					if(this.img_change) {
+						this.$refs.upload.submit();
+						this.img_change = false;
+					}
 					this.axios.post(this.$store.state.serverUrl + "/user/modify", {
 						id: this.modifyData.id,
 						name: this.modifyData.name,
