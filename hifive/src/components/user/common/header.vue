@@ -62,7 +62,7 @@
 				<el-form-item label="头像" prop="image">
 					<img :src="modifyData.image" class="avatar" style="margin-right:20px">
 					<el-upload class="avatar-uploader" ref="upload" :on-change="previewImg"
-					action="http://192.168.20.99:8080/hifive/upload/uploadUserImage" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload" accept=".jpg, .jpeg, png" :auto-upload="false">
+					action="http://192.168.20.99:8080/hifive/upload/uploadUserImage" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload" accept=".jpg, .jpeg, .png" :auto-upload="false">
 						<el-button slot="trigger" size="small" type="primary">点击更改头像</el-button>
 						<!-- <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传</el-button> -->
 						<div>

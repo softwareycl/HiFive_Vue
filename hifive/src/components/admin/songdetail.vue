@@ -37,6 +37,10 @@
 				<el-col :span="8" :offset="3">
 					<div style="margin-bottom:30px;">
 						<p class="font_songLry" style="font-size:20px">歌词</p>
+						<el-upload class="lyr-uploader" action="http://192.168.20.99:8080/hifive/upload/uploadLyrics" :limit="1" :on-exceed="exceedTip" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+							<el-button slot="trigger" size="small" type="primary">上传歌词</el-button>
+
+						</el-upload>
 						<div v-bind:class="{fold: isfold}" id="lyr"></div>
 						<button v-if="isfold" @click="isfold = false" style="border:0px;background-color:transparent;margin-top:10px;outline:none;cursor:pointer;color:#31C27C">[展开]</button>
 						<button v-if="!isfold" @click="isfold = true" style="border:0px;background-color:transparent;margin-top:10px;outline:none;cursor:pointer;color:#31C27C">[收起]</button>
@@ -69,7 +73,15 @@
 						<el-input v-model="editSong.language" ></el-input>
 					</el-form-item>
 					<el-form-item label="流派" prop="style">
-						<el-input v-model="editSong.style"></el-input>
+						<el-select v-model="editSong.style" :placeholder="editSong.style">
+							<el-option label="POP 流行" value="POP 流行"></el-option>
+							<el-option label="ELECTRONIC 电子" value="ELECTRONIC 电子"></el-option>
+							<el-option label="ROCK 摇滚" value="ROCK 摇滚"></el-option>
+							<el-option label="CLASSIC 古典" value="CLASSIC 古典"></el-option>
+							<el-option label="FOLK 民谣" value="FOLK 民谣"></el-option>
+							<el-option label="R&B" value="R&B"></el-option>
+							<el-option label="其他" value="其他"></el-option>
+						</el-select>
 					</el-form-item>
 					<el-form-item label="发行时间" prop="releaseDate">
 						<!-- <el-input v-model="editSong.artistName" ></el-input> -->
@@ -333,6 +345,9 @@
 				}
 				return number;
 			},
+			exceedTip: function() {
+				this.$message('每次最多上传一个文件');
+			}
 		},
 	};
 </script>
@@ -360,5 +375,8 @@
 		height: 140px;
 		float: left;
 		display: block;
+	}
+	.lyr-uploader {
+		height: 60px;
 	}
 </style>
