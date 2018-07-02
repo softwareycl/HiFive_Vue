@@ -2,14 +2,14 @@
 	<div>
       <v-head></v-head>
       <v-nav></v-nav>
-      <div class="main" id="artistdetail" :data="artist">
-      	<el-row :gutter="100">
+      <div class="main" id="artistdetail" :data="artist" style="width: auto;">
+      	<el-row>
       		<el-col :span="4" :offset="4">
       			<div>
       				<img align=right style="float:left;margin-top:30px; border-radius:100%; width:230px; height: 230px; overflow:hidden;" :src=artist.image>
       			</div>
       		</el-col>
-      		<el-col :span="8">
+      		<el-col :span="8" style="margin-left: 30px; margin-top: 25px">
       			<div style="width: 300px;">
       				<p class="font_artistName">{{artist.name}}</p>
       			</div>
@@ -31,9 +31,9 @@
       		</el-col>
       	</el-row>
         <div style="width:900px; margin: auto;">
-          <p style="font-family:'Microsoft YaHei'; font-size:x-large;">热门歌曲</p>
+          <p style="font-family:'Microsoft YaHei'; font-size:x-large; margin-left: 50px">热门歌曲</p>
         </div>
-      	<el-row :gutter="50">
+      	<el-row>
       		<el-col :span="15" :offset="4">
       			<div style="margin: auto; ">
       				<el-table :data="songListView" style="height: 100%; width: 100%; margin-left:50px;" stripe="true" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">
@@ -95,9 +95,9 @@
             </el-form>
         </el-dialog>
         <div style="width:900px; margin: auto;">
-          <p style="font-family:'Microsoft YaHei'; font-size:x-large;">专辑</p>
+          <p style="font-family:'Microsoft YaHei'; font-size:x-large; margin-left: 50px">专辑</p>
         </div>
-        <el-row style="width:1100px; height: 200px; margin: auto; margin-left: 250px;">
+        <el-row style="width:1100px; height: 200px; margin: auto; margin-left: 240px;">
           <ul id="albumlist" data="albumView">
             <li v-for="item in albumView" class="albumli" style="list-style: none;">
               <div class="album">
@@ -456,8 +456,9 @@
   a {text-decoration: none;}
 
 	.main {
-      width: 1450px;
+      width:1349px;
    		height: auto;
+      margin: auto;
     	opacity: 0.95;
     	position: relative;
       font-family: "Microsoft YaHei";
@@ -469,7 +470,7 @@
       width: 20%;
       height: 200px;
       margin-bottom: 30px;
-      margin-right: 40px;
+      margin-right: 5px;
     }
   .album {
       background-color: #f6f6f6;
