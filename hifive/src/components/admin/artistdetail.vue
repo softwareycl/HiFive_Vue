@@ -1,8 +1,8 @@
 <template>
-	<div>
+  <div>
       <v-head></v-head>
       <div class="main" id="artistdetail" :data="artist">
-        <el-row :gutter="100">
+        <el-row>
           <el-col :span="4" :offset="4">
             <div>
               <img align=right style="float:left;margin-top:30px; border-radius:100%; width:230px; height: 230px; overflow:hidden;" src=../../assets/周杰伦.jpg>
@@ -27,33 +27,76 @@
               </el-popover>
             </div>
             <el-button icon="el-icon-edit" v-on:click="editDialogVisible=true">编辑歌手</el-button>
-            <el-button icon="el-icon-plus" v-on:click="addDialogVisible=true">添加专辑</el-button>
             <el-button icon="el-icon-delete" v-on:click="deleteArtist">删除歌手</el-button>
           </el-col>
         </el-row>
-        <el-dialog title="编辑歌手" :visible.sync="editDialogVisible" width="60%" :before-close="handleClose">
-        <el-form :model="artist" ref="album" label-width="100px">
-          <el-form-item label="歌手姓名" prop="name">
-            <el-input v-model="artist.name"></el-input>
+        <div style="width: 1000px;margin-left: 300px; margin-top:40px; margin-bottom: 10px">
+          <p style="font-family:'Microsoft YaHei'; font-size:x-large; display: inline; margin-right: 750px">专辑</p>
+          <el-button icon="el-icon-plus" v-on:click="addDialogVisible=true" style="">添加专辑</el-button>
+        </div>
+        <el-row v-for="i in 1" :key="i" style="width:1100px; height: 200px; margin: auto; margin-left: 250px;">
+          <ul id="albumlist" data="albumView">
+            <li v-for="item in albumView" class="albumli" style="list-style: none;">
+              <div class="album" style="float: left; margin-left: 20px; margin-right: 20px">
+                <router-link :to="{path:'/admin/albumdetail',query:{id:item.id}}">
+                  <img class="albumImage" src='../../assets/周杰伦.jpg' alt=""  @click="setAlbum(item)">
+                  <p style="color: black; width: 150px;" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';" @click="setAlbum(item)">{{item.name}}</p>
+                </router-link>
+              </div>
+            </li>
+          </ul>          
+        </el-row>
+        <div style="clear: both;"></div>
+         <el-pagination style="margin-top: 30px; margin-bottom: 30px" layout="prev, pager, next" @current-change="handleCurrentChange" :page-count="albumPageCount" class = "pagination">
+           </el-pagination>
+      </div>
+      <el-dialog title="编辑歌手信息" :visible.sync="editDialogVisible" width="60%" :before-close="handleClose">
+        <el-form :model="artist" ref="artist" label-width="100px">
+          <el-form-item label="姓名：" prop="name" style="width: 325px">
+            <el-input v-model="artist.name" clearable></el-input>
           </el-form-item>
- <!--          <el-form-item label="歌手图片" prop="image">
-            <img src="../../assets/周杰伦.jpg">
+          <el-form-item label="图片：" prop="image">
+            <img :src="artist.image" class="avatar" style=" width: 150px; height: 150px;">
+            <el-upload class="avatar-uploader" ref="upload" :on-change="previewImg"
+            action="http://192.168.20.99:8080/hifive/upload/uploadArtistImage" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload" accept=".jpg, .jpeg, png" :auto-upload="false">
+            <el-button slot="trigger" size="small" type="primary">点击选择图片</el-button>
+            <!-- <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传</el-button> -->
+            <div>
+              <div>图片大小不超过2M</div>        
+              <div>上传图片格式为:jpg/jpeg/png</div>
+            </div>
+          </el-upload>
+          <div style="clear:both"></div>
           </el-form-item>
-          <el-form-item label="性别" prop="gender">
+          <el-form-item label="性别：" prop="gender">
             <el-radio-group v-model="artist.gender">
               <el-radio label="1">男</el-radio>
               <el-radio label="2">女</el-radio>
               <el-radio label="3">组合</el-radio>
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="首字母" prop="initial">
-            <el-input v-model="artist.initial"></el-input>
+          <div style="height: 50px; margin-bottom: 0;">
+            <el-form-item label="生日：" prop="birthday" style="width: 325px; float: left; margin-right: 100px;">
+              <el-date-picker v-model="artist.birthday" type="date" placeholder="请选择出生年月" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd">
+              </el-date-picker>
           </el-form-item>
-          <el-form-item label="国家" prop="country">
-            <el-input v-model="artist.country"></el-input>
+          <el-form-item label="首字母：" prop="initial" style="width: 325px; float: left; margin-right: 100px;">
+            <el-select v-model="artist.initial" placeholder="请选择歌手所属地区" clearable >
+              <el-option
+                v-for="item in initialOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
           </el-form-item>
-          <el-form-item label="所属地区" prop="region">
-            <el-select v-model="artist.region" placeholder="请选择歌手所属地区">
+          </div>
+          <div style="height: 50px; margin-bottom: 0;">
+            <el-form-item label="国家：" prop="country" style="width: 325px; float: left; margin-right: 100px;">
+            <el-input v-model="artist.country" clearable></el-input>
+          </el-form-item>
+          <el-form-item label="所属地区：" prop="region" style="float: left;">
+            <el-select v-model="artist.region" placeholder="请选择歌手所属地区" clearable >
               <el-option
                 v-for="item in regionOptions"
                 :key="item.value"
@@ -62,22 +105,92 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="生日" prop="birthday">
-            <el-date-picker v-model="artist.birthday" type="date" placeholder="请选择出生年月" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd">
-            </el-date-picker>
+          </div>
+          <div style="height: 50px; margin-bottom: 0;">
+            <el-form-item label="职业：" prop="occupation" style="width: 325px; float: left; margin-right: 100px;">
+            <el-input v-model="artist.occupation" clearable></el-input>
           </el-form-item>
-          <el-form-item>
+          <el-form-item label="代表作：" prop="representative" style="width: 325px; float: left;">
+            <el-input v-model="artist.representative" clearable></el-input>
+          </el-form-item>
+          </div>
+          <div>
+            <el-form-item label="简介：" prop="intro" style="width: 750px">
+            <el-input v-model="artist.intro" type="textarea" placeholder="请输入歌手简介" :autosize="{ minRows: 2, maxRows: 4}" ></el-input>
+          </el-form-item>
+          </div>
+          <div>
+            <el-form-item>
             <el-button type="primary" @click="submitForm('artist')">完成</el-button>
             <el-button @click="editDialogVisible=false">取消</el-button>
-          </el-form-item> -->
+          </el-form-item>
+          </div>
         </el-form>
       </el-dialog>
-        <div style="width:900px; margin: auto;">
-          <p style="font-family:'Microsoft YaHei'; font-size:x-large;">专辑</p>
-        </div>
-      </div>
+       <el-dialog title="添加专辑" :visible.sync="addDialogVisible" width="60%" :before-close="handleClose">
+        <el-form :model="album" ref="album" label-width="100px">
+          <el-form-item label="名称：" prop="name" style="width: 325px">
+            <el-input v-model="album.name" clearable></el-input>
+          </el-form-item>
+          <el-form-item label="封面：" prop="image">
+           <img :src="album.image" class="avatar" style=" width: 150px; height: 150px;">
+            <el-upload class="avatar-uploader" ref="upload" :on-change="previewImg2"
+            action="http://192.168.20.99:8080/hifive/upload/uploadAlbumImage" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload" accept=".jpg, .jpeg, png" :auto-upload="false">
+            <el-button slot="trigger" size="small" type="primary">点击选择图片</el-button>
+            <!-- <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传</el-button> -->
+            <div>
+              <div>图片大小不超过2M</div>        
+              <div>上传图片格式为:jpg/jpeg/png</div>
+            </div>
+          </el-upload>
+          <div style="clear:both"></div>
+          </el-form-item>
+          <div style="height: 50px; margin-bottom: 0;">
+            <el-form-item label="歌手：" prop="artistName" style="width: 325px; float: left; margin-right: 100px;">
+              <el-input v-model="artist.name"></el-input>
+            </el-form-item>
+            <el-form-item label="所属地区：" prop="region" style="width: 325px; float: left">
+              <el-select v-model="album.region" placeholder="请选择所属地区" clearable >
+                <el-option
+                  v-for="item in regionOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </div>
+          <div style="height: 50px; margin-bottom: 0;">
+          <el-form-item label="流派：" prop="style" style="width: 325px; float: left; margin-right: 100px;">
+            <el-select v-model="album.style" placeholder="请选择专辑流派" clearable>
+              <el-option
+                v-for="item in styleOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="发行时间" prop="releaseDate" style="width: 325px; float: left">
+            <el-date-picker v-model="album.releaseDate" type="date" placeholder="请选择发行时间" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd">
+            </el-date-picker>
+          </el-form-item>
+          </div>
+          <div>
+            <el-form-item label="简介：" prop="intro" style="width: 750px">
+            <el-input v-model="album.intro" type="textarea" placeholder="请输入歌手简介" :autosize="{ minRows: 2, maxRows: 4}" ></el-input>
+          </el-form-item>
+          </div>
+          <div>
+            <el-form-item>
+            <el-button type="primary" @click="submitForm('artist')">完成</el-button>
+            <el-button @click="editDialogVisible=false">取消</el-button>
+          </el-form-item>
+          </div>
+        </el-form>
+      </el-dialog>
       <v-foot></v-foot>
-	</div>
+  </div>
 </template>
 
 <script>
@@ -91,13 +204,56 @@
     },
     data(){
       return{
+        // imgs:[],
+        // imgData: { accept: 'image/jpg, image/jpeg, image/png'},
         editDialogVisible:false,
         addDialogVisible:false,
         dialogVisible:false,
+        albumPage:1,
+        albumPageCount:0,
+        albumlist:[
+        {
+          id:'001',
+          name:'范特西',
+          image:'../../assets/周杰伦.jpg',}],
+        albumView:[
+        {
+          id:'001',
+          name:'范特西',
+          image:'',
+        },{
+          id:'002',
+          name:'范特西',
+          image:'',
+        },{
+          id:'003',
+          name:'范特西',
+          image:'../../assets/周杰伦.jpg',
+        },{
+          id:'004',
+          name:'范特西',
+          image:'../../assets/周杰伦.jpg',
+        },{
+          id:'005',
+          name:'范特西',
+          image:'../../assets/周杰伦.jpg',
+        },{
+          id:'006',
+          name:'范特西',
+          image:'../../assets/周杰伦.jpg',
+        },{
+          id:'007',
+          name:'范特西',
+          image:'../../assets/周杰伦.jpg',
+        },{
+          id:'008',
+          name:'范特西',
+          image:'../../assets/周杰伦.jpg',
+        }],
         artist:{
-          id:'',
+          id:'6',
           name:'周杰伦',
-          image:'../../assets/icon.jpg',
+          image:'',
           initial:'Z',
           region:'港台',
           gender:'男',
@@ -108,7 +264,17 @@
           birthday:'1979-01-18',
           representative:'安静',
         },
-        region: ['', '内地', '港台', '欧美', '日韩', '其他'],
+        album:{
+          id:'',
+          name:'',
+          image:'',
+          artistId:'',
+          region:'',
+          style:'',
+          releaseDate:'',
+          intro:'',
+        },
+        // region: ['', '内地', '港台', '欧美', '日韩', '其他'],
         regionOptions: [{
           value: '',
           label: ''
@@ -128,21 +294,184 @@
           value: '其他',
           label: '其他',
         }],
+        initialOptions: [{
+          value: '',
+          label: ''
+        }, {
+          value: 'A',
+          label: 'A'
+        }, {
+          value: 'B',
+          label: 'B'
+        }, {
+          value: 'C',
+          label: 'C'
+        }, {
+          value: 'D',
+          label: 'D'
+        }, {
+          value: 'E',
+          label: 'E'
+        }, {
+          value: 'F',
+          label: 'F'
+        }, {
+          value: 'G',
+          label: 'G'
+        }, {
+          value: 'H',
+          label: 'H'
+        }, {
+          value: 'I',
+          label: 'I'
+        }, {
+          value: 'J',
+          label: 'J'
+        }, {
+          value: 'K',
+          label: 'K'
+        }, {
+          value: 'L',
+          label: 'L'
+        }, {
+          value: 'M',
+          label: 'M'
+        }, {
+          value: 'N',
+          label: 'N'
+        }, {
+          value: 'O',
+          label: 'O'
+        }, {
+          value: 'P',
+          label: 'P'
+        }, {
+          value: 'Q',
+          label: 'Q'
+        }, {
+          value: 'R',
+          label: 'R'
+        }, {
+          value: 'S',
+          label: 'S'
+        }, {
+          value: 'T',
+          label: 'T'
+        }, {
+          value: 'U',
+          label: 'U'
+        }, {
+          value: 'V',
+          label: 'V'
+        }, {
+          value: 'W',
+          label: 'W'
+        }, {
+          value: 'X',
+          label: 'X'
+        }, {
+          value: 'Y',
+          label: 'Y'
+        }, {
+          value: 'Z',
+          label: 'Z'
+        }],
+        style: ['', 'POP 流行', 'ROCK 摇滚', 'FOLK 民谣', 'ELECTRONIC 电子', 'LIGHT 轻音乐', 'RAP RAP', 'COUNTRY 乡村','DANCE 舞曲', '其他'],
+        styleOptions: [{
+          value: '',
+          label: ''
+        }, {
+          value: 'POP 流行',
+          label: 'POP 流行',
+        }, {
+          value: 'ROCK 摇滚',
+          label: 'ROCK 摇滚',
+        }, {
+          value: 'FOLK 民谣',
+          label: 'FOLK 民谣',
+        }, {
+          value: 'ELECTRONIC 电子',
+          label: 'ELECTRONIC 电子',
+        }, {
+          value: 'LIGHT 轻音乐',
+          label: 'LIGHT 轻音乐',
+        },{
+          value: 'RAP RAP',
+          label: 'RAP RAP',
+        }, {
+          value: 'COUNTRY 乡村',
+          label: 'COUNTRY 乡村',
+        }, {
+          value: 'DANCE 舞曲',
+          label: 'DANCE 舞曲',
+        }, {
+          value: '其他',
+          label: '其他',
+        },],
       }
     },
-    created(){
-      this.album.id=this.$route.query.id;
-    },
-    computed:{
-      serverUrl(){
+
+    computed: {
+      serverUrl() {
         return this.$store.state.serverUrl;
+      },
+      state() {
+        return this.$store.state;
       }
     },
+
+    // created() {
+    //   this.artist.id = this.$route.query.id;
+    // },
+
     mounted(){
-      this.getAlbumInfo();
-      this.handleOverflow();
+      this.getArtistInfo(this.artist.id);
     },
-    getArtistInfo:function(artistId){
+    
+    methods:{
+    setAlbum: function(item){
+      this.$store.state.albums = item;
+    },
+
+    A_pagination: function(_albums,_albumPage){
+      this.albumPageCount = Math.ceil(parseFloat(_albums.length) / 8);
+      if(_albumPage != this.albumPage){
+        this.albumPage = _albumPage;
+        this.albumView.splice(0,this.albumView.length);
+        }
+      for (var i = 0; i < 4; i++) {
+        if(_albums[((this.albumPage - 1)*4)+i] != null){
+          var album = _albums[((this.albumPage - 1)*4)+i];
+          this.albumView.push(album);
+        }
+      } 
+    },
+
+    deleteArtist: function(){
+
+    },
+
+    previewImg: function(file) {
+        this.artist.image = file.url;
+    },
+
+    previewImg2: function(file) {
+        this.album.image = file.url;
+    },
+
+    beforeAvatarUpload: function(file) {
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!isLt2M) {
+        this.$message.error('上传图片大小不能超过 2MB!');
+      }
+      return isLt2M;
+    },
+
+    handleAvatarSuccess: function() {
+        alert("上传成功");
+    },
+
+    getArtistInfo: function(artistId){alert(this.artist.id);
       this.axios.get(this.serverUrl+'/artist/getInfo',{
         params:{
           id:this.artist.id
@@ -157,7 +486,7 @@
             this.artist.albumList[i].image = this.serverUrl + this.artist.albumList[i].image;
             }
             this.artist.albumList = response.data.albumList;
-            this.A_pagination(this.artist.albumList,this.albumPage);
+            this.A_pagination(this.artist.albumList,this.albumPageCount);
           })
         .catch(function(err){
           console.log(err);
@@ -179,15 +508,19 @@
       })
       .catch(_ => {});
       },
+    handleCurrentChange: function(val){
+        this.A_pagination(this.artist.albumList,val);
+      },
+    }
     }
   </script>
 
-  <style>
+  <style scoped>
   a {text-decoration: none;}
 
   .main {
-      width: 1450px;
-      height: 1500px;
+      width: auto;
+      height: auto;
       opacity: 0.95;
       position: relative;
       font-family: "Microsoft YaHei";
@@ -227,4 +560,21 @@
       font-size:Medium;
       margin-top: 5px;
   }
+  .albumImage{
+    width: 200px;
+    height: 200px;
+    box-sizing: border-box;
+    &:hover {
+      cursor: pointer;
+      opacity: 0.9;
+    }
+  }
+  .pagination {
+    text-align: center;
+    font-size: 20px;
+    &:hover {
+        cursor: pointer;
+        color: #31c27c;
+      }
+    }
   </style>
