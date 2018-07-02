@@ -323,10 +323,10 @@ export default {
               console.log(err);
             });
         },
-        deleteSong:function(row,index){//还要考虑page刷新问题
+        deleteSong:function(row,index){
             this.axios.get(this.serverUrl+'/user/unlikeSong',{
               params:{
-                id:row.id
+                songId:row.id
               }
             })
             .then(response =>{
@@ -359,7 +359,6 @@ export default {
         },
         playAlbum:function(){
             this.state.songList=[];
-            //拿到songList放到state
 
         },
         handleAlbumCommand:function(command){
@@ -402,39 +401,44 @@ export default {
               console.log(err);
             });
         },
-        deleteAlbum:function(row,index){//还要考虑page刷新
-            this.axios.get(this.serverUrl+'/user/unlikeAlbum',{
-              params:{
-                id:row.id
-              }
-            })
-            .then(response =>{
-              if(response){
-                this.allAlbum.splice((this.currentPageOfAlbum-1)*10+index,1);
-                this.albumPaginationChange(this.currentPageOfAlbum);
-                for(var i=0;i<this.state.likeAlbums.length;i++){
-                    if(this.state.likeAlbums[i].id==row.id){
-                        this.state.likeAlbums.splice(i,1);
-                        break;
-                    }
+        deleteAlbum:function(row,index){
+            this.$confirm('确认删除？')
+            .then(_ => {
+                this.axios.get(this.serverUrl+'/user/unlikeAlbum',{
+                  params:{
+                    albumId:row.id
                 }
-                this.$message({
-                  showClose: true,
-                  message: '专辑已被取消收藏',
-                  type: 'success'
-                });
-              }
-              else{
-                this.$message({
-                  showClose: true,
-                  message: '会话超时',
-                  type: 'error'
-                });
-              }
             })
-            .catch(function(err){
-              console.log(err);
-            });
+                .then(response =>{
+                  if(response){
+                    this.allAlbum.splice((this.currentPageOfAlbum-1)*10+index,1);
+                    this.albumPaginationChange(this.currentPageOfAlbum);
+                    for(var i=0;i<this.state.likeAlbums.length;i++){
+                        if(this.state.likeAlbums[i].id==row.id){
+                            this.state.likeAlbums.splice(i,1);
+                            break;
+                        }
+                    }
+                    this.$message({
+                      showClose: true,
+                      message: '专辑已被取消收藏',
+                      type: 'success'
+                  });
+                }
+                else{
+                    this.$message({
+                      showClose: true,
+                      message: '会话超时',
+                      type: 'error'
+                  });
+                }
+            })
+                .catch(function(err){
+                  console.log(err);
+              });
+
+            })
+            .catch(_ => {});
         },
         playPlaylist:function(){
 
@@ -452,35 +456,37 @@ export default {
             this.addPlaylistToPlaylist(command.param2.id,command.param1);
           }
         },
-        // addPlaylistToPlaylist:function(fromId,toId){
-        //     this.axios.get(this.serverUrl+'/playlist/addPlaylistToPlaylist',{
-        //       params:{
-        //         fromId:fromId,
-        //         toId:toId
-        //       }
-        //     })
-        //     .then(response =>{
-        //       if(response){
-        //         this.$message({
-        //           showClose: true,
-        //           message: '已成功添加到歌单',
-        //           type: 'success'
-        //         });
-        //       }
-        //       else{
-        //         this.$message({
-        //           showClose: true,
-        //           message: '会话超时',
-        //           type: 'error'
-        //         });
-        //       }
-        //     })
-        //     .catch(function(err){
-        //       console.log(err);
-        //     });
-        // },
-        deletePlaylist:function(row,index){//考虑page的刷新
-            this.axios.get(this.serverUrl+'/playlist/remove',{
+        addPlaylistToPlaylist:function(fromId,toId){
+            this.axios.get(this.serverUrl+'/playlist/addPlaylistToPlaylist',{
+              params:{
+                fromId:fromId,
+                toId:toId
+              }
+            })
+            .then(response =>{
+              if(response){
+                this.$message({
+                  showClose: true,
+                  message: '已成功添加到歌单',
+                  type: 'success'
+                });
+              }
+              else{
+                this.$message({
+                  showClose: true,
+                  message: '会话超时',
+                  type: 'error'
+                });
+              }
+            })
+            .catch(function(err){
+              console.log(err);
+            });
+        },
+        deletePlaylist:function(row,index){
+            this.$confirm('确认删除？')
+            .then(_ => {
+                this.axios.get(this.serverUrl+'/playlist/remove',{
               params:{
                 id:row.id
               }
@@ -512,6 +518,8 @@ export default {
             .catch(function(err){
               console.log(err);
             });
+            })
+            .catch(_ => {});
         },
         submitForm:function(){//新建歌单显示在哪
           this.$refs["newPlaylist"].validate((valid) => {
@@ -574,8 +582,27 @@ export default {
         },
         tab:function(tab){
             if(tab.name=="2"){
-                this.getMyMusic();
+                this.getMyPlaylist();
             }
+        },
+        getMyPlaylist:function(){
+            this.axios.get(this.serverUrl + "/user/showMyMusic", {
+                params: {
+                    id: this.user.id
+                }
+            })
+            .then(res => {
+                this.user = res.data;
+                this.user.image = this.state.serverUrl + this.user.image;
+                this.allPlaylist=this.user.playlistList;
+                for(var i=0;i<this.allPlaylist.length;i++){
+                    this.$set(this.allPlaylist[i],'Flag',false);
+                    this.$set(this.allPlaylist[i],'isopen',false);
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
         },
         getMyMusic:function(){
             this.axios.get(this.serverUrl + "/user/showMyMusic", {
@@ -679,10 +706,7 @@ export default {
     },
     mounted(){
         this.user.id=this.state.user.id;
-        // this.getMyMusic();
-        this.songPaginationChange(1);
-        this.albumPaginationChange(1);
-        this.playlistPaginationChange(1);
+        this.getMyMusic();
     }
 }
 </script>
