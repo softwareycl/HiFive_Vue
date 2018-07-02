@@ -1,10 +1,12 @@
 <template>
     <div class="wrapper">
         <v-head></v-head>
-        <div style="width:100%;height:1350px;">
+        <div v-if="this.state.isLogin" style="width:100%;height:1350px;">
             <div :data="user" class="background" :style="background">
-                <img :src="user.image" class="userImage">
-            	<p align=center style="font-size: x-large;color:white;">{{user.name}}</p>
+                <div style="width:100%;height:315px;">
+                    <img :src="user.image" class="userImage">
+            	    <p align=center style="font-size: x-large;color:white;">{{user.name}}</p>
+                </div>
                 <el-dialog title="创建歌单" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
                     <el-form :model="newPlaylist" :rules="rules" ref="newPlaylist" label-width="100px">
                         <el-form-item label="歌单名称" prop="name">
@@ -19,7 +21,7 @@
                         </el-form-item>
                     </el-form>
                 </el-dialog>
-                <el-tabs value="1" style="width:90%;position:relative;left:5%;bottom:-27px;">
+                <el-tabs value="1" @tab-click="tab" style="width:90%;position:relative;left:5%;bottom:-27px;">
                     <el-tab-pane name="1">
                         <span class="tab1" slot="label">我喜欢</span>
                         <el-tabs value="1" style="width:100%;">
@@ -331,6 +333,12 @@ export default {
               if(response){
                 this.allSong.splice((this.currentPageOfSong-1)*10+index,1);
                 this.songPaginationChange(this.currentPageOfSong);
+                for(var i=0;i<this.state.likeSongs.length;i++){
+                    if(this.state.likeSongs[i].id==row.id){
+                        this.state.likeSongs.splice(i,1);
+                        break;
+                    }
+                }
                 this.$message({
                   showClose: true,
                   message: '歌曲已被取消收藏',
@@ -404,6 +412,12 @@ export default {
               if(response){
                 this.allAlbum.splice((this.currentPageOfAlbum-1)*10+index,1);
                 this.albumPaginationChange(this.currentPageOfAlbum);
+                for(var i=0;i<this.state.likeAlbums.length;i++){
+                    if(this.state.likeAlbums[i].id==row.id){
+                        this.state.likeAlbums.splice(i,1);
+                        break;
+                    }
+                }
                 this.$message({
                   showClose: true,
                   message: '专辑已被取消收藏',
@@ -438,33 +452,33 @@ export default {
             this.addPlaylistToPlaylist(command.param2.id,command.param1);
           }
         },
-        addPlaylistToPlaylist:function(fromId,toId){
-            this.axios.get(this.serverUrl+'/playlist/addPlaylistToPlaylist',{
-              params:{
-                fromId:fromId,
-                toId:toId
-              }
-            })
-            .then(response =>{
-              if(response){
-                this.$message({
-                  showClose: true,
-                  message: '删除歌单成功',
-                  type: 'success'
-                });
-              }
-              else{
-                this.$message({
-                  showClose: true,
-                  message: '会话超时',
-                  type: 'error'
-                });
-              }
-            })
-            .catch(function(err){
-              console.log(err);
-            });
-        },
+        // addPlaylistToPlaylist:function(fromId,toId){
+        //     this.axios.get(this.serverUrl+'/playlist/addPlaylistToPlaylist',{
+        //       params:{
+        //         fromId:fromId,
+        //         toId:toId
+        //       }
+        //     })
+        //     .then(response =>{
+        //       if(response){
+        //         this.$message({
+        //           showClose: true,
+        //           message: '已成功添加到歌单',
+        //           type: 'success'
+        //         });
+        //       }
+        //       else{
+        //         this.$message({
+        //           showClose: true,
+        //           message: '会话超时',
+        //           type: 'error'
+        //         });
+        //       }
+        //     })
+        //     .catch(function(err){
+        //       console.log(err);
+        //     });
+        // },
         deletePlaylist:function(row,index){//考虑page的刷新
             this.axios.get(this.serverUrl+'/playlist/remove',{
               params:{
@@ -475,6 +489,12 @@ export default {
               if(response){
                 this.allPlaylist.splice((this.currentPageOfPlaylist-1)*10+index,1);
                 this.playlistPaginationChange(this.currentPageOfPlaylist);
+                for(var i=0;i<this.state.playlistList.length;i++){
+                    if(this.state.playlistList[i].id==row.id){
+                        this.state.playlistList.splice(i,1);
+                        break;
+                    }
+                }
                 this.$message({
                   showClose: true,
                   message: '删除歌单成功',
@@ -493,7 +513,7 @@ export default {
               console.log(err);
             });
         },
-        submitForm:function(){
+        submitForm:function(){//新建歌单显示在哪
           this.$refs["newPlaylist"].validate((valid) => {
             if (valid) {
               this.axios.post(this.serverUrl+'/playlist/create',{
@@ -507,6 +527,11 @@ export default {
                   this.getPlaylistList();
                   this.dialogVisible=false;
                   this.$refs["newPlaylist"].resetFields();
+                  this.$message({
+                    showClose: true,
+                    message: '歌单创建成功',
+                    type: 'success'
+                  });
                   if(this.newPlaylist.type=="song"){
                     this.addSongToPlaylist(this.newPlaylist.info,response.data);
                   }
@@ -516,11 +541,6 @@ export default {
                   else{
                     this.addPlaylistToPlaylist(this.newPlaylist.info,response.data);
                   }
-                  this.$message({
-                    showClose: true,
-                    message: '已成功添加到新歌单',
-                    type: 'success'
-                  });
                 }
                 else{
                   this.$message({
@@ -551,6 +571,11 @@ export default {
           var D = date.getDate();
           if(D < 10) D = '0' + D;
           return Y+M+D;
+        },
+        tab:function(tab){
+            if(tab.name=="2"){
+                this.getMyMusic();
+            }
         },
         getMyMusic:function(){
             this.axios.get(this.serverUrl + "/user/showMyMusic", {
@@ -654,7 +679,10 @@ export default {
     },
     mounted(){
         this.user.id=this.state.user.id;
-        this.getMyMusic();
+        // this.getMyMusic();
+        this.songPaginationChange(1);
+        this.albumPaginationChange(1);
+        this.playlistPaginationChange(1);
     }
 }
 </script>
