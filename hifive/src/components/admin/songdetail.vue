@@ -30,30 +30,42 @@
 							<span class="font_other">发行时间 : {{song.releaseDate}}</span>
 						</div>
 						<div style="margin-top:20px">
-							<el-button type="primary" icon="el-icon-edit" style="background-color:#31C27C" onmouseover="this.style.backgroundColor='#2CAF6F';" onmouseout="this.style.backgroundColor='#31C27C';" v-on:click="dialogVisible = true;editSong=song">编辑</el-button>
+							<el-button type="primary" icon="el-icon-edit" style="background-color:#31C27C" onmouseover="this.style.backgroundColor='#2CAF6F';" onmouseout="this.style.backgroundColor='#31C27C';" v-on:click="edit">编辑</el-button>
 							<el-button icon="el-icon-delete" v-on:click="deleteSong">删除</el-button>
-							<el-dialog title="编辑歌曲信息" :visible.sync="dialogVisible" width="40%" :before-close="handleClose">
+							<el-dialog title="编辑歌曲信息" :visible.sync="dialogVisible" width="40%" :before-close="handleClose" center="true">
 								<el-form :model="editSong" :rules="rules" ref="editSong" label-width="100px">
-									<el-form-item label="歌名" prop="songName">
+									<el-form-item label="歌名" prop="name">
 										<el-input v-model="editSong.name"></el-input>
+									</el-form-item>
+									<el-form-item label="歌曲图片" prop="image">
+										<img :src="editSong.image" class="avatar" style="margin-right:20px">
+										<el-upload class="avatar-uploader" ref="upload" :on-change="previewImg" action="http://192.168.20.99:8080/hifive/upload/uploadSongImage" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload" accept=".jpg, .jpeg, png" :auto-upload="false">
+											<el-button slot="trigger" size="small" type="primary">点击更改图片</el-button>
+											<div>
+												<div>图片大小不超过2M</div>				
+												<div>上传图片格式为:jpg/jpeg/png</div>
+											</div>
+										</el-upload>
+										<div style="clear:both"></div>
 									</el-form-item>
 									<el-form-item label="歌手名" prop="artistName">
-										<el-input v-model="editSong.artistName" ></el-input>
+										<el-input v-model="editSong.artistName" :disabled="true"></el-input>
 									</el-form-item>
-									<el-form-item label="专辑" prop="songName">
-										<el-input v-model="editSong.name"></el-input>
+									<el-form-item label="专辑" prop="albumName">
+										<el-input v-model="editSong.albumName" :disabled="true"></el-input>
 									</el-form-item>
-									<el-form-item label="语种" prop="artistName">
-										<el-input v-model="editSong.artistName" ></el-input>
+									<el-form-item label="语种" prop="language">
+										<el-input v-model="editSong.language" ></el-input>
 									</el-form-item>
-									<el-form-item label="流派" prop="songName">
-										<el-input v-model="editSong.name"></el-input>
+									<el-form-item label="流派" prop="style">
+										<el-input v-model="editSong.style"></el-input>
 									</el-form-item>
-									<el-form-item label="发行时间" prop="artistName">
-										<el-input v-model="editSong.artistName" ></el-input>
+									<el-form-item label="发行时间" prop="releaseDate">
+										<!-- <el-input v-model="editSong.artistName" ></el-input> -->
+										<el-date-picker type="date" :placeholder="editSong.releaseDate" v-model="editSong.releaseDate" style="width: 100%;"></el-date-picker>
 									</el-form-item>
 									<el-form-item>
-										<el-button type="primary" @click="submitForm('ruleForm')">完成</el-button>
+										<el-button type="primary" @click="finishEdit('editSong')">完成</el-button>
 										<el-button @click="dialogVisible=false">取消</el-button>
 									</el-form-item>
 								</el-form>
@@ -86,9 +98,6 @@
 			this.id = this.$route.query.id;
 		},
 		mounted() {
-			if(this.$store.state.isLogin == true) {
-				this.state = true;
-			}
 			this.getIntro(this.id);  
 		},
 		components: {
@@ -118,12 +127,10 @@
 					lyricsPath: "",
 					filePath: '',
 					image: "",
-					isCollected:false
 				},
 				editSong: {
 
 				},
-				state:true,
 				dialogVisible:false,
 				ruleForm: {
 					name: '',
@@ -131,12 +138,23 @@
 				},
 				rules: {
 					name: [
-					{ required: true, message: '请输入歌单名称', trigger: 'blur' },
-					{ min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
+					{ required: true, message: '请输入歌曲名称', trigger: 'blur' }
 					],
-					des: [
-					{ min: 1, max: 140, message: '长度在 140 个字符以内', trigger: 'blur' }
-					]
+					artistName: [
+					{ required: true, message: '请输入歌手名称', trigger: 'blur' }
+					],
+					albumName: [
+					{ required: true, message: '请输入专辑名称', trigger: 'blur' }
+					],
+					language: [
+					{ required: true, message: '请输入语种', trigger: 'blur' }
+					],
+					style: [
+					{ required: true, message: '请输入流派', trigger: 'blur' }
+					],
+					releaseDate: [
+					{ required: true, message: '请输入发行时间', trigger: 'blur' }
+					],
 				},
 				style: ['', 'POP 流行', 'ELECTRONIC 电子','ROCK 摇滚', 'CLASSIC 古典','FOLK 民谣', 'R&B', '其他'],
 			}
@@ -151,6 +169,25 @@
 					done();
 				})
 				.catch(_ => {});
+			},
+			edit: function() {
+				this.dialogVisible = true;
+				this.editSong.id = this.song.id;
+				this.editSong.name = this.song.name;
+				this.editSong.artistId = this.song.artistId;
+				this.editSong.artistName = this.song.artistName;
+				this.editSong.language = this.song.language;
+				this.editSong.style = this.song.style;
+				this.editSong.albumId = this.song.albumId;
+				this.editSong.albumName = this.song.albumName;
+				this.editSong.duration = this.song.duration;
+				this.editSong.releaseDate = this.song.releaseDate;
+				this.editSong.lyricsPath = this.song.lyricsPath;
+				this.editSong.filePath = this.song.filePath;
+				this.editSong.image = this.song.image;
+			},
+			finishEdit: function(_song) {
+				this.submitForm(_song);
 			},
 			submitForm:function(formname){
 				this.$refs[formname].validate((valid) => {
@@ -192,16 +229,21 @@
 					.catch(function (error) {
 						console.log(error);
 					});
-					// var xmlhttp=new XMLHttpRequest();
-					// xmlhttp.onreadystatechange=function()
-					// {
-					// 	var textHTML=xmlhttp.responseText;
-					// 	textHTML=textHTML.replace(/(\n)+|(\r\n)+/g,"<br>");
-					// 	document.getElementById("lyr").innerHTML=textHTML;
-					// }
-					// xmlhttp.open("GET",this.song.lyricsPath,true);
-					// xmlhttp.overrideMimeType("text/html;charset=gb2312");
-					// xmlhttp.send();
+					
+					this.editSong.id = this.song.id;
+					this.editSong.name = this.song.name;
+					this.editSong.artistId = this.song.artistId;
+					this.editSong.artistName = this.song.artistName;
+					this.editSong.language = this.song.language;
+					this.editSong.style = this.song.style;
+					this.editSong.albumId = this.song.albumId;
+					this.editSong.albumName = this.song.albumName;
+					this.editSong.duration = this.song.duration;
+					this.editSong.releaseDate = this.song.releaseDate;
+					this.editSong.lyricsPath = this.song.lyricsPath;
+					this.editSong.filePath = this.song.filePath;
+					this.editSong.image = this.song.image;
+
 				})
 				.catch(function (error) {
 					console.log(error);
@@ -216,14 +258,30 @@
 		        	D = '0' + D;
 		        return Y+M+D;
 	      	},
+	      	beforeAvatarUpload: function(file) {
+				const isLt2M = file.size / 1024 / 1024 < 2;
+				if (!isLt2M) {
+					this.$message.error('上传头像图片大小不能超过 2MB!');
+				}
+				return isLt2M;
+			},
+			// submitUpload: function() {
+			// 	this.$refs.upload.submit();
+			// },
+			handleAvatarSuccess: function() {
+				alert("上传成功");
+			},
+			previewImg: function(file) {
+				this.editSong.image = file.url;
+			},
 		},
 	};
 </script>
 
-<style>
+<style scoped>
 	.Asong_detail {
 		min-height: 600px;
-		padding: 30px;
+		padding: 50px;
 	}
 	.font_songName{
 		font-family:"Microsoft YaHei";
@@ -237,5 +295,11 @@
 	.fold {
 		max-height: 400px;
 		overflow: hidden;
+	}
+	.avatar {
+		width: 120px;
+		height: 120px;
+		float: left;
+		display: block;
 	}
 </style>

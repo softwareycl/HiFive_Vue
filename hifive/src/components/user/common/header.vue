@@ -36,7 +36,7 @@
 				</el-dropdown>
 			</div>
 		</div>
-		<el-dialog title="修改密码" :visible.sync="modifyPwdVisible" style="font-weight:bold;text-align:center;" width="40%">
+		<el-dialog title="修改密码" :visible.sync="modifyPwdVisible" style="font-weight:bold;" width="40%" center="true">
 			<el-form :model="modifyPwd" :rules="rules" ref="modifyPwd" label-width="100px">
 				<el-form-item label="旧密码" prop="oldPwd">
 					<el-input type="password" v-model="modifyPwd.oldPwd"></el-input>
@@ -47,14 +47,14 @@
 				<el-form-item label="确认密码" prop="checkPass">
 					<el-input type="password" v-model="modifyPwd.checkPass"></el-input>
 				</el-form-item>
-				<el-form-item style="text-align:left">
+				<el-form-item>
 					<el-button @click="finishModifyPwd('modifyPwd')">提交</el-button>
 					<el-button @click="modifyPwdVisible = false">取消</el-button>
 				</el-form-item>
 			</el-form>
 		</el-dialog>
 
-		<el-dialog title="修改个人资料" :visible.sync="modifyDataVisible" style="font-weight:bold;text-align:center;" width="40%">
+		<el-dialog title="修改个人资料" :visible.sync="modifyDataVisible" style="font-weight:bold;" center="true" width="40%">
 			<el-form :model="modifyData" :rules="rules1" ref="modifyData" label-width="100px" style="text-align:left">
 				<el-form-item label="昵称" prop="name">
 					<el-input v-model="modifyData.name" style="width:70%"></el-input>
@@ -82,7 +82,7 @@
 				</el-form-item>
 			</el-form>
 		</el-dialog>
-		<el-dialog title="欢迎来到云音乐" :visible.sync="dialogFormVisible" style="font-weight:bold">
+		<el-dialog title="欢迎来到云音乐" :visible.sync="dialogFormVisible" style="font-weight:bold" center="true">
 			<template>
 				<el-tabs v-model="activeName" class="login_form" style="margin:0 75px;text-align:left">
 					<el-tab-pane label="登录" name="first">
@@ -666,10 +666,10 @@
 		height:80px;
 		border-radius:100%;
 	}
-	.header-dialog-footer {
+	/*.header-dialog-footer {
 		margin: 0;
 		padding: 0;
-	}
+	}*/
 
 	.avatar {
 		width: 120px;
