@@ -87,7 +87,7 @@
           <div>
             <p class="font_albumIntro">简介</p>
             <p id="albumIntro" style="display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 4;overflow: hidden;" class="font_other">{{album.intro}}</p>
-            <el-popover v-if="this.isOverflow" placement="left" title="专辑简介" trigger="click" width=500px>
+            <el-popover v-if="this.isOverflow" placement="left" title="专辑简介" trigger="click" width=500>
               <p class="font_other">{{album.intro}}</p>
               <el-button type="text" slot="reference" style="color:black" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">[更多]</el-button>
             </el-popover>
