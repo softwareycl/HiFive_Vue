@@ -171,7 +171,7 @@
 					{ min: 1, max: 140, message: '长度在 140 个字符以内', trigger: 'blur' }
 					]
 				},
-				style: ['', 'POP 流行', 'ROCK 摇滚', 'FOLK 民谣', 'ELECTRONIC 电子', 'LIGHT 轻音乐', 'RAP RAP', 'COUNTRY 乡村','DANCE 舞曲', '其他'],
+				style: ['', 'POP 流行', 'ELECTRONIC 电子','ROCK 摇滚', 'CLASSIC 古典','FOLK 民谣', 'R&B', '其他'],
 			}
 		},
 		methods: {
@@ -281,6 +281,7 @@
 <style>
 	.song_detail {
 		min-height: 600px;
+		padding: 30px;
 	}
 	.font_songName{
 		font-family:"Microsoft YaHei";
