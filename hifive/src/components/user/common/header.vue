@@ -394,9 +394,22 @@
 					.then(res => {
 						var tip = res.data;
 						if(tip == 0) {
-							alert("管理员登录成功");
 							this.dialogFormVisible = false;
 							this.$router.push('/admin/artist');
+							this.$store.state.isLogin = true;
+							this.axios.get(this.$store.state.serverUrl + "/user/getInfo", {
+								params: {
+									id: this.loginUser.id
+								}
+							})
+							.then(res => {
+								this.user = res.data;
+								this.user.image = this.$store.state.serverUrl + this.user.image;
+								this.$store.state.user = this.user;
+							})
+							.catch(function (error) {
+								console.log(error);
+							});
 						}
 						if(tip == 1) {
 							this.dialogFormVisible = false;

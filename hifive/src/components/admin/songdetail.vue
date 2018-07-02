@@ -1,7 +1,7 @@
 <template>
 	<div class="wrapper">
 		<v-head></v-head>
-		<div class="song_detail">
+		<div class="Asong_detail">
 			<el-row :gutter="50">
 				<el-col :span="4" :offset="4">
 					<div>
@@ -32,7 +32,7 @@
 						<div style="margin-top:20px">
 							<el-button type="primary" icon="el-icon-edit" style="background-color:#31C27C" onmouseover="this.style.backgroundColor='#2CAF6F';" onmouseout="this.style.backgroundColor='#31C27C';" v-on:click="dialogVisible = true;editSong=song">编辑</el-button>
 							<el-button icon="el-icon-delete" v-on:click="deleteSong">删除</el-button>
-							<el-dialog title="编辑歌曲信息" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
+							<el-dialog title="编辑歌曲信息" :visible.sync="dialogVisible" width="40%" :before-close="handleClose">
 								<el-form :model="editSong" :rules="rules" ref="editSong" label-width="100px">
 									<el-form-item label="歌名" prop="songName">
 										<el-input v-model="editSong.name"></el-input>
@@ -89,18 +89,6 @@
 			if(this.$store.state.isLogin == true) {
 				this.state = true;
 			}
-
-			// var xmlhttp=new XMLHttpRequest();
-			// xmlhttp.onreadystatechange=function()
-			// {
-			// 	var textHTML=xmlhttp.responseText;
-			// 	textHTML=textHTML.replace(/(\n)+|(\r\n)+/g,"<br>");
-			// 	document.getElementById("lyr").innerHTML=textHTML;
-			// }
-			// xmlhttp.open("GET","/static/lyr.txt",true);
-			// xmlhttp.overrideMimeType("text/html;charset=gb2312");
-			// xmlhttp.send();
-
 			this.getIntro(this.id);  
 		},
 		components: {
@@ -108,15 +96,9 @@
 			vFoot
 		},
 		computed: {
-			song () {
-				return this.$store.state.song;
-			},
 			state () {
 				return this.$store.state;
 			},
-			serverUrl(){
-          		return this.$store.state.serverUrl;
-        	}
 		},
 		data () {
 			return {
@@ -124,15 +106,15 @@
 				id: '',
 				song:{
 					id:'',
-					name:'dd',
+					name:'',
 					artistId: '',
-					artistName:'ddd',
-					language: 'aaa',
-					style:'bbb',
+					artistName:'',
+					language: '',
+					style:'',
 					albumId: '',
-					albumName:'ds',
+					albumName:'',
 					duration: '',
-					releaseDate:'cccc',
+					releaseDate:'',
 					lyricsPath: "",
 					filePath: '',
 					image: "",
@@ -184,7 +166,7 @@
 			},
 
 			getIntro: function(_id) {
-				this.axios.get(this.serverUrl + "/song/getInfo", {
+				this.axios.get(this.$store.state.serverUrl + "/song/getInfo", {
 					params: {
 						id: _id,
 					}
@@ -192,8 +174,8 @@
 				.then(res => {
 					console.log(res.data);
 					this.song = res.data;
-					this.song.image = this.serverUrl + this.song.image;
-					this.song.lyricsPath = this.serverUrl + this.song.lyricsPath;
+					this.song.image = this.$store.state.serverUrl + this.song.image;
+					this.song.lyricsPath = this.$store.state.serverUrl + this.song.lyricsPath;
 					this.song.releaseDate = this.timestampToTime(this.song.releaseDate);
 					this.song.style = this.style[this.song.style];
 
@@ -234,16 +216,14 @@
 		        	D = '0' + D;
 		        return Y+M+D;
 	      	},
-	      	downloadSong: function(){
-	      		
-	      	}
 		},
 	};
 </script>
 
 <style>
-	.song_detail {
+	.Asong_detail {
 		min-height: 600px;
+		padding: 30px;
 	}
 	.font_songName{
 		font-family:"Microsoft YaHei";
