@@ -465,6 +465,7 @@ export default {
             })
             .then(response =>{
               if(response){
+                this.getMyPlaylist();
                 this.$message({
                   showClose: true,
                   message: '已成功添加到歌单',
@@ -532,7 +533,7 @@ export default {
                 if(response.data!=-1){
                   var thisPlaylist={id:response.data,name:this.newPlaylist.name,intro:this.newPlaylist.intro};
                   this.state.playlistList.push(thisPlaylist);
-                  this.getPlaylistList();
+                  this.getMyPlaylist();
                   this.dialogVisible=false;
                   this.$refs["newPlaylist"].resetFields();
                   this.$message({
@@ -540,7 +541,10 @@ export default {
                     message: '歌单创建成功',
                     type: 'success'
                   });
-                  if(this.newPlaylist.type=="song"){
+                  if(this.newPlaylist.type==''){
+                    return false;
+                  }
+                  else if(this.newPlaylist.type=="song"){
                     this.addSongToPlaylist(this.newPlaylist.info,response.data);
                   }
                   else if(this.newPlaylist.type=="album"){
@@ -599,6 +603,8 @@ export default {
                     this.$set(this.allPlaylist[i],'Flag',false);
                     this.$set(this.allPlaylist[i],'isopen',false);
                 }
+                this.playlistPaginationChange(this.currentPageOfPlaylist);
+                this.state.playlistList=this.allPlaylist;
             })
             .catch(function (error) {
                 console.log(error);
@@ -636,6 +642,9 @@ export default {
                 this.songPaginationChange(1);
                 this.albumPaginationChange(1);
                 this.playlistPaginationChange(1);
+                this.state.likeSongs=this.allSong;
+                this.state.likeAlbums=this.allAlbum;
+                this.state.playlistList=this.allPlaylist;
             })
             .catch(function (error) {
                 console.log(error);
