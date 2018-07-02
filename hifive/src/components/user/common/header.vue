@@ -21,8 +21,10 @@
 					<img :src="this.$store.state.user.image" class="user_image">
 					<el-dropdown-menu slot="dropdown">
 						<el-dropdown-item command="a">
-							<img :src="this.$store.state.user.image" class="inner_userImage">
-							<span style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{user.name}}</span>
+							<router-link tag="a" to="/user/mymusic">
+								<img :src="this.$store.state.user.image" class="inner_userImage">
+								<span style="color:black;">{{this.$store.state.user.name}}</span>
+							</router-link>
 						</el-dropdown-item>
 
 						<el-dropdown-item command="b" style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">修改个人资料</el-dropdown-item>
@@ -58,19 +60,21 @@
 					<el-input v-model="modifyData.name" style="width:70%"></el-input>
 				</el-form-item>
 				<el-form-item label="头像" prop="image">
-					<img :src="this.$store.state.user.image" class="avatar">
-					<el-upload class="avatar-uploader" ref="upload" action="http://192.168.20.95:8080/hifive/upload/uploadUserImage" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload" :auto-upload="false">
-						<div style="margin-left:30px;">
+					<img :src="modifyData.image" class="avatar" style="margin-right:20px">
+					<el-upload class="avatar-uploader" ref="upload" :on-change="previewImg"
+					action="http://192.168.20.99:8080/hifive/upload/uploadUserImage" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload" accept=".jpg, .jpeg, png" :auto-upload="false">
+						<el-button slot="trigger" size="small" type="primary">点击更改头像</el-button>
+						<!-- <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传</el-button> -->
+						<div>
 							<div>图片大小不超过2M</div>				
-							<div>上传图片格式为:jpg/jpeg/png</div>							
-							<el-button size="small" type="primary">点击更改头像</el-button>
-						</div>						
+							<div>上传图片格式为:jpg/jpeg/png</div>
+						</div>
 					</el-upload>
 					<div style="clear:both"></div>
 				</el-form-item>
 				<el-form-item label="性别" prop="gender">
-					<el-radio v-model="modifyData.gender" label="1">男</el-radio>
-					<el-radio v-model="modifyData.gender" label="2">女</el-radio>
+					<el-radio v-model="modifyData.gender" :label="1">男</el-radio>
+					<el-radio v-model="modifyData.gender" :label="2">女</el-radio>
 				</el-form-item>
 				<el-form-item>
 					<el-button @click="finishModifyData('modifyData')">完成</el-button>
@@ -109,8 +113,8 @@
 								<el-input v-model="registerUser.id" placeholder="请输入邮箱"></el-input>
 							</el-form-item>
 							<el-form-item label="性别" prop="gender">
-								<el-radio v-model="registerUser.gender" label="1">男</el-radio>
-								<el-radio v-model="registerUser.gender" label="2">女</el-radio>
+								<el-radio v-model="registerUser.gender" :label="1">男</el-radio>
+								<el-radio v-model="registerUser.gender" :label="2">女</el-radio>
 							</el-form-item>
 							<el-form-item label="密码" prop="pwd">
 								<el-input v-model="registerUser.pwd" placeholder="请输入密码"></el-input>
@@ -147,7 +151,6 @@
 			// 	this.curTitle = sessionStorage.getItem('curTitle');
 			this.isLogin = this.$store.state.isLogin;
 			this.curTitle = this.$route.name;
-			this.modifyData = this.$store.state.user;
 			if(this.isLogin == true) {
 				// this.getUserMesg();
 			}
@@ -178,7 +181,7 @@
 			var validatePass2 = (rule, value, callback) => {
 				if (value === '') {
 					callback(new Error('请再次输入密码'));
-				} else if (value !== this.modifyPwd.pass) {
+				} else if (value !== this.modifyPwd.newPwd) {
 					callback(new Error('两次输入密码不一致!'));
 				} else {
 					callback();
@@ -187,13 +190,6 @@
 			var validateName = (rule, value, callback) => {
 				if (value === '') {
 					callback(new Error('请输入昵称'));
-				} else {
-					callback();
-				}
-			};
-			var validateGender = (rule, value, callback) => {
-				if (value === '') {
-					callback(new Error('请选择性别'));
 				} else {
 					callback();
 				}
@@ -278,7 +274,7 @@
 					{ max: 5, message: '最多5个字符', trigger: 'blur'}
 					],
 					gender: [
-					{ validator: validateGender, trigger: 'blur' }
+					{ required: true, message: '请选择性别', trigger: 'blur' }
 					],
 				},
 				rules2: {
@@ -368,17 +364,23 @@
 
 				} else if(command == 'b') {
 					this.modifyDataVisible = true;
+					this.modifyData.id = this.$store.state.user.id;
+					this.modifyData.name = this.$store.state.user.name;
+					this.modifyData.gender = this.$store.state.user.gender;
+					this.modifyData.image = this.$store.state.user.image;
 
 				} else if(command == 'c') {
 					this.modifyPwdVisible = true;
-				} else {
+
+				} else if(command == 'd'){
 					this.$store.state.user = {};
 					this.$store.state.isLogin = false;
 					if(this.$route.name == '我的音乐') {
 						this.$router.push('/');
 					}
-					else
+					else {
 						this.$router.push('/user/black_login');
+					}
 				}
 			},
 			login: function(_loginUser) {
@@ -413,26 +415,25 @@
 								this.$store.state.likeSongs = this.user.likeSongList;
 								this.$store.state.likeAlbums = this.user.likeAlbumList;
 								// for(var i=0; i<this.us)
-								
 								for(var i=0; i<this.$store.state.likeSongs.length; i++) {
 									this.$store.state.likeSongs[i].image = this.$store.state.serverUrl + this.$store.state.likeSongs[i].image;
 									this.$store.state.likeSongs[i].filePath = this.$store.state.serverUrl + this.$store.state.likeSongs[i].filePath;
 									this.$store.state.likeSongs[i].lyricsPath = this.$store.state.serverUrl + this.$store.state.likeSongs[i].lyricsPath;
 								}
-
 								for(var i=0; i<this.$store.state.likeAlbums.length; i++) {
 									this.$store.state.likeAlbums[i].image = this.$store.state.serverUrl + this.$store.state.likeAlbums[i].image;
 									this.$store.state.likeAlbums[i].releaseDate = this.timestampToTime(this.$store.state.likeAlbums[i].releaseDate);
 								}
+								
 								this.$store.state.playlistList = this.user.playlistList;
+								if(this.$route.name == '我的音乐')
+									this.$router.push('/user/mymusic');
+								else
+									this.$router.push('/user/black_login');
 							})
 							.catch(function (error) {
 								console.log(error);
 							});
-							if(this.$route.name == '我的音乐')
-								this.$router.push('/user/mymusic');
-							else
-								this.$router.push('/user/black_login');
 						}
 						else if(tip == 2) {
 							alert("用户不存在");
@@ -453,7 +454,7 @@
 					this.axios.post(this.$store.state.serverUrl + "/user/register", {
 						id: this.registerUser.id,
 						name: this.registerUser.name,
-						gender: parseInt(this.registerUser.gender),
+						gender: this.registerUser.gender,
 						pwd: this.registerUser.pwd,
 						securityQuestion: parseInt(this.registerUser.securityQuestion),
 						securityAnswer: this.registerUser.securityAnswer
@@ -502,6 +503,41 @@
 			},
 			finishModifyData: function(_modifyData) {
 				this.submitForm(_modifyData);
+				if(this.flag) {
+					this.flag = false;
+					this.$refs.upload.submit();
+					this.axios.post(this.$store.state.serverUrl + "/user/modify", {
+						id: this.modifyData.id,
+						name: this.modifyData.name,
+						gender: this.modifyData.gender
+					})
+					.then(res => {
+						var tip = res.data;
+						if(tip == true) {
+							alert("修改成功");
+							this.modifyDataVisible = false;
+							this.axios.get(this.$store.state.serverUrl + "/user/getInfo", {
+								params: {
+									id: this.$store.state.user.id
+								}
+							})
+							.then(res => {
+								this.user = res.data;
+								this.user.image = this.$store.state.serverUrl + this.user.image;
+								this.$store.state.user = this.user;
+							})
+							.catch(function (error) {
+								console.log(error);
+							});
+						}
+						else if(tip == false) {
+							alert("修改失败");
+						}
+					})
+					.catch(function (error) {
+						console.log(error);
+					});
+				}
 			},
 			submitForm(formName) {
 				this.$refs[formName].validate((valid) => {
@@ -524,6 +560,22 @@
 				if(D < 10) D = '0' + D;
 				return Y+M+D;
 			},
+			beforeAvatarUpload: function(file) {
+				const isLt2M = file.size / 1024 / 1024 < 2;
+				if (!isLt2M) {
+					this.$message.error('上传头像图片大小不能超过 2MB!');
+				}
+				return isLt2M;
+			},
+			// submitUpload: function() {
+			// 	this.$refs.upload.submit();
+			// },
+			handleAvatarSuccess: function() {
+				alert("上传成功");
+			},
+			previewImg: function(file) {
+				this.modifyData.image = file.url;
+			}
 		},
 		computed: {
 			search () {
@@ -536,7 +588,7 @@
 	};
 </script>
 
-<style scope>
+<style>
 	body {
 		margin: 0;
 	}
@@ -611,5 +663,6 @@
 		height: 120px;
 		float: left;
 		display: block;
+		border-radius: 100%;
 	}
 </style>
