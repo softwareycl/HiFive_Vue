@@ -12,7 +12,7 @@
 			</el-input>
 		</div>
 		<div class="head_image">
-			<span v-if="isLogin" style="color:black;cursor:pointer;" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">注销</span>
+			<span style="color:black;cursor:pointer;" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">注销</span>
 		</div>
 		<div style="clear: both;"></div>
 	</div>
