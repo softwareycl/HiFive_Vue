@@ -5,6 +5,7 @@
     <!--去掉audio标签中controls="controls"属性就可以修改样式-->
       <audio 
       ref="audio" 
+      id = "audio"
       @pause="onPause"
       @play="onPlay"
       @timeupdate="onTimeupdate" 
@@ -25,19 +26,15 @@
       </el-col>
       <el-col :span="2">
         <div class="songImg" >
-          <router-link :to="{path:'/user/songdetail',query:{id:currentSong.id}}">
-            <img id="img" height="50" width="50" :src="currentSong.image" alt="" onerror="this.style.display='none'"/>
-          </router-link>
+          <!-- <router-link :to="{path:'/user/songdetail',query:{id:currentSong.id}}"> -->
+            <img id="img" height="50" width="50"  @click="clickSongName" :src="currentSong.image" alt=""/>
+          <!-- </router-link> -->
         </div>
       </el-col>
       <el-col :span="13">
       <div class="songInfo">  
-        <router-link :to="{path:'/user/songdetail',query:{id:currentSong.id}}">
-          <el-button class="songInfo2" type="text">{{currentSong.name}}</el-button>
-        </router-link>
-        <router-link :to="{path:'/user/artistdetail',query:{id:currentSong.artistId}}">
-          <el-button class="songInfo2" type="text">{{currentSong.artistName}}</el-button>
-        </router-link>
+          <el-button class="songInfo2" type="text" @click="clickSongName">{{currentSong.name}}</el-button>
+          <el-button class="songInfo2" @click="clickArtistName" type="text">{{currentSong.artistName}}</el-button>
       </div>
       <div class="tooltip">
         <el-slider v-model="sliderTime" :format-tooltip="formatProcessToolTip" @change="changeCurrentTime" class="slider"></el-slider>
@@ -50,7 +47,7 @@
       <el-popover
       ref=""
         placement="top-start"
-        width="1480"
+        width="1200"
         trigger="click"
         @show="showLyrics">
         <div class="bg">
@@ -151,7 +148,16 @@ export default {
         'songList',
       ]),
       currentSong() {
-        return this.$store.state.currentSong;
+        var song = this.$store.state.currentSong;
+        if(song.id != null)
+          return song;
+        else {
+          return {
+            name:"无播放歌曲", 
+            image:require("../../../assets/player_icon.jpg"),
+          };
+        }
+          
       },
     },
     mounted() {
@@ -161,6 +167,8 @@ export default {
 
     // 控制音频的播放与暂停
     startPlayOrPause () {
+      if(this.$refs.audio.src == "" || this.$refs.audio.src==undefined || this.$refs.audio.src==null)
+        return this.pause();
       return this.audio.playing ? this.pause() : this.play()
     },
     // 播放音频
@@ -171,6 +179,9 @@ export default {
     pause () {
       this.$refs.audio.pause()
     },
+    getAudio: function(){
+      return document.getElementById("audio");
+    },
     // 当音频播放
     onPlay () {
       this.audio.playing = true
@@ -179,13 +190,6 @@ export default {
     onPause () {
       this.audio.playing = false
     },
-
-    // 当timeupdate事件大概每秒一次，用来更新音频流的当前播放时间
-    // onTimeupdate(res) {
-    //   console.log('timeupdate')
-    //   console.log(res)
-    //   this.audio.currentTime = res.target.currentTime
-    // },
 
     // 当加载语音流元数据完成后，会触发该事件的回调函数
     // 语音元数据主要是语音的长度之类的数据
@@ -243,13 +247,26 @@ export default {
         })
         .then(res => {
           document.getElementById("lyrics").innerHTML=res.data;
-          console.log(res.data);
 
         })
         .catch(function (error) {
           console.log(error);
         });
 
+      },
+      clickSongName: function(){
+        if(this.currentSong.id == null) return;
+        this.$router.push({
+          path: "/user/songdetail",
+          query:{id:this.currentSong.id}
+        })
+      },
+      clickArtistName: function(){
+        if(this.currentSong.id == null) return;
+        this.$router.push({
+          path: "/user/artistdetail",
+          query:{id:this.currentSong.artistId}
+        })
       },
       clickSongRow: function(row, event){
         var songId = row.id;
@@ -266,17 +283,18 @@ export default {
         this.play();
       },
       deleteAll: function(){
+        this.onPause();
+        document.getElementById("audio").src="";
         this.$store.state.songList = [];
         this.$store.state.currentSong = {filePath: ""};
         this.$store.state.currentIndex = 0;
-        this.onPause();
+        this.audio.currentTime = 0;
         this.audio.maxTime = 0;
+        this.sliderTime = 0,
+
         document.getElementById("lyricsTitle").innerHTML="无播放歌曲";
         document.getElementById("lyrics").innerHTML = "暂无歌词";
       },
-      test: function(){
-        alert("in player.vue");
-      }
   },
   filters: {
     // 使用组件过滤器来动态改变按钮的显示
@@ -301,7 +319,6 @@ export default {
   height:550px;
   width:100%;
   background:url("http://publicdomainarchive.com/wp-content/uploads/2016/01/public-domain-images-free-stock-photos-002.jpg") 0 0 no-repeat;
-
 }
 
 .playerFooter {
@@ -314,6 +331,7 @@ export default {
     background-color:white;
     margin-left:-1px;
     margin-bottom:0px;
+    border-top: 1px solid #D0D0D0;
   }
 .playlist {
     color: #333;
@@ -331,12 +349,12 @@ export default {
   text-align:left;
   margin-left:0px;
 }
-  .lyrics {
-    color: #333;
-    text-align: center;
-    margin:0 auto;
-  }
-  .songImg{
+.lyrics {
+  color: #333;
+  text-align: center;
+  margin:0 auto;
+}
+.songImg{
   border-color:white;
   padding-top:5px;
   padding-left:25px;
@@ -345,13 +363,14 @@ export default {
   border-color:white;
   border-width: 0;
   border-style: none;
+  cursor: pointer;
 }
 .time{    
   width:50px;
   height:40px;
   font-size:16px;
   color:black;
-  margin-top:30px;
+  margin-top:34px;
   margin-left:10px;
 }
 
@@ -360,7 +379,7 @@ export default {
   padding-left:10px;
   font-size:18px;
   text-align: left;
-  color: #31C27C;
+  color: #009933;
 }
 
 .btn{
@@ -398,8 +417,10 @@ export default {
   color:#31c27c;
 }
 .el-popover{
-    position: absolute;
-    overflow: hidden;
-    margin: 0 auto;
+position: fixed;
+word-wrap: break-word; 
+word-break: normal; 
+overflow:hidden;
+margin-top: 0px;
 }
 </style>

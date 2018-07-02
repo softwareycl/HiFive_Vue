@@ -27,10 +27,10 @@
                     <el-menu-item index="4" @click="rankDisplay(4);">
                         港台榜
                     </el-menu-item>
-                    <el-menu-item index="5" @click="rankDisplay(5);">
+                    <el-menu-item index="5" @click="rankDisplay(6);">
                         日韩榜
                     </el-menu-item>
-                    <el-menu-item index="6" @click="rankDisplay(6);">
+                    <el-menu-item index="6" @click="rankDisplay(5);">
                         欧美榜
                     </el-menu-item>
 
@@ -150,7 +150,6 @@ import vHeader from "../common/header.vue";
 import vNav from "../common/navigation.vue";
 import vFoot from "../common/footer.vue";
 import a from "@/../static/images/1.jpg"
-
 export default{
     data(){
         return {
@@ -159,7 +158,6 @@ export default{
             rankType:1,
             rankText: ["新歌榜", "热歌榜", "内地榜", "港台榜", "日韩榜", "欧美榜"],
             songs:[],
-            page: 1,
             pageCount: 1,
             songsView: [],
             dialogVisible:false,
@@ -244,7 +242,6 @@ export default{
             })
             .then(res => {
                 this.songs = res.data;
-                console.log(res.data);
                 for(var i = 0; i < res.data.length; i++){
                     this.songs[i].image = this.serverUrl + this.songs[i].image;
                     this.songs[i].filePath = this.serverUrl + this.songs[i].filePath;
@@ -358,64 +355,19 @@ export default{
         },
         addToSongList: function(index){
             index = (this.page - 1) * 20 + index;
-            console.log(this.songs);
             var song = this.songs[index];
-            var songId = song.id;
-            if(this.$store.state.songList.length == 0){
-                this.$store.state.songList = [];
-                this.$store.state.songList.push(song);
-                this.$store.state.currentSong = song;
-                this.$store.state.currentIndex = 0;
-            } else if(this.$store.state.currentSong.id != songId){
-                for(var i = 0; i < this.$store.state.songList.length; i++){
-                    if(this.$store.state.songList[i].id == songId){
-                        this.$store.state.songList.splice(i, 1);
-                        if(i < this.$store.state.currentIndex)
-                            this.$store.state.currentIndex=this.$store.state.currentIndex-1;
-                        break;
-                    }
-                }
-                this.$store.state.songList.push(song);
-            }
+            var songs = [song];
+            this.$store.dispatch("addToSongList", songs);
         },
 
         addAllToSongList: function(){
-            if(this.$store.state.songList.length == 0){
-                this.$store.state.songList = [];
-                for(var i = 0; i < this.songs.length; i++){
-                    this.$store.state.songList.push(this.songs[i]);
-                }
-                this.$store.state.currentSong = this.$store.state.songList[0];
-                this.$store.state.currentIndex = 0;
-            } else {
-                for(var m = 0; m < this.songs.length; m++){
-                    var song = this.songs[m];
-                    var songId = song.id;
-                    if(this.$store.state.currentSong.id != songId){
-                        for(var i = 0; i < this.$store.state.songList.length; i++){
-                            if(this.$store.state.songList[i].id == songId){
-                                this.$store.state.songList.splice(i, 1);
-                                if(i < this.$store.state.currentIndex)
-                                    this.$store.state.currentIndex=this.$store.state.currentIndex-1;
-                                break;
-                            }
-                        }
-                        this.$store.state.songList.push(song);
-                    }
-                }
-            }
+            this.$store.dispatch("addToSongList", this.songs);
         },
 
         playSong:function(index){
             //传递歌曲ID给player.vue
-            index = (this.page - 1) * 20 + index;
-
-            this.$store.state.songList = [];
-            for(var i = 0; i < this.songs.length; i++){
-                this.$store.state.songList.push(this.songs[i]);
-            }
-            this.$store.state.currentSong = this.songs[index];
-            this.$store.state.currentIndex = index;
+            var startIndex = (this.page - 1) * 20 + index;
+            this.$store.dispatch("play", [this.songs, startIndex, false]);
         },
     },
     
