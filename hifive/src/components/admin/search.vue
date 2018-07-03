@@ -14,21 +14,21 @@
 				<el-table :data="songList" style="width: 100%" :stripe="true" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">
 					<el-table-column label="歌曲">
 						<template slot-scope="scope">
-							<router-link tag="a" :to="{path:'/user/songdetail',query:{id:scope.row.id}}">
+							<router-link tag="a" :to="{path:'/admin/songdetail',query:{id:scope.row.id}}">
 								<span style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.name}}</span>
 							</router-link>
 						</template>
 					</el-table-column>
 					<el-table-column label="歌手">
 						<template slot-scope="scope">
-							<router-link tag="a" :to="{path:'/user/artistdetail',query:{id:scope.row.artistId}}">
+							<router-link tag="a" :to="{path:'/admin/artistdetail',query:{id:scope.row.artistId}}">
 								<span style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.artistName}}</span>
 							</router-link>
 						</template>
 					</el-table-column>
 					<el-table-column label="专辑">
 						<template slot-scope="scope">
-							<router-link tag="a" :to="{path:'/user/albumdetail',query:{id:scope.row.albumId}}">
+							<router-link tag="a" :to="{path:'/admin/albumdetail',query:{id:scope.row.albumId}}">
 								<span style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.albumName}}</span>
 							</router-link>
 						</template>
@@ -48,7 +48,7 @@
 				<ul id="singerlist">
 					<li v-for="item in artistList" class="singerli">
 						<div class="singer">
-							<router-link to="/user/artistdetail">
+							<router-link to="/admin/artistdetail">
 								<img :src="item.image" alt="" style="border-radius:100%;padding:35px;">
 								<p style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{item.name}}</p>
 							</router-link>
@@ -65,14 +65,14 @@
 				<el-row gutter="20">
 					<el-col :data="albumList" v-for="list in albumList" style='width:20%'>
 						<el-card :body-style="{ padding: '0px'}" shadow="never" style="border:none;margin-bottom:20px;">
-							<router-link tag="a" :to="{path:'/user/albumdetail',query:{id:list.id}}">
+							<router-link tag="a" :to="{path:'/admin/albumdetail',query:{id:list.id}}">
 								<img :src="list.image" class="image">
 							</router-link>
 							<div style="line-height:8px;font-size:5px;">
-								<router-link tag="a" :to="{path:'/user/albumdetail',query:{id:list.id}}">
+								<router-link tag="a" :to="{path:'/admin/albumdetail',query:{id:list.id}}">
 									<p style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{list.name}}</p>
 								</router-link>
-								<router-link tag="a" :to="{path:'/user/artistdetail',query:{id:list.artistId}}">
+								<router-link tag="a" :to="{path:'/admin/artistdetail',query:{id:list.artistId}}">
 									<p style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{list.artistName}}</p>
 								</router-link>
 							</div>

@@ -1,7 +1,7 @@
 <template>
 	<div class="header">
 		<div class="icon" @click="home()">
-			<img src="../../assets/icon.jpg">
+			<img src="../../assets/LOGO0.png">
 		</div>
 		<div style="float:left;">
             <h1 style="font-size: xx-large;margin:18px 0px;">后台{{this.$route.name}}</h1>

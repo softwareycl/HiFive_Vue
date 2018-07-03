@@ -37,7 +37,7 @@
 				<el-col :span="8" :offset="3">
 					<div style="margin-bottom:30px;">
 						<p class="font_songLry" style="font-size:20px">歌词</p>
-						<el-upload class="lyr-uploader" action="http://192.168.20.99:8080/hifive/upload/uploadLyrics" :limit="1" :on-exceed="exceedTip" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+						<el-upload class="lyr-uploader" action="http://192.168.20.99:8080/hifive/upload/uploadLyrics" :data={id:this.song.id} :limit="1" :on-exceed="exceedTip" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
 							<el-button slot="trigger" size="small" type="primary">上传歌词</el-button>
 
 						</el-upload>
@@ -54,7 +54,7 @@
 					</el-form-item>
 					<el-form-item label="歌曲图片" prop="image">
 						<img :src="editSong.image" class="avatar" style="margin-right:20px">
-						<el-upload class="avatar-uploader" ref="upload" :on-change="previewImg" action="http://192.168.20.99:8080/hifive/upload/uploadSongImage" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload" accept=".jpg, .jpeg, png" :auto-upload="false">
+						<el-upload class="avatar-uploader" ref="upload" :data={id:editSong.id} :on-change="previewImg" action="http://192.168.20.99:8080/hifive/upload/uploadSongImage" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload" accept=".jpg, .jpeg, png" :auto-upload="false">
 							<el-button slot="trigger" size="small" type="primary">点击更改图片</el-button>
 							<div>
 								<div>图片大小不超过2M</div>				
@@ -184,23 +184,36 @@
 		},
 		methods: {
 			deleteSong:function(){ 
-				this.axios.get(this.$store.state.serverUrl + "/song/removeSong", {
-					params: {
-						id: this.song.id,
-					}
+				alert(this.song.name);
+				this.$confirm('确认删除？')
+				.then(_ => {
+					this.axios.get(this.serverUrl+'/song/removeSong',{
+						params:{
+							id:this.song.id,
+						}
+					})
+					.then(response =>{
+						if(response){
+							this.$message({
+								showClose: true,
+								message: '歌曲删除成功',
+								type: 'success'
+							});
+							this.$router.go(-1);
+						}
+						else{
+							this.$message({
+								showClose: true,
+								message: '会话超时',
+								type: 'error'
+							});
+						}
+					})
+					.catch(function(err){
+						console.log(err);
+					});
 				})
-				.then(res => {
-					var state = res.data;
-					if(state == 'true') {
-						alert("删除成功");
-						this.$router.go(-1);
-					}
-					else
-						alert("删除失败");
-				})
-				.catch(function (error) {
-					console.log(error);
-				});
+				.catch(_ => {});
 			},
 			edit: function() {
 				this.dialogVisible = true;
@@ -271,9 +284,7 @@
 					}
 				})
 				.then(res => {
-					console.log(res.data);
 					this.song = res.data;
-					console.log(this.song);
 					this.song.image = this.$store.state.serverUrl + this.song.image;
 					this.song.lyricsPath = this.$store.state.serverUrl + this.song.lyricsPath;
 					this.song.releaseDate = this.timestampToTime(this.song.releaseDate);
@@ -286,7 +297,6 @@
 					.then(res => {
 						var textHTML=res.data;
 						document.getElementById("lyr").innerHTML=textHTML.replace(/(\n)+|(\r\n)+/g,"<br>");
-						console.log(res.data);
 
 					})
 					.catch(function (error) {
