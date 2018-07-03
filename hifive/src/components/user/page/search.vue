@@ -26,30 +26,16 @@
 								<el-dropdown trigger="click" placement="bottom-start" @visible-change="handle(scope.row,$event)" @command="handleSongCommand">
 									<el-button icon="el-icon-plus" circle></el-button>
 									<el-dropdown-menu slot="dropdown" :data="playlistList">
-										<el-dropdown-item command="playqueue">播放队列</el-dropdown-item>
+										<el-dropdown-item :command='{type:"playqueue",params:scope.$index}'>播放队列</el-dropdown-item>
 										<div v-if="isLogin">
 											<el-dropdown-item disabled divided>我喜欢</el-dropdown-item>
-											<el-dropdown-item v-for="playlist in playlistList" :key="playlist.ID" :command='{type:"playlist",param1:playlist.ID,param2:scope.row}'>{{playlist.name}}</el-dropdown-item>
-											<el-dropdown-item command="newplaylist" divided>添加到新歌单</el-dropdown-item>
+											<el-dropdown-item v-for="playlist in playlistList" :key="playlist.id" :command='{type:"playlist",param1:playlist.id,param2:scope.row}'>{{playlist.name}}</el-dropdown-item>
+											<el-dropdown-item :command='{type:"newplaylist",params:scope.row}' divided>添加到新歌单</el-dropdown-item>
 										</div>
 										<el-dropdown-item v-else command="login" divided>登录后添加到歌单</el-dropdown-item>
 									</el-dropdown-menu>
 								</el-dropdown>
 							</span>
-							<el-dialog title="创建歌单" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
-								<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
-									<el-form-item label="歌单名称" prop="name">
-										<el-input v-model="ruleForm.name" placeholder="请输入歌单名称"></el-input>
-									</el-form-item>
-									<el-form-item label="歌单简介" prop="des">
-										<el-input type="textarea" v-model="ruleForm.des" placeholder="请输入歌单简介"></el-input>
-									</el-form-item>
-									<el-form-item>
-										<el-button type="primary" @click="submitForm('ruleForm')">完成</el-button>
-										<el-button @click="dialogVisible=false">取消</el-button>
-									</el-form-item>
-								</el-form>
-							</el-dialog>
 							<span v-if="scope.row.Flag"> <el-button icon="el-icon-download" circle v-on:click="downloadSong(scope.row)"></el-button> </span>
 						</template>
 					</el-table-column>
@@ -76,20 +62,23 @@
 				<div class="pagination-footer" style="margin-top:50px">	
 					<el-pagination @current-change="handleCurrentChange" :current-page="page.cur" :page-size="20" background layout="total, prev, pager, next" :total="page.total"> </el-pagination>
 				</div>
+				<el-dialog title="创建歌单" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
+					<el-form :model="newPlaylist" :rules="rules" ref="newPlaylist" label-width="100px">
+						<el-form-item label="歌单名称" prop="name">
+							<el-input v-model="newPlaylist.name" placeholder="请输入歌单名称"></el-input>
+						</el-form-item>
+						<el-form-item label="歌单简介" prop="intro">
+							<el-input type="textarea" v-model="newPlaylist.intro" placeholder="请输入歌单简介"></el-input>
+						</el-form-item>
+						<el-form-item>
+							<el-button type="primary" @click="submitForm">完成</el-button>
+							<el-button @click="dialogVisible=false">取消</el-button>
+						</el-form-item>
+					</el-form>
+				</el-dialog>
 			</div>
+
 			<div class="search_artist" v-if="curTitle == '歌手'">
-				<!-- <el-row gutter="20">
-					<el-col :data="artistList" v-for="list in artistList" style='width:20%'>
-						<el-card :body-style="{ padding: '0px'}" shadow="never" style="border:none;margin-bottom:20px;">							
-							<div style="line-height:8px;font-size:5px;text-align:center">
-								<router-link tag="a" :to="{path:'/user/artistdetail',query:{id:artistList.id}}">
-									<img src="../../../assets/icon.jpg" class="image">	
-									<p style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{list.name}}</p>
-								</router-link>			
-							</div>
-						</el-card>
-					</el-col>
-				</el-row> -->
 				<ul id="singerlist">
 					<li v-for="item in artistList" class="singerli">
 						<div class="singer">
@@ -105,6 +94,7 @@
 					<el-pagination @current-change="handleCurrentChange" :current-page="page.cur" :page-size="20" background layout="total, prev, pager, next" :total="page.total"> </el-pagination>
 				</div>
 			</div>
+
 			<div class="search_artist" v-if="curTitle == '专辑'">
 				<el-row gutter="20">
 					<el-col :data="albumList" v-for="list in albumList" style='width:20%'>
@@ -153,9 +143,7 @@
 			}
 		},
 		mounted () {
-			if(this.$store.state.isLogin == true) {
-				this.isLogin = true;
-			}
+			this.isLogin=this.state.isLogin;
 			this.getPlaylistList();
 			if(this.curTitle == '歌曲') {
 				this.getSongList(this.$store.state.search.name,this.page.cur);
@@ -173,7 +161,7 @@
 		data () {
 			return {
 				dialogVisible:false,
-				isLogin:true,
+				isLogin: '',
 				ruleForm: {
 					name: '',
 					des: ''
@@ -183,23 +171,17 @@
 					{ required: true, message: '请输入歌单名称', trigger: 'blur' },
 					{ min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
 					],
-					des: [
+					intro: [
 					{ min: 1, max: 140, message: '长度在 140 个字符以内', trigger: 'blur' }
 					]
 				},
-
-				playlistList:[{
-					ID:'1',
-					name:'1'
+				newPlaylist: {
+					id:'',
+					name: '',
+					intro: '',
+					type:'',
+					info:''
 				},
-				{
-					ID:'2',
-					name:'2'
-				},
-				{
-					ID:'3',
-					name:'3'
-				}],
 
 				curTitle: '歌曲',
 				headNav: [
@@ -215,6 +197,7 @@
 				songList: [],
 				artistList: [],
 				albumList: [],
+				playlistList:[],
 				page: {
 					cur: 1,
 					total: 0,
@@ -222,6 +205,9 @@
 			}
 		},
 		methods: {
+			playSong: function() {
+
+			},
 			cur_title: function(title) {
 				this.curTitle = title;
 				this.page.cur = 1;
@@ -265,42 +251,114 @@
 				if(command=="login"){
 					window.location.href='/';
 				}
-				else if(command=="newplaylist"){
+				else if(command.type=="newplaylist"){
 					this.dialogVisible=true;
+					this.newPlaylist.type="song";
+					this.newPlaylist.info=command.params.id;
 				}
-				else if(command=="playqueue"){
-
+				else if(command.type=="playqueue"){
+					
 				}
 				else{
-					console.log(command.param1);
-					console.log(command.param2.ID)
+					this.addSongToPlaylist(command.param2.id,command.param1);
 				}
 			},
 
-			submitForm:function(formname){
-				this.$refs[formname].validate((valid) => {
+			submitForm:function(){
+				this.$refs["newPlaylist"].validate((valid) => {
+
 					if (valid) {
-						alert('submit!');
-						this.dialogVisible=false;
-						this.$refs[formname].resetFields();
-					} else {
-						alert('error submit!!');
+						this.axios.post(this.serverUrl+'/playlist/create',{
+							name:this.newPlaylist.name,
+							intro:this.newPlaylist.intro
+						})
+						.then(response =>{
+
+							if(response.data!=-1){
+								var thisPlaylist={id:response.data,name:this.newPlaylist.name,intro:this.newPlaylist.intro};
+								this.state.playlistList.push(thisPlaylist);
+								this.getPlaylistList();
+								this.dialogVisible=false;
+								this.$refs["newPlaylist"].resetFields();
+								this.$message({
+									showClose: true,
+									message: '歌单创建成功',
+									type: 'success'
+								});
+								this.addSongToPlaylist(this.newPlaylist.info,response.data);
+							}
+							else{
+								this.$message({
+									showClose: true,
+									message: '会话超时',
+									type: 'error'
+								});
+							}
+						})
+						.catch(function(err){
+							console.log(err);
+						});
+					} 
+					else {
+						this.$message({
+							showClose: true,
+							message: '格式不正确',
+							type: 'error'
+						});
 						return false;
 					}
 				});
 			},
 
 			downloadSong:function(row){
-
+				if(this.isLogin){
+					window.location.href = this.serverUrl + "/download/downloadSong?id=" + row.id;
+				} else {
+					this.$confirm('还未登录,是否现在登录?', '提示', {
+						confirmButtonText: '确定',
+						cancelButtonText: '取消',
+					}).then(() => {
+						window.location.href='/';
+					}).catch(() => {
+					});
+				}
 			},
 
 			getPlaylistList:function(){
-
-			},
-
-			playSong:function(row){
-
-			},
+	      		if(this.isLogin){
+	      			this.playlistList=this.state.playlistList;
+	      		}
+	      		else{
+	      			return false;
+	      		}
+	      	},
+	      	addSongToPlaylist:function(songId,playlistId){
+	      		this.axios.get(this.serverUrl+'/playlist/addSong',{
+	      			params:{
+	      				songId:songId,
+	      				playlistId:playlistId
+	      			}
+	      		})
+	      		.then(response =>{
+	      			if(response){
+	      				this.$message({
+	      					showClose: true,
+	      					message: '已成功添加到歌单',
+	      					type: 'success'
+	      				});
+	      			}
+	      			else{
+	      				this.$message({
+	      					showClose: true,
+	      					message: '会话超时',
+	      					type: 'error'
+	      				});
+	      			}
+	      		})
+	      		.catch(function(err){
+	      			console.log(err);
+	      		});
+	      	},
 
 			handleCurrentChange: function(c){
 				this.page.cur = c;

@@ -80,18 +80,22 @@ export default new Router({
     //以下为管理员页面的跳转
     {
       path: '/admin/artistdetail',
+      name: '歌手详情页',
       component: resolve => require(['../components/admin/artistdetail.vue'], resolve)
     },
     {
       path: '/admin/artist',
+      name: '首页',
       component: resolve => require(['../components/admin/artist.vue'], resolve)
     },
     {
       path: '/admin/albumdetail',
+      name: '专辑详情页',
       component: resolve => require(['../components/admin/albumdetail.vue'], resolve)
     },
     {
       path: '/admin/songdetail',
+      name: '歌曲详情页',
       component: resolve => require(['../components/admin/songdetail.vue'], resolve)
     },
     {
@@ -108,6 +112,7 @@ export default new Router({
     },
     {
       path: '/admin/search',
+      name: '搜索页',
       component: resolve => require(['../components/admin/search.vue'], resolve)
     },
   ],

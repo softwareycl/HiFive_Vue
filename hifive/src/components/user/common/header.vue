@@ -1,7 +1,7 @@
 <template>
 	<div class="header">
 		<div class="icon" @click="home()">
-			<img src="../../../assets/icon.jpg">
+			<img src="../../../assets/LOGO0.png">
 		</div>
 		<ul class="menu_1">
 			<li v-for="list in headNav" :class="{ list_color:curTitle == list.title}" @click="cur_title(list.title)">
@@ -36,7 +36,7 @@
 				</el-dropdown>
 			</div>
 		</div>
-		<el-dialog title="修改密码" :visible.sync="modifyPwdVisible" style="font-weight:bold;" width="40%" center="true">
+		<el-dialog title="修改密码" :visible.sync="modifyPwdVisible" style="font-weight:bold;" width="40%" :center="true">
 			<el-form :model="modifyPwd" :rules="rules" ref="modifyPwd" label-width="100px">
 				<el-form-item label="旧密码" prop="oldPwd">
 					<el-input type="password" v-model="modifyPwd.oldPwd"></el-input>
@@ -54,7 +54,7 @@
 			</el-form>
 		</el-dialog>
 
-		<el-dialog title="修改个人资料" :visible.sync="modifyDataVisible" style="font-weight:bold;" center="true" width="40%">
+		<el-dialog title="修改个人资料" :visible.sync="modifyDataVisible" style="font-weight:bold;" :center="true" width="40%">
 			<el-form :model="modifyData" :rules="rules1" ref="modifyData" label-width="100px" style="text-align:left">
 				<el-form-item label="昵称" prop="name">
 					<el-input v-model="modifyData.name" style="width:70%"></el-input>
@@ -82,7 +82,7 @@
 				</el-form-item>
 			</el-form>
 		</el-dialog>
-		<el-dialog title="欢迎来到云音乐" :visible.sync="dialogFormVisible" style="font-weight:bold" center="true">
+		<el-dialog title="欢迎来到云音乐" :visible.sync="dialogFormVisible" style="font-weight:bold" :center="true">
 			<template>
 				<el-tabs v-model="activeName" class="login_form" style="margin:0 75px;text-align:left">
 					<el-tab-pane label="登录" name="first">

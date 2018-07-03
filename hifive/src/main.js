@@ -18,6 +18,7 @@ import './theme/pagination.css'
 import './theme/dropdown.css'
 import './theme/dropdown-item.css'
 import './theme/dropdown-menu.css'
+import './theme/radio.css'
 
 Vue.config.productionTip = false
 Vue.use(VueAxios, axios)
