@@ -19,40 +19,6 @@
 							</router-link>
 						</template>
 					</el-table-column>
-					<el-table-column label=" ">
-						<template slot-scope="scope">
-							<span v-if="scope.row.Flag"> <el-button icon="el-icon-caret-right" circle v-on:click="playSong(scope.row)"></el-button> </span>
-							<span v-if="scope.row.Flag"> 
-								<el-dropdown trigger="click" placement="bottom-start" @visible-change="handle(scope.row,$event)" @command="handleSongCommand">
-									<el-button icon="el-icon-plus" circle></el-button>
-									<el-dropdown-menu slot="dropdown" :data="playlistList">
-										<el-dropdown-item command="playqueue">播放队列</el-dropdown-item>
-										<div v-if="isLogin">
-											<el-dropdown-item disabled divided>我喜欢</el-dropdown-item>
-											<el-dropdown-item v-for="playlist in playlistList" :key="playlist.ID" :command='{type:"playlist",param1:playlist.ID,param2:scope.row}'>{{playlist.name}}</el-dropdown-item>
-											<el-dropdown-item command="newplaylist" divided>添加到新歌单</el-dropdown-item>
-										</div>
-										<el-dropdown-item v-else command="login" divided>登录后添加到歌单</el-dropdown-item>
-									</el-dropdown-menu>
-								</el-dropdown>
-							</span>
-							<el-dialog title="创建歌单" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
-								<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
-									<el-form-item label="歌单名称" prop="name">
-										<el-input v-model="ruleForm.name" placeholder="请输入歌单名称"></el-input>
-									</el-form-item>
-									<el-form-item label="歌单简介" prop="des">
-										<el-input type="textarea" v-model="ruleForm.des" placeholder="请输入歌单简介"></el-input>
-									</el-form-item>
-									<el-form-item>
-										<el-button type="primary" @click="submitForm('ruleForm')">完成</el-button>
-										<el-button @click="dialogVisible=false">取消</el-button>
-									</el-form-item>
-								</el-form>
-							</el-dialog>
-							<span v-if="scope.row.Flag"> <el-button icon="el-icon-download" circle v-on:click="downloadSong(scope.row)"></el-button> </span>
-						</template>
-					</el-table-column>
 					<el-table-column label="歌手">
 						<template slot-scope="scope">
 							<router-link tag="a" :to="{path:'/user/artistdetail',query:{id:scope.row.artistId}}">
@@ -77,19 +43,8 @@
 					<el-pagination @current-change="handleCurrentChange" :current-page="page.cur" :page-size="20" background layout="total, prev, pager, next" :total="page.total"> </el-pagination>
 				</div>
 			</div>
+
 			<div class="search_artist" v-if="curTitle == '歌手'">
-				<!-- <el-row gutter="20">
-					<el-col :data="artistList" v-for="list in artistList" style='width:20%'>
-						<el-card :body-style="{ padding: '0px'}" shadow="never" style="border:none;margin-bottom:20px;">							
-							<div style="line-height:8px;font-size:5px;text-align:center">
-								<router-link tag="a" :to="{path:'/user/artistdetail',query:{id:artistList.id}}">
-									<img src="../../../assets/icon.jpg" class="image">	
-									<p style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{list.name}}</p>
-								</router-link>			
-							</div>
-						</el-card>
-					</el-col>
-				</el-row> -->
 				<ul id="singerlist">
 					<li v-for="item in artistList" class="singerli">
 						<div class="singer">
@@ -105,6 +60,7 @@
 					<el-pagination @current-change="handleCurrentChange" :current-page="page.cur" :page-size="20" background layout="total, prev, pager, next" :total="page.total"> </el-pagination>
 				</div>
 			</div>
+			
 			<div class="search_artist" v-if="curTitle == '专辑'">
 				<el-row gutter="20">
 					<el-col :data="albumList" v-for="list in albumList" style='width:20%'>
@@ -156,7 +112,6 @@
 			if(this.$store.state.isLogin == true) {
 				this.isLogin = true;
 			}
-			this.getPlaylistList();
 			if(this.curTitle == '歌曲') {
 				this.getSongList(this.$store.state.search.name,this.page.cur);
 				this.getSongTotal(this.$store.state.search.name);
@@ -178,28 +133,6 @@
 					name: '',
 					des: ''
 				},
-				rules: {
-					name: [
-					{ required: true, message: '请输入歌单名称', trigger: 'blur' },
-					{ min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
-					],
-					des: [
-					{ min: 1, max: 140, message: '长度在 140 个字符以内', trigger: 'blur' }
-					]
-				},
-
-				playlistList:[{
-					ID:'1',
-					name:'1'
-				},
-				{
-					ID:'2',
-					name:'2'
-				},
-				{
-					ID:'3',
-					name:'3'
-				}],
 
 				curTitle: '歌曲',
 				headNav: [
@@ -237,69 +170,6 @@
 					this.getAlbumList(this.$store.state.search.name,this.page.cur);
 					this.getAlbumTotal(this.$store.state.search.name);
 				}
-			},
-
-			handleMouseEnter:function(row, column, cell, event){				
-				row.Flag=true;
-			},
-			handleMouseOut:function(row, column, cell, event){
-				if(!row.isopen){
-					row.Flag=false;
-				}
-				else{
-					return false;
-				}
-			},
-			handle:function(row,event){
-				row.Flag=event;
-				row.isopen=event;
-			},
-			handleClose(done) {
-				this.$confirm('确认关闭？')
-				.then(_ => {
-					done();
-				})
-				.catch(_ => {});
-			},
-			handleSongCommand:function(command){
-				if(command=="login"){
-					window.location.href='/';
-				}
-				else if(command=="newplaylist"){
-					this.dialogVisible=true;
-				}
-				else if(command=="playqueue"){
-
-				}
-				else{
-					console.log(command.param1);
-					console.log(command.param2.ID)
-				}
-			},
-
-			submitForm:function(formname){
-				this.$refs[formname].validate((valid) => {
-					if (valid) {
-						alert('submit!');
-						this.dialogVisible=false;
-						this.$refs[formname].resetFields();
-					} else {
-						alert('error submit!!');
-						return false;
-					}
-				});
-			},
-
-			downloadSong:function(row){
-
-			},
-
-			getPlaylistList:function(){
-
-			},
-
-			playSong:function(row){
-
 			},
 
 			handleCurrentChange: function(c){

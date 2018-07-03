@@ -40,24 +40,24 @@
 								</el-button>
 								<el-dropdown-menu slot="dropdown" :data="playlistList">
 									<el-dropdown-item command="playqueue">播放队列</el-dropdown-item>
-									<div v-if="state">
+									<div v-if="isLogin">
 										<el-dropdown-item disabled divided>我喜欢</el-dropdown-item>
-										<el-dropdown-item v-for="playlist in playlistList" :key="playlist.ID" :command='{type:"playlist",params:playlist.ID}'>{{playlist.name}}</el-dropdown-item>
+										<el-dropdown-item v-for="playlist in playlistList" :key="playlist.id" :command='{type:"playlist",params:playlist.id}'>{{playlist.name}}</el-dropdown-item>
 										<el-dropdown-item command="newplaylist" divided>添加到新歌单</el-dropdown-item>
 									</div>
 									<el-dropdown-item v-else command="login" divided>登录后添加到歌单</el-dropdown-item>
 								</el-dropdown-menu>
 							</el-dropdown>
 							<el-dialog title="创建歌单" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
-								<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
+								<el-form :model="newPlaylist" :rules="rules" ref="newPlaylist" label-width="100px">
 									<el-form-item label="歌单名称" prop="name">
-										<el-input v-model="ruleForm.name" placeholder="请输入歌单名称"></el-input>
+										<el-input v-model="newPlaylist.name" placeholder="请输入歌单名称"></el-input>
 									</el-form-item>
-									<el-form-item label="歌单简介" prop="des">
-										<el-input type="textarea" v-model="ruleForm.des" placeholder="请输入歌单简介"></el-input>
+									<el-form-item label="歌单简介" prop="intro">
+										<el-input type="textarea" v-model="newPlaylist.intro" placeholder="请输入歌单简介"></el-input>
 									</el-form-item>
 									<el-form-item>
-										<el-button type="primary" @click="submitForm('ruleForm')">完成</el-button>
+										<el-button type="primary" @click="submitForm">完成</el-button>
 										<el-button @click="dialogVisible=false">取消</el-button>
 									</el-form-item>
 								</el-form>
@@ -91,21 +91,7 @@
 			this.id = this.$route.query.id;
 		},
 		mounted() {
-			if(this.$store.state.isLogin == true) {
-				this.state = true;
-			}
-
-			// var xmlhttp=new XMLHttpRequest();
-			// xmlhttp.onreadystatechange=function()
-			// {
-			// 	var textHTML=xmlhttp.responseText;
-			// 	textHTML=textHTML.replace(/(\n)+|(\r\n)+/g,"<br>");
-			// 	document.getElementById("lyr").innerHTML=textHTML;
-			// }
-			// xmlhttp.open("GET","/static/lyr.txt",true);
-			// xmlhttp.overrideMimeType("text/html;charset=gb2312");
-			// xmlhttp.send();
-
+			this.isLogin=this.state.isLogin;
 			this.getIntro(this.id);  
 		},
 		components: {
@@ -128,6 +114,7 @@
 			return {
 				isfold: true,
 				id: '',
+				isLogin: '',
 				song:{
 					id:'',
 					name:'',
@@ -142,32 +129,22 @@
 					lyricsPath: "",
 					filePath: '',
 					image: "",
-					isCollected:false
 				},
-				playlistList:[{
-					ID:'1',
-					name:'1'
-				},
-				{
-					ID:'2',
-					name:'2'
-				},
-				{
-					ID:'3',
-					name:'3'
-				}],
-				state:true,
-				dialogVisible:false,
-				ruleForm: {
+				newPlaylist: {
+					id:'',
 					name: '',
-					des: ''
+					intro: '',
+					type:'',
+					info:''
 				},
+				playlistList:[],
+				dialogVisible:false,
 				rules: {
 					name: [
 					{ required: true, message: '请输入歌单名称', trigger: 'blur' },
 					{ min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
 					],
-					des: [
+					intro: [
 					{ min: 1, max: 140, message: '长度在 140 个字符以内', trigger: 'blur' }
 					]
 				},
@@ -179,10 +156,76 @@
 
 			},
 			collect:function(){
-				this.song.isCollected=true;
+				if(this.isLogin){
+					this.axios.get(this.serverUrl+'/user/likeSong',{
+						params:{
+							songId:this.song.id
+						}
+					})
+					.then(response =>{
+						if(response){
+							this.state.likeSongs.push(this.song);
+							this.song.isCollected=true;
+							this.$message({
+								showClose: true,
+								message: '收藏专辑成功',
+								type: 'success'
+							});
+						}  
+						else{
+							this.$message({
+								showClose: true,
+								message: '会话超时',
+								type: 'error'
+							});
+						}
+					})
+					.catch(function(err){
+						console.log(err);
+					});
+				}
+				else{
+					this.$confirm('还未登录,是否现在登录?', '提示', {
+						confirmButtonText: '确定',
+						cancelButtonText: '取消',
+					}).then(() => {
+						window.location.href='/';
+					}).catch(() => {
+					});
+				}
 			},
 			cancelCollect:function(){ 
-				this.song.isCollected=false;
+				this.axios.get(this.serverUrl+'/user/unlikeSong',{
+					params:{
+						songId:this.song.id
+					}
+				})
+				.then(response =>{
+					if(response){
+						for(var i=0;i<this.state.likeSongs.length;i++){
+							if(this.state.likeSongs[i].id==this.song.id){
+								this.state.likeSongs.splice(i,1);
+								break;
+							}
+						}
+						this.song.isCollected=false;
+						this.$message({
+							showClose: true,
+							message: '取消收藏成功',
+							type: 'success'
+						});
+					}
+					else{
+						this.$message({
+							showClose: true,
+							message: '会话超时',
+							type: 'error'
+						});
+					}
+				})
+				.catch(function(err){
+					console.log(err);
+				});
 			},
 			handleSongCommand:function(command){
 				if(command=="login"){
@@ -190,14 +233,14 @@
 				}
 				else if(command=="newplaylist"){
 					this.dialogVisible=true;
+					this.newPlaylist.type="song";
+					this.newPlaylist.info=this.song.id;
 				}
 				else if(command=="playqueue"){
-
+					
 				}
 				else{
-
-					console.log(command.param1);
-					console.log(command.param2.ID)
+					this.addSongToPlaylist(command.params);
 				}
 			},
 			handleClose(done) {
@@ -208,13 +251,44 @@
 				.catch(_ => {});
 			},
 			submitForm:function(formname){
-				this.$refs[formname].validate((valid) => {
+				this.$refs["newPlaylist"].validate((valid) => {
 					if (valid) {
-						alert('submit!');
-						this.dialogVisible=false;
-						this.$refs[formname].resetFields();
-					} else {
-						alert('error submit!!');
+						this.axios.post(this.serverUrl+'/playlist/create',{
+							name:this.newPlaylist.name,
+							intro:this.newPlaylist.intro
+						})
+						.then(response =>{							
+							if(response.data!=-1){
+								var thisPlaylist={id:response.data,name:this.newPlaylist.name,intro:this.newPlaylist.intro};
+								this.state.playlistList.push(thisPlaylist);
+								this.getPlaylistList();
+								this.dialogVisible=false;
+								this.$refs["newPlaylist"].resetFields();
+								this.$message({
+									showClose: true,
+									message: '歌单创建成功',
+									type: 'success'
+								});
+								this.addSongToPlaylist(response.data);
+							}
+							else{
+								this.$message({
+									showClose: true,
+									message: '会话超时',
+									type: 'error'
+								});
+							}
+						})
+						.catch(function(err){
+							console.log(err);
+						});
+					} 
+					else {
+						this.$message({
+							showClose: true,
+							message: '格式不正确',
+							type: 'error'
+						});
 						return false;
 					}
 				});
@@ -227,13 +301,13 @@
 					}
 				})
 				.then(res => {
-					console.log(res.data);
 					this.song = res.data;
 					this.song.image = this.serverUrl + this.song.image;
 					this.song.lyricsPath = this.serverUrl + this.song.lyricsPath;
 					this.song.releaseDate = this.timestampToTime(this.song.releaseDate);
 					this.song.style = this.style[this.song.style];
-
+					this.$set(this.song,'isCollected',false);
+					this.getIsCollected();
 					this.axios.get(this.song.lyricsPath, {
 						params: {
 						}
@@ -241,7 +315,6 @@
 					.then(res => {
 						var textHTML=res.data;
 						document.getElementById("lyr").innerHTML=textHTML.replace(/(\n)+|(\r\n)+/g,"<br>");
-						console.log(res.data);
 
 					})
 					.catch(function (error) {
@@ -273,7 +346,53 @@
 	      	},
 	      	downloadSong: function(){
 	      		
-	      	}
+	      	},
+	      	getPlaylistList:function(){
+	      		if(this.isLogin){
+	      			this.playlistList=this.state.playlistList;
+	      		}
+	      		else{
+	      			return false;
+	      		}
+	      	},
+	      	getIsCollected:function(){
+	      		var flag=false;
+	      		for(var i=0;i<this.state.likeSongs.length;i++){
+	      			if(this.song.id==this.state.likeSongs[i].id){
+	      				flag=true;
+	      				break;
+	      			}
+	      		}
+	      		this.song.isCollected=flag;
+	      	},
+	      	addSongToPlaylist:function(playlistId){
+	      		alert(playlistId);
+	      		this.axios.get(this.serverUrl+'/playlist/addSong',{
+	      			params:{
+	      				songId:this.song.id,
+	      				playlistId:playlistId
+	      			}
+	      		})
+	      		.then(response =>{
+	      			if(response){
+	      				this.$message({
+	      					showClose: true,
+	      					message: '已成功添加到歌单',
+	      					type: 'success'
+	      				});
+	      			}
+	      			else{
+	      				this.$message({
+	      					showClose: true,
+	      					message: '会话超时',
+	      					type: 'error'
+	      				});
+	      			}
+	      		})
+	      		.catch(function(err){
+	      			console.log(err);
+	      		});
+	      	},
 		},
 	};
 </script>
