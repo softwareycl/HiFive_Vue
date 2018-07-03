@@ -1,7 +1,7 @@
 <template>
 
   <div class="wholeBody">
-    <div class="playerFooter">
+    <div class="playerFooter" style="z-index:10">
     <!--去掉audio标签中controls="controls"属性就可以修改样式-->
       <audio 
       ref="audio" 
@@ -68,6 +68,7 @@
               <div class="songTable">
               <el-table
                 :data="songList"
+                highlight-current-row:false
                 style="width: 100%"
                 max-height="455" min-height="455"
                 @row-dblclick="clickSongRow">
@@ -86,7 +87,7 @@
               <el-table-column               
                 prop="duration"
                 label="时长"
-                width="80">
+                width="100">
               </el-table-column>
               </el-table>
               </div>
@@ -164,6 +165,9 @@ export default {
     },
 
    methods: {
+    setCurrentRow: function(row){
+      alert(12);
+    },
 
     // 控制音频的播放与暂停
     startPlayOrPause () {
@@ -308,12 +312,12 @@ export default {
   }
 }
 </script>
-<style>
+<style >
 .wholeBody,.info{
   height:100%;
   width:100%;
   min-height:100%;
-  margin-bottom:50px;
+  margin-bottom:61px;
 }
 .bg{
   height:550px;
@@ -329,7 +333,6 @@ export default {
     position:fixed;
     bottom:0px;
     background-color:white;
-    margin-left:-1px;
     margin-bottom:0px;
     border-top: 1px solid #D0D0D0;
   }

@@ -63,7 +63,7 @@
                 </el-row>
                 <el-row>
                     <el-col align=center>
-                        <el-tabs value="1" @tab-click="switchAlbum" style="width:240px;z-index: 0px">
+                        <el-tabs value="1" @tab-click="switchAlbum" style="width:240px;z-index: 0;">
                             <el-tab-pane label="内地" name="1"></el-tab-pane>
                             <el-tab-pane label="港台" name="2"></el-tab-pane>
                             <el-tab-pane label="欧美" name="3"></el-tab-pane>
@@ -340,29 +340,68 @@ export default {
             document.getElementById(button).style.opacity=0;
         },
         playAllSong:function(){
-
+            var songs = [];
+            for(var i = 0; i < this.songList.length; i++){
+                if(this.songList[i].id != "")
+                    songs.push(this.songList[i]);
+            }
+            this.$store.dispatch("play", [songs, 0, false]);
         },
         switchSong(tab) {
             this.getSongList(tab.name);
         },
         clickOnSongButton:function(index){
-            
-            console.log(this.songList[index].id);
+            if(this.songList[index].id != ""){
+                var songs = [];
+                for(var i = 0; i < this.songList.length; i++){
+                    if(this.songList[i].id != "")
+                        songs.push(this.songList[i]);
+                }
+                this.$store.dispatch("play", [songs, index, false]);
+            }
         },
         switchAlbum(tab) {
             this.getAlbumList(tab.name);
         },
         clickOnAlbumButton:function(index){
+            if(this.albumList[index].id == "") return;
+
+            var songs;
+            this.axios.get(this.serverUrl + "/album/getSongsFromAlbum",{
+                params:{
+                  id: this.albumList[index].id,
+                }
+            })
+            .then(response => {
+                console.log(response.data);
+                songs = response.data;
+                for(var i = 0; i < songs.length; i++){
+                    songs[i].image = this.serverUrl + songs[i].image;
+                    songs[i].filePath = this.serverUrl + songs[i].filePath;
+                    songs[i].lyricsPath = this.serverUrl + songs[i].lyricsPath;
+                }
+                this.$store.dispatch("play", [songs, 0, false]);
+            })
+            .catch(function(err){
+                console.log(err);
+            });
             
-            console.log(this.albumList[index].id);
         },
-        toList:function(index){
-            console.log(index);
-            //传递index给rank.vue
-        },
+
         playList:function(index){
-            console.log(index);
-            //
+            var rank;
+            if(index == 1) rank = this.list1;
+            else if(index == 2) rank = this.list2;
+            else if(index == 3) rank = this.list3;
+            else if(index == 4) rank = this.list4;
+            else if(index == 5) rank = this.list5;
+            else if(index == 6) rank = this.list6;
+            var songs = [];
+            for(var i = 0; i < rank.length; i++){
+                if(rank[i].id != "")
+                    songs.push(rank[i]);
+            }
+            this.$store.dispatch("play", [songs, 0, false]);
         },
         getSongList: function(index){
             var song={id:'',name:'暂无数据',artistName:'',duration:'',image:emptyImage};
@@ -446,11 +485,11 @@ export default {
                 } 
                 else if(index == 5)
                 {
-                    this.list5=rank;
+                    this.list6=rank;
                 } 
                 else if(index == 6)
                 {
-                    this.list6=rank;
+                    this.list5=rank;
                 }
               })
               .catch(function(err){
@@ -474,7 +513,7 @@ export default {
 
 </script>
 
-<style>
+<style scoped>
  .font_Menu{
   font-family:"Microsoft YaHei";
   font-size:xx-large;

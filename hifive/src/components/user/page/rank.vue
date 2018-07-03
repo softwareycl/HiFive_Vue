@@ -12,7 +12,7 @@
                     <h2>排行榜</h2>
                 </div>
                 <el-menu
-                default-active="1"
+                :default-active=index
                 class="rankMenu"
                 mode="vertical">
                     <el-menu-item index="1" @click="rankDisplay(1)">
@@ -27,11 +27,11 @@
                     <el-menu-item index="4" @click="rankDisplay(4);">
                         港台榜
                     </el-menu-item>
-                    <el-menu-item index="5" @click="rankDisplay(6);">
-                        日韩榜
-                    </el-menu-item>
-                    <el-menu-item index="6" @click="rankDisplay(5);">
+                    <el-menu-item index="5" @click="rankDisplay(5);">
                         欧美榜
+                    </el-menu-item>
+                    <el-menu-item index="6" @click="rankDisplay(6);">
+                        日韩榜
                     </el-menu-item>
 
                 </el-menu>
@@ -153,10 +153,10 @@ import a from "@/../static/images/1.jpg"
 export default{
     data(){
         return {
-            index: 1,
+            index: "1",
             page:1,
             rankType:1,
-            rankText: ["新歌榜", "热歌榜", "内地榜", "港台榜", "日韩榜", "欧美榜"],
+            rankText: ["新歌榜", "热歌榜", "内地榜", "港台榜", "欧美榜", "日韩榜"],
             songs:[],
             pageCount: 1,
             songsView: [],
@@ -195,6 +195,11 @@ export default{
         vHeader,
         vFoot,
     },
+    created(){
+        var index=this.$route.query.rankType;
+        if(index != undefined)
+            this.index = index.toString();
+    },
     computed: {
       serverUrl() {
         return this.$store.state.serverUrl;
@@ -204,7 +209,7 @@ export default{
       }
     },
     mounted() {
-      this.rankDisplay(1);
+      this.rankDisplay(this.index);
       this.getPlaylistList(this.userID);
     },
     methods:{
