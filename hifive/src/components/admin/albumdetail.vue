@@ -78,13 +78,13 @@
             <el-input v-model="addSong.name" style="width:50%;"></el-input>
           </el-form-item>
           <el-form-item label="歌曲图片" prop="image">
-            <el-upload ref="upload2" :auto-upload="false" action="http://192.168.20.99:8080/hifive/upload/uploadSongImage" :data={id:addSong.id} :show-file-list="false" :on-change="addImage" :before-upload="beforeAvatarUpload" style="float:left">
+            <el-upload ref="upload2" :auto-upload="false" action="http://192.168.20.99:8080/hifive/upload/uploadSongImage" :data={id:addSong.id} :show-file-list="false" :on-change="addImage" :before-upload="beforeAvatarUpload">
               <img :src="addSong.image" class="img">
             </el-upload>
-            <el-upload ref="upload3" :auto-upload="false" action="http://192.168.20.99:8080/hifive/upload/uploadSongFile" :data={id:addSong.id} :limit="1" :on-change="addFilePath" :on-exceed="handleExceed">
+            <el-upload ref="upload3" :auto-upload="false" action="http://192.168.20.99:8080/hifive/upload/uploadSongFile" :data={id:addSong.id} :limit="1" :on-change="addFilePath" :on-exceed="handleExceed" style="height:90px;">
               <el-button slot="trigger">选取歌曲文件</el-button>
             </el-upload>
-            <el-upload ref="upload4" :auto-upload="false" action="http://192.168.20.99:8080/hifive/upload/uploadLyrics" :data={id:addSong.id} :limit="1" :on-change="addLyricsPath" :on-exceed="handleExceed">
+            <el-upload ref="upload4" :auto-upload="false" action="http://192.168.20.99:8080/hifive/upload/uploadLyrics" :data={id:addSong.id} :limit="1" :on-change="addLyricsPath" :on-exceed="handleExceed" style="height:90px;">
               <el-button slot="trigger">选取歌词文件</el-button>
             </el-upload>
           </el-form-item>
@@ -148,7 +148,7 @@
               </el-table-column>
               <el-table-column label="时长">
                 <template slot-scope="scope">
-                  <span v-if="scope.row.Flag"><el-button icon="el-icon-delete" circle v-on:click="deleteSong(scope.row)"></el-button></span>
+                  <span v-if="scope.row.Flag"><el-button icon="el-icon-delete" circle v-on:click="deleteSong(scope.row,scope.$index)"></el-button></span>
                   <span v-else class="font_other">{{scope.row.duration}}</span>
                 </template>
               </el-table-column>
@@ -262,6 +262,9 @@
         style: ['', 'POP 流行', 'ELECTRONIC 电子','ROCK 摇滚' ,'CLASSIC 古典','FOLK 民谣', 'R&B', '其他'],
         region:['', '内地', '港台', '欧美', '日韩', '其他'],
         styleOptions: [{
+          value: 0,
+          label: '全部',
+        },{
           value: 1,
           label: 'POP 流行',
         }, {
@@ -284,6 +287,9 @@
           label: '其他',
         },],
         regionOptions: [{
+          value: 0,
+          label: '全部',
+        },{
           value: 1,
           label: '内地',
         }, {
@@ -364,8 +370,12 @@
       },
       deleteAlbum:function(){
         alert(this.album.id);
-        this.axios.get(this.serverUrl+'/album/removeAlbum',{
+        this.$confirm('确认删除？')
+        .then(_ => {
+          this.axios.get(this.serverUrl+'/album/removeAlbum',{
+            params:{
               id:this.album.id,
+            }
             })
             .then(response =>{
               if(response){
@@ -387,9 +397,40 @@
             .catch(function(err){
               console.log(err);
             });
+        })
+        .catch(_ => {});
       },
-      deleteSong:function(row){
-
+      deleteSong:function(row,index){
+        alert(row.id);
+        this.$confirm('确认删除？')
+        .then(_ => {
+          this.axios.get(this.serverUrl+'/song/removeSong',{
+            params:{
+              songId:row.id,
+            }
+            })
+            .then(response =>{
+              if(response){
+                this.songList.splice(index,1);
+                this.$message({
+                  showClose: true,
+                  message: '歌曲删除成功',
+                  type: 'success'
+                });
+              }
+              else{
+                this.$message({
+                  showClose: true,
+                  message: '会话超时',
+                  type: 'error'
+                });
+              }
+            })
+            .catch(function(err){
+              console.log(err);
+            });
+        })
+        .catch(_ => {});
       },
       beforeAvatarUpload(file) {
         const isJPG = file.type === 'image/jpeg';
@@ -406,7 +447,6 @@
       submitForm1:function(){
         this.$refs["editAlbum"].validate((valid) => {
           if (valid) {
-            this.$refs.upload1.submit();
             this.axios.post(this.serverUrl+'/album/modifyAlbum',{
               id:this.editAlbum.id,
               name:this.editAlbum.name,
@@ -417,6 +457,7 @@
             })
             .then(response =>{
               if(response){
+                this.$refs.upload1.submit();
                 this.getAlbumInfo();
                 this.editDialogVisible=false;
                 this.$message({
