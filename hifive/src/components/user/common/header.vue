@@ -36,7 +36,7 @@
 				</el-dropdown>
 			</div>
 		</div>
-		<el-dialog title="修改密码" :visible.sync="modifyPwdVisible" style="font-weight:bold;text-align:center;" width="40%">
+		<el-dialog title="修改密码" :visible.sync="modifyPwdVisible" style="font-weight:bold;" width="40%" center="true">
 			<el-form :model="modifyPwd" :rules="rules" ref="modifyPwd" label-width="100px">
 				<el-form-item label="旧密码" prop="oldPwd">
 					<el-input type="password" v-model="modifyPwd.oldPwd"></el-input>
@@ -47,14 +47,14 @@
 				<el-form-item label="确认密码" prop="checkPass">
 					<el-input type="password" v-model="modifyPwd.checkPass"></el-input>
 				</el-form-item>
-				<el-form-item style="text-align:left">
+				<el-form-item>
 					<el-button @click="finishModifyPwd('modifyPwd')">提交</el-button>
 					<el-button @click="modifyPwdVisible = false">取消</el-button>
 				</el-form-item>
 			</el-form>
 		</el-dialog>
 
-		<el-dialog title="修改个人资料" :visible.sync="modifyDataVisible" style="font-weight:bold;text-align:center;" width="40%">
+		<el-dialog title="修改个人资料" :visible.sync="modifyDataVisible" style="font-weight:bold;" center="true" width="40%">
 			<el-form :model="modifyData" :rules="rules1" ref="modifyData" label-width="100px" style="text-align:left">
 				<el-form-item label="昵称" prop="name">
 					<el-input v-model="modifyData.name" style="width:70%"></el-input>
@@ -62,7 +62,7 @@
 				<el-form-item label="头像" prop="image">
 					<img :src="modifyData.image" class="avatar" style="margin-right:20px">
 					<el-upload class="avatar-uploader" ref="upload" :on-change="previewImg"
-					action="http://192.168.20.99:8080/hifive/upload/uploadUserImage" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload" accept=".jpg, .jpeg, png" :auto-upload="false">
+					action="http://192.168.20.99:8080/hifive/upload/uploadUserImage" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload" accept=".jpg, .jpeg, .png" :auto-upload="false">
 						<el-button slot="trigger" size="small" type="primary">点击更改头像</el-button>
 						<!-- <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传</el-button> -->
 						<div>
@@ -82,7 +82,7 @@
 				</el-form-item>
 			</el-form>
 		</el-dialog>
-		<el-dialog title="欢迎来到云音乐" :visible.sync="dialogFormVisible" style="font-weight:bold">
+		<el-dialog title="欢迎来到云音乐" :visible.sync="dialogFormVisible" style="font-weight:bold" center="true">
 			<template>
 				<el-tabs v-model="activeName" class="login_form" style="margin:0 75px;text-align:left">
 					<el-tab-pane label="登录" name="first">
@@ -217,6 +217,7 @@
 				modifyDataVisible: false,
 				dialogFormVisible: false,
 				flag: false,
+				img_change: false,
 				activeName: 'first',
 				user: {
 					id: '',
@@ -364,6 +365,7 @@
 
 				} else if(command == 'b') {
 					this.modifyDataVisible = true;
+					this.img_change = false;
 					this.modifyData.id = this.$store.state.user.id;
 					this.modifyData.name = this.$store.state.user.name;
 					this.modifyData.gender = this.$store.state.user.gender;
@@ -394,9 +396,22 @@
 					.then(res => {
 						var tip = res.data;
 						if(tip == 0) {
-							alert("管理员登录成功");
 							this.dialogFormVisible = false;
 							this.$router.push('/admin/artist');
+							this.$store.state.isLogin = true;
+							this.axios.get(this.$store.state.serverUrl + "/user/getInfo", {
+								params: {
+									id: this.loginUser.id
+								}
+							})
+							.then(res => {
+								this.user = res.data;
+								this.user.image = this.$store.state.serverUrl + this.user.image;
+								this.$store.state.user = this.user;
+							})
+							.catch(function (error) {
+								console.log(error);
+							});
 						}
 						if(tip == 1) {
 							this.dialogFormVisible = false;
@@ -505,7 +520,10 @@
 				this.submitForm(_modifyData);
 				if(this.flag) {
 					this.flag = false;
-					this.$refs.upload.submit();
+					if(this.img_change) {
+						this.$refs.upload.submit();
+						this.img_change = false;
+					}
 					this.axios.post(this.$store.state.serverUrl + "/user/modify", {
 						id: this.modifyData.id,
 						name: this.modifyData.name,
@@ -653,10 +671,10 @@
 		height:80px;
 		border-radius:100%;
 	}
-	.header-dialog-footer {
+	/*.header-dialog-footer {
 		margin: 0;
 		padding: 0;
-	}
+	}*/
 
 	.avatar {
 		width: 120px;

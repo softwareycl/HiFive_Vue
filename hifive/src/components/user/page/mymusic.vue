@@ -250,16 +250,14 @@ export default {
             row.isopen=event;
         },
         playAllSong:function(){
-            this.state.songList=this.allSong;
+            
         },
         playSong:function(index){
-            this.state.songList=[];
-            this.state.songList.push(this.songList[index])
-
+            
         },
         handleSongCommand:function(command){
           if(command.type=="playqueue"){
-            this.state.songList.push(this.songList[command.params]);
+            
           }
           else if(command.type=="newplaylist"){
             this.dialogVisible=true;
@@ -298,30 +296,7 @@ export default {
             });
         },
         downloadSong:function(row){
-            this.axios.get(this.serverUrl+'/download/downloadSong',{
-              params:{
-                id:row.id
-              }
-            })
-            .then(response =>{
-              if(response){
-                this.$message({
-                  showClose: true,
-                  message: '下载成功',
-                  type: 'success'
-                });
-              }
-              else{
-                this.$message({
-                  showClose: true,
-                  message: '下载失败',
-                  type: 'error'
-                });
-              }
-            })
-            .catch(function(err){
-              console.log(err);
-            });
+            window.location.href = this.serverUrl + "/download/downloadSong?id=" + row.id;
         },
         deleteSong:function(row,index){
             this.axios.get(this.serverUrl+'/user/unlikeSong',{
@@ -358,8 +333,7 @@ export default {
             });
         },
         playAlbum:function(){
-            this.state.songList=[];
-
+            
         },
         handleAlbumCommand:function(command){
           if(command.type=="playqueue"){
@@ -522,7 +496,7 @@ export default {
             })
             .catch(_ => {});
         },
-        submitForm:function(){//新建歌单显示在哪
+        submitForm:function(){
           this.$refs["newPlaylist"].validate((valid) => {
             if (valid) {
               this.axios.post(this.serverUrl+'/playlist/create',{
@@ -534,6 +508,7 @@ export default {
                   var thisPlaylist={id:response.data,name:this.newPlaylist.name,intro:this.newPlaylist.intro};
                   this.state.playlistList.push(thisPlaylist);
                   this.getMyPlaylist();
+                  this.playlistPaginationChange(Math.floor((this.allPlaylist.length-1)/10)+1);
                   this.dialogVisible=false;
                   this.$refs["newPlaylist"].resetFields();
                   this.$message({
@@ -597,13 +572,12 @@ export default {
             })
             .then(res => {
                 this.user = res.data;
-                this.user.image = this.state.serverUrl + this.user.image;
+                this.user.image = this.serverUrl + this.user.image;
                 this.allPlaylist=this.user.playlistList;
                 for(var i=0;i<this.allPlaylist.length;i++){
                     this.$set(this.allPlaylist[i],'Flag',false);
                     this.$set(this.allPlaylist[i],'isopen',false);
                 }
-                this.playlistPaginationChange(this.currentPageOfPlaylist);
                 this.state.playlistList=this.allPlaylist;
             })
             .catch(function (error) {
@@ -618,7 +592,7 @@ export default {
             })
             .then(res => {
                 this.user = res.data;
-                this.user.image = this.state.serverUrl + this.user.image;
+                this.user.image = this.serverUrl + this.user.image;
                 this.allSong=this.user.likeSongList;
                 this.allAlbum = this.user.likeAlbumList;
                 this.allPlaylist=this.user.playlistList;

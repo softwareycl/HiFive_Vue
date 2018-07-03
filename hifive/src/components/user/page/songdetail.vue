@@ -278,7 +278,7 @@
 	};
 </script>
 
-<style>
+<style scoped>
 	.song_detail {
 		min-height: 600px;
 		padding: 30px;

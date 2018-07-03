@@ -87,7 +87,7 @@
           <div>
             <p class="font_albumIntro">简介</p>
             <p id="albumIntro" style="display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 4;overflow: hidden;" class="font_other">{{album.intro}}</p>
-            <el-popover v-if="this.isOverflow" placement="left" title="专辑简介" trigger="click">
+            <el-popover v-if="this.isOverflow" placement="left" title="专辑简介" trigger="click" width=500>
               <p class="font_other">{{album.intro}}</p>
               <el-button type="text" slot="reference" style="color:black" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">[更多]</el-button>
             </el-popover>
@@ -188,7 +188,7 @@
       }
     },
     playAllSong:function(){
-      this.state.songList=this.songList;
+      
     },
     collect:function(){
       if(this.isLogin){
@@ -272,7 +272,7 @@
         this.newPlaylist.info=this.album.id;
       }
       else if(command=="playqueue"){
-        this.state.songList=this.state.songList.concat(this.songList);
+        
       }
       else{
         this.addAlbumToPlaylist(command.params);
@@ -306,15 +306,14 @@
       });
     },
     playSong:function(index){
-      this.state.songList=[];
-      this.state.songList.push(this.songList[index]);
+      
     },
     handleSongCommand:function(command){
       if(command=="login"){
         window.location.href='/';
       }
       else if(command.type=="playqueue"){
-        this.state.songList.push(this.songList[command.params]);
+        
       }
       else if(command.type=="newplaylist"){
         this.dialogVisible=true;
@@ -363,7 +362,6 @@
             if(response.data!=-1){
               var thisPlaylist={id:response.data,name:this.newPlaylist.name,intro:this.newPlaylist.intro};
               this.state.playlistList.push(thisPlaylist);
-              this.getPlaylistList();
               this.dialogVisible=false;
               this.$refs["newPlaylist"].resetFields();
               this.$message({
@@ -402,30 +400,7 @@
     },
     downloadSong:function(row){
       if(this.isLogin){
-        this.axios.get(this.serverUrl+'/download/downloadSong',{
-          params:{
-            id:row.id
-          }
-        })
-        .then(response =>{
-          if(response){
-            this.$message({
-              showClose: true,
-              message: '下载成功',
-              type: 'success'
-            });
-          }
-          else{
-            this.$message({
-              showClose: true,
-              message: '下载失败',
-              type: 'error'
-            });
-          }
-        })
-        .catch(function(err){
-          console.log(err);
-        });
+        window.location.href = this.serverUrl + "/download/downloadSong?id=" + row.id;
       }
       else{
         this.$confirm('还未登录,是否现在登录?', '提示', {
@@ -462,7 +437,6 @@
           this.$set(this.songList[i],'isopen',false);
         }
         this.$set(this.album,'isCollected',false);
-        this.handleOverflow();
         if(this.isLogin){
           this.getIsCollected();
           this.getPlaylistList();
@@ -506,6 +480,9 @@
     this.isLogin=this.state.isLogin;
     this.getAlbumInfo();
   },
+  updated: function (){
+    this.handleOverflow();
+  }
 }
 </script>
 

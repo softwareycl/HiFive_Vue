@@ -3,8 +3,8 @@
 		<div class="icon" @click="home()">
 			<img src="../../assets/icon.jpg">
 		</div>
-		<div style="float:left;margin-top:20px;">
-            <h style="font-size: xx-large;">欢迎来到后台管理</h>
+		<div style="float:left;">
+            <h1 style="font-size: xx-large;">欢迎来到后台管理</h1>
 		</div>
 		<div class="search">
 			<el-input size="medium" placeholder="搜索歌手、歌曲、专辑" v-model="inputTxt" @keyup.enter.native="onSearch">
@@ -12,7 +12,7 @@
 			</el-input>
 		</div>
 		<div class="head_image">
-			<span v-if="isLogin" style="color:black;cursor:pointer;" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">注销</span>
+			<span style="color:black;cursor:pointer;" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">注销</span>
 		</div>
 		<div style="clear: both;"></div>
 	</div>
