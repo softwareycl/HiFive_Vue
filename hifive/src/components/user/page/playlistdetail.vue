@@ -35,14 +35,17 @@
                             </el-form-item>
                             <el-form-item label="上传图片" prop="image">
                                 <el-upload
-                                action="https://jsonplaceholder.typicode.com/posts/"
+                                ref="uploadImage"
+                                action="http://192.168.20.99:8080/hifive/upload/uploadPlaylistImage"
                                 list-type="picture-card"
-                                :on-preview="handlePictureCardPreview"
-                                :on-remove="handleRemove">
+                                :show-file-list="false"
+                                :data={id:ruleForm.id} 
+                                :on-change="editImage"                    
+                                :before-upload="beforeAvatarUpload">
                                 <i class="el-icon-plus"></i>
                                 </el-upload>
                                 <el-dialog :visible.sync="dialogVisible">
-                                <img width="100%" :src="dialogImageUrl" alt="">
+                                <img width="100%" :src="ruleForm.image" alt="">
                                 </el-dialog>
                             </el-form-item>
                             <el-form-item>
@@ -116,7 +119,7 @@
                             <el-input type="textarea" v-model="ruleForm.intro" placeholder="请输入歌单简介"></el-input>
                         </el-form-item>
                         <el-form-item>
-                            <el-button type="primary" @click="submitForm('ruleForm')">完成</el-button>
+                            <el-button type="primary" @click="submitForm">完成</el-button>
                             <el-button @click="dialogVisible=false">取消</el-button>
                         </el-form-item>
                         </el-form>
@@ -258,38 +261,6 @@ export default {
                 albumName:'bbb',
                 duration:"04:30",
                 },
-
-                {
-                name:'zzz',
-                artistName:'aaa',
-                albumName:'bbb',
-                duration:"04:30",
-                },
-                {
-                name:'zzz',
-                artistName:'aaa',
-                albumName:'bbb',
-                duration:"04:30",
-                },
-                {
-                name:'zzz',
-                artistName:'aaa',
-                albumName:'bbb',
-                duration:"04:30",
-
-                },
-                {
-                name:'zzz',
-                artistName:'aaa',
-                albumName:'bbb',
-                duration:"04:30",
-                },
-                {
-                name:'zzz',
-                artistName:'aaa',
-                albumName:'bbb',
-                duration:"04:30",
-                },
                 {
                 name:'zzz',
                 artistName:'aaa',
@@ -410,6 +381,7 @@ export default {
                 ]
             },
             ruleForm: {
+            id: '',
             name: '',
             intro: '',
             image:'',
@@ -438,6 +410,9 @@ export default {
       isLogin(){
         return this.$store.state.isLogin;
       }
+    },
+    created() {
+      this.id = this.$route.query.id;
     },
     mounted() {
         // this.getPlaylistList(this.userID);
@@ -630,48 +605,46 @@ export default {
                 console.log(err);
               });
         },
-        submitForm:function(formname){
-          this.$refs[formname].validate((valid) => {
-            if (valid) {
-              this.axios.get(this.serverUrl+'/playlist/create',{
-                params:{
-                  name:formname.name,
-                  intro:formname.intro,
-                  image:formname.image,
-                }
-              })
-              .then(response =>{
-                if(response){
-                  this.getPlaylistList();
-                  this.$message({
-                    showClose: true,
-                    message: '已成功添加到新歌单',
-                    type: 'success'
-                  });
-                }
-                else{
-                  this.$message({
-                    showClose: true,
-                    message: '会话超时',
-                    type: 'error'
-                  });
-                }
-              })
-              .catch(function(err){
-                console.log(err);
-              });
-              this.dialogVisible=false;
-              this.$refs[formname].resetFields();
-            } 
-            else {
-              this.$message({
-                    showClose: true,
-                    message: '格式不正确',
-                    type: 'error'
-              });
-              return false;
-            }
-          });
+        submitForm:function(){
+        this.$refs["ruleForm"].validate((valid) => {
+          if (valid) {
+            this.$refs.uploadImage.submit();
+            this.axios.post(this.serverUrl+'/playlist/modifyInfo',{
+              id:this.ruleForm.id,
+              name:this.ruleForm.name,
+              intro:this.ruleForm.intro,
+            })
+            .then(response =>{
+              if(response){
+                this.getPlaylistInfo();
+                this.editDialogVisible=false;
+                this.$message({
+                  showClose: true,
+                  message: '歌单编辑成功',
+                  type: 'success'
+                });
+              }
+              else{
+                this.$message({
+                  showClose: true,
+                  message: '会话超时',
+                  type: 'error'
+                });
+              }
+            })
+            .catch(function(err){
+              console.log(err);
+            });
+          } 
+          else {
+            this.$message({
+              showClose: true,
+              message: '格式不正确',
+              type: 'error'
+            });
+            return false;
+          }
+        });
         },
         handleChange: function(val){
             if(val != this.page){
@@ -752,33 +725,43 @@ export default {
             this.$store.state.currentSong = this.playlistSongList[index];
             this.$store.state.currentIndex = index;
         },
-        deleteSong: function(val){
-            this.$confirm('确认删除？', '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
-                }).then(() => {
-
-                //删除歌曲    
+        deleteSong:function(){
+        this.axios.get(this.serverUrl+'/playlist/removeSong',{
+              songId:this.song.id,
+              playlistId: this.playlist.id,
+            })
+            .then(response =>{
+              if(response){
                 this.$message({
-                    type: 'success',
-                    message: '删除成功!'
+                  showClose: true,
+                  message: '歌曲删除成功',
+                  type: 'success'
                 });
-                }).catch(() => {
+                this.$router.go(-1);
+              }
+              else{
                 this.$message({
-                    type: 'info',
-                    message: '已取消删除'
-                });          
-            });               
-        },
+                  showClose: true,
+                  message: '会话超时',
+                  type: 'error'
+                });
+              }
+            })
+            .catch(function(err){
+              console.log(err);
+            });
+      },
         //上传图片
-        handleRemove(file, fileList) {
-            console.log(file, fileList);
-            },
-        handlePictureCardPreview(file) {
-            //图片url
-            this.dialogImageUrl = file.url;
-            this.dialogVisible = true;
+        editImage:function(file,){
+            this.ruleForm.image=file.url;
+        },
+        beforeAvatarUpload(file) {
+            const isLt2M = file.size / 1024 / 1024 < 2;
+
+            if (!isLt2M) {
+            this.$message.error('上传歌单封面大小不能超过 2MB!');
+            }
+            return isJPG && isLt2M;
         },
     }
 
