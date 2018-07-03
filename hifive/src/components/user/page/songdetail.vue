@@ -345,7 +345,17 @@
 		        return Y+M+D;
 	      	},
 	      	downloadSong: function(){
-	      		
+	      		if(this.isLogin){
+					window.location.href = this.serverUrl + "/download/downloadSong?id=" + this.song.id;
+				} else {
+					this.$confirm('还未登录,是否现在登录?', '提示', {
+						confirmButtonText: '确定',
+						cancelButtonText: '取消',
+					}).then(() => {
+						window.location.href='/';
+					}).catch(() => {
+					});
+				}
 	      	},
 	      	getPlaylistList:function(){
 	      		if(this.isLogin){
