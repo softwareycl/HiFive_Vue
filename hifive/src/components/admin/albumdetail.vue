@@ -245,7 +245,7 @@
         addSong:{
           id:'',
           name:'',
-          image:'',
+          image:require('../../assets/点击添加图片.png'),
           artistId:'',
           artistName:'',
           albumName:'',
