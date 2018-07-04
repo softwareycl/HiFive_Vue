@@ -11,10 +11,12 @@ export default{
 		if(!isSingle){
 			var songs = params[0];
 			var startIndex = params[1];
+			
 			if(state.currentSong.id == songs[startIndex].id){
 				var audio = player.methods.getAudio();
-				audio.play();
+				audio.currentTime = 0;
 			}
+
 		    state.currentSong = {};
 	        state.songList = [];
 	        for(var i = 0; i < songs.length; i++){

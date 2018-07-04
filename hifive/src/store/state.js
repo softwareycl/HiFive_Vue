@@ -17,7 +17,7 @@ const state = {
 
   rankType:1,
   
-  currentIndex: 0,
+  currentIndex: -1,
   currentSong: {},
   songList: [],
 }

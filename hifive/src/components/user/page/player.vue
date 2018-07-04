@@ -49,7 +49,7 @@
         placement="top-start"
         width="1200"
         trigger="click"
-        @show="showLyrics">
+        @show="clickPopOver">
         <div class="bg">
         <el-container>
 
@@ -65,26 +65,31 @@
 
             </div>
               <!--播放列表表格-->
-              <div class="songTable">
+              <div class="songTable songListTable">
               <el-table
+                class="songListTable"
+                ref="songListTable"
                 :data="songList"
-                highlight-current-row:false
+                highlight-current-row
                 style="width: 100%"
                 max-height="455" min-height="455"
                 @row-dblclick="clickSongRow">
               <el-table-column prop="index" width="50" type="index">
               </el-table-column>
-              <el-table-column               
-                prop="name"
+              <el-table-column
                 label="歌曲"
                 width="350">
+                <template slot-scope="scope">
+                  <i v-if="scope.$index == currentIndex" class="el-icon-caret-right"></i>
+                  <span style="margin-left: 5px">{{ scope.row.name }}</span>
+                </template>
               </el-table-column>
-              <el-table-column               
+              <el-table-column
                 prop="artistName"
                 label="歌手"
                 width="170">
               </el-table-column>            
-              <el-table-column               
+              <el-table-column
                 prop="duration"
                 label="时长"
                 width="100">
@@ -146,7 +151,7 @@ export default {
     },
     computed: {
       ...mapState([
-        'songList',
+        'songList','currentIndex'
       ]),
       currentSong() {
         var song = this.$store.state.currentSong;
@@ -165,10 +170,6 @@ export default {
     },
 
    methods: {
-    setCurrentRow: function(row){
-      alert(12);
-    },
-
     // 控制音频的播放与暂停
     startPlayOrPause () {
       if(this.$refs.audio.src == "" || this.$refs.audio.src==undefined || this.$refs.audio.src==null)
@@ -198,13 +199,11 @@ export default {
     // 当加载语音流元数据完成后，会触发该事件的回调函数
     // 语音元数据主要是语音的长度之类的数据
     onLoadedmetadata(res) {
-      console.log('loadedmetadata')
-      console.log(res)
       this.audio.maxTime = parseInt(res.target.duration)
     },
     // 拖动进度条，改变当前时间，index是进度条改变时的回调函数的参数0-100之间，需要换算成实际时间
     changeCurrentTime(index) {
-    this.$refs.audio.currentTime = parseInt(index / 100 * this.audio.maxTime)
+      this.$refs.audio.currentTime = parseInt(index / 100 * this.audio.maxTime)
     },
     // 当音频当前时间改变后，进度条也要改变
     onTimeupdate(res) {
@@ -215,8 +214,8 @@ export default {
 
     // 进度条格式化toolTip
     formatProcessToolTip(index = 0) {
-    index = parseInt(this.audio.maxTime / 100 * index)
-    return '进度条: ' + realFormatSecond(index)
+      index = parseInt(this.audio.maxTime / 100 * index)
+      return '进度条: ' + realFormatSecond(index)
     }, 
     //点击歌手名跳转至歌手详情
     artistdetail(){
@@ -225,26 +224,40 @@ export default {
       });
     },
     //播放上一曲
-      preSong: function(){
-        if(this.$store.state.currentIndex > 0){
-          this.$store.state.currentIndex = this.$store.state.currentIndex - 1
-          this.$store.state.currentSong = this.$store.state.songList[this.$store.state.currentIndex]
-        }
-      },
+    preSong: function(){
+      if(this.$store.state.currentIndex > 0){
+        this.$store.state.currentIndex = this.$store.state.currentIndex - 1
+        this.$store.state.currentSong = this.$store.state.songList[this.$store.state.currentIndex]
+      }
+    },
     // 播放下一曲
-      nextSong: function(){
-        if(this.$store.state.currentIndex < this.$store.state.songList.length){
-          this.$store.state.currentIndex = this.$store.state.currentIndex + 1
-          this.$store.state.currentSong = this.$store.state.songList[this.$store.state.currentIndex]
-        }
-      },
-      end: function () {
+    nextSong: function(){
+      if(this.$store.state.currentIndex < this.$store.state.songList.length){
+        this.$store.state.currentIndex = this.$store.state.currentIndex + 1
+        this.$store.state.currentSong = this.$store.state.songList[this.$store.state.currentIndex]
+      }
+    },
+    end: function () {
+      if(this.$store.state.currentIndex < this.$store.state.songList.length - 1)
         this.nextSong()
-      },
-      showLyrics: function(){
-        if(this.currentSong.name === undefined){
-          document.getElementById("lyricsTitle").innerHTML="无播放歌曲";
-        }
+    },
+    clickPopOver: function(){
+      if(this.currentSong.name != undefined){
+        this.$refs.songListTable.setCurrentRow(this.$store.state.songList[this.$store.state.currentIndex]);
+      }
+      if(this.$store.state.currentIndex > 3){
+        var distance = 50 * this.$store.state.currentIndex - 150;
+        this.$nextTick(() => {
+          this.$refs.songListTable.bodyWrapper.scrollTop = distance;
+        });        
+      }
+      this.showLyrics();
+    },
+
+    showLyrics: function(){
+      if(this.currentSong.name === undefined){
+        document.getElementById("lyricsTitle").innerHTML="无播放歌曲";
+      } else {
         this.axios.get(this.currentSong.lyricsPath, {
           params: {
           }
@@ -256,49 +269,49 @@ export default {
         .catch(function (error) {
           console.log(error);
         });
-
-      },
-      clickSongName: function(){
-        if(this.currentSong.id == null) return;
-        this.$router.push({
-          path: "/user/songdetail",
-          query:{id:this.currentSong.id}
-        })
-      },
-      clickArtistName: function(){
-        if(this.currentSong.id == null) return;
-        this.$router.push({
-          path: "/user/artistdetail",
-          query:{id:this.currentSong.artistId}
-        })
-      },
-      clickSongRow: function(row, event){
-        var songId = row.id;
-        var index;
-        for(var i = 0; i < this.$store.state.songList.length; i++){
-          if(this.$store.state.songList[i].id == songId){
-            index = i;
-            break;
-          }
+      }
+    },
+    clickSongName: function(){
+      if(this.currentSong.id == null) return;
+      this.$router.push({
+        path: "/user/songdetail",
+        query:{id:this.currentSong.id}
+      })
+    },
+    clickArtistName: function(){
+      if(this.currentSong.id == null) return;
+      this.$router.push({
+        path: "/user/artistdetail",
+        query:{id:this.currentSong.artistId}
+      })
+    },
+    clickSongRow: function(row, event){
+      var songId = row.id;
+      var index;
+      for(var i = 0; i < this.$store.state.songList.length; i++){
+        if(this.$store.state.songList[i].id == songId){
+          index = i;
+          break;
         }
-        this.$store.state.currentSong = this.$store.state.songList[index];
-        this.$store.state.currentIndex = index;
-        this.showLyrics();
-        this.play();
-      },
-      deleteAll: function(){
-        this.onPause();
-        document.getElementById("audio").src="";
-        this.$store.state.songList = [];
-        this.$store.state.currentSong = {filePath: ""};
-        this.$store.state.currentIndex = 0;
-        this.audio.currentTime = 0;
-        this.audio.maxTime = 0;
-        this.sliderTime = 0,
+      }
+      this.$store.state.currentSong = this.$store.state.songList[index];
+      this.$store.state.currentIndex = index;
+      this.showLyrics();
+      this.play();
+    },
+    deleteAll: function(){
+      this.onPause();
+      document.getElementById("audio").src="";
+      this.$store.state.songList = [];
+      this.$store.state.currentSong = {filePath: ""};
+      this.$store.state.currentIndex = -1;
+      this.audio.currentTime = 0;
+      this.audio.maxTime = 0;
+      this.sliderTime = 0,
 
-        document.getElementById("lyricsTitle").innerHTML="无播放歌曲";
-        document.getElementById("lyrics").innerHTML = "暂无歌词";
-      },
+      document.getElementById("lyricsTitle").innerHTML="无播放歌曲";
+      document.getElementById("lyrics").innerHTML = "暂无歌词";
+    },
   },
   filters: {
     // 使用组件过滤器来动态改变按钮的显示
@@ -312,7 +325,7 @@ export default {
   }
 }
 </script>
-<style >
+<style>
 .wholeBody,.info{
   height:100%;
   width:100%;
