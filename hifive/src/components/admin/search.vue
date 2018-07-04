@@ -63,7 +63,7 @@
 			
 			<div class="search_artist" v-if="curTitle == '专辑'">
 				<el-row gutter="20">
-					<el-col :data="albumList" v-for="list in albumList" style='width:20%'>
+					<el-col :data="albumList" v-for="list in albumList" :key="list.id" style='width:20%'>
 						<el-card :body-style="{ padding: '0px'}" shadow="never" style="border:none;margin-bottom:20px;">
 							<router-link tag="a" :to="{path:'/admin/albumdetail',query:{id:list.id}}">
 								<img :src="list.image" class="image">
