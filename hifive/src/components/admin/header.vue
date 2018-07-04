@@ -25,6 +25,9 @@
 
 	export default {
 		mounted () {
+			if(this.$route.name == '搜索页') {
+				this.inputTxt = this.$store.state.search.name;
+			}
 		},
 		data () {
 			return {
