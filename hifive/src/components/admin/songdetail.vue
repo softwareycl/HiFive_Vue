@@ -37,7 +37,7 @@
 				<el-col :span="8" :offset="3">
 					<div style="margin-bottom:30px;">
 						<p class="font_songLry" style="font-size:20px">歌词</p>
-						<el-upload class="lyr-uploader" action="http://192.168.20.99:8080/hifive/upload/uploadLyrics" :data={id:this.song.id} :limit="1" :on-exceed="exceedTip" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+						<el-upload class="lyr-uploader" action="http://192.168.20.99:8080/hifive/upload/uploadLyrics" :data={id:this.song.id} :limit="1" :on-exceed="exceedTip" :on-success="handleLyrSuccess">
 							<el-button slot="trigger" size="small" type="primary">上传歌词</el-button>
 
 						</el-upload>
@@ -54,7 +54,7 @@
 					</el-form-item>
 					<el-form-item label="歌曲图片" prop="image">
 						<img :src="editSong.image" class="avatar" style="margin-right:20px">
-						<el-upload class="avatar-uploader" ref="upload" :data={id:editSong.id} :on-change="previewImg" action="http://192.168.20.99:8080/hifive/upload/uploadSongImage" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload" accept=".jpg, .jpeg, png" :auto-upload="false">
+						<el-upload class="avatar-uploader" ref="upload" :data={id:editSong.id} :on-change="previewImg" action="http://192.168.20.99:8080/hifive/upload/uploadSongImage" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload" :on-error="handleLyrError" accept=".jpg, .jpeg, png" :auto-upload="false">
 							<el-button slot="trigger" size="small" type="primary">点击更改图片</el-button>
 							<div>
 								<div>图片大小不超过2M</div>				
@@ -342,9 +342,43 @@
 			handleAvatarSuccess: function() {
 				alert("上传成功");
 			},
-			previewImg: function(file) {
+			previewImg: function(file,fileList) {
 				this.editSong.image = file.url;
 				this.img_change = true;
+				if(fileList.length > 1) {
+					fileList.splice(0, 1);
+				}
+			},
+			handleLyrError: function(err) {
+				console.log(err);
+				alert('上传图片失败');
+				return;
+			},
+			handleLyrSuccess: function() {
+				this.axios.get(this.$store.state.serverUrl + "/song/getInfo", {
+					params: {
+						id: this.song.id,
+					}
+				})
+				.then(res => {
+					this.song.lyricsPath = this.$store.state.serverUrl + res.data.lyricsPath;
+					this.axios.get(this.song.lyricsPath, {
+						params: {
+						}
+					})
+					.then(res => {
+						var textHTML=res.data;
+						document.getElementById("lyr").innerHTML=textHTML.replace(/(\n)+|(\r\n)+/g,"<br>");
+
+					})
+					.catch(function (error) {
+						console.log(error);
+					});
+					this.editSong.lyricsPath = this.song.lyricsPath;
+				})
+				.catch(function (error) {
+					console.log(error);
+				});
 			},
 			getStyleNumber:function(style){
 				var number=-1;
@@ -357,7 +391,7 @@
 			},
 			exceedTip: function() {
 				this.$message('每次最多上传一个文件');
-			}
+			},
 		},
 	};
 </script>

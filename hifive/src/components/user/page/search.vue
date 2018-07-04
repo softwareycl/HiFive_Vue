@@ -3,7 +3,7 @@
 		<v-head></v-head>
 		<div class="search_nav">	
 			<ul class="menu_2">
-				<li v-for="list in headNav" :class="{ nav_color:curTitle == list.title}" @click="cur_title(list.title)" @mouseover="mo()">
+				<li v-for="list in headNav" :class="{ nav_color:curTitle == list.title}" @click="cur_title(list.title)">
 					{{list.title}}
 				</li>
 			</ul>
@@ -97,7 +97,7 @@
 
 			<div class="search_artist" v-if="curTitle == '专辑'">
 				<el-row gutter="20">
-					<el-col :data="albumList" v-for="list in albumList" style='width:20%'>
+					<el-col :data="albumList" v-for="list in albumList" :key="list.id" style='width:20%'>
 						<el-card :body-style="{ padding: '0px'}" shadow="never" style="border:none;margin-bottom:20px;">
 							<router-link tag="a" :to="{path:'/user/albumdetail',query:{id:list.id}}">
 								<img :src="list.image" class="image">
