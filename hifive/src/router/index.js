@@ -57,6 +57,7 @@ export default new Router({
     },
     {
       path: '/user/playlistdetail',
+      name: '我的音乐',
       component: resolve => require(['../components/user/page/playlistdetail.vue'], resolve)
     },
     {

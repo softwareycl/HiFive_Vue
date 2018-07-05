@@ -24,6 +24,15 @@
 <script>
 
 	export default {
+		created() {
+			if(!this.$store.state.isLogin) {
+				this.$store.state.isLogin = JSON.parse(sessionStorage.getItem('isLogin'));
+				if(this.$store.state.isLogin) {
+					this.$store.state.user = JSON.parse(sessionStorage.getItem('user'));
+					this.$store.state.search.name = sessionStorage.getItem('inputTxt');
+				}
+			}
+		},
 		mounted () {
 			if(this.$route.name == '搜索页') {
 				this.inputTxt = this.$store.state.search.name;
@@ -41,6 +50,8 @@
 			exit: function() {
 				this.$store.state.isLogin = false;
 				this.$router.push('/');
+				sessionStorage.removeItem('user');
+				sessionStorage.removeItem('isLogin');
 			},
 			onSearch: function() {
 				if(this.inputTxt == '') {
@@ -51,6 +62,7 @@
 					return;
 				}
 				this.$store.state.search.name = this.inputTxt;
+				sessionStorage.setItem('inputTxt', this.$store.state.search.name);
 				this.$router.push('/admin/black');		
 			},
 		},

@@ -82,7 +82,7 @@
 				<ul id="singerlist">
 					<li v-for="item in artistList" class="singerli">
 						<div class="singer">
-							<router-link to="/user/artistdetail">
+							<router-link tag="a" :to="{path:'/user/artistdetail',query:{id:item.id}}">
 								<img :src="item.image" alt="" style="border-radius:100%;padding:35px;">
 								<p style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{item.name}}</p>
 							</router-link>
@@ -461,15 +461,15 @@
 					console.log(error);
 				});
 			},
-			setSong: function(item){
-        		this.$store.state.song.id = item
-      		},
-      		setAlbum: function(item){
-        		this.$store.state.album = item
-      		},
-      		setArtist: function(item){
-        		this.$store.state.album = item
-      		},
+			// setSong: function(item){
+   //      		this.$store.state.song.id = item
+   //    		},
+   //    		setAlbum: function(item){
+   //      		this.$store.state.album = item
+   //    		},
+   //    		setArtist: function(item){
+   //      		this.$store.state.album = item
+   //    		},
 		},
 		
 	};

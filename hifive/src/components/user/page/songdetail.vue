@@ -9,7 +9,7 @@
 						<img align=right style="margin-top:25px;height:235px;width:235px" :src="song.image">
 					</div>
 				</el-col>
-				<el-col :span="9">
+				<el-col :span="12">
 					<div>
 						<p class="font_songName" style="margin-bottom:10px">{{song.name}}</p>
 						<i class="el-icon-service"></i>
@@ -88,6 +88,7 @@
 
 	export default {
 		created() {
+			// sessionStorage.setItem('songDetail_id', this.$route.query.id);
 			this.id = this.$route.query.id;
 		},
 		mounted() {
@@ -376,7 +377,6 @@
 	      		this.song.isCollected=flag;
 	      	},
 	      	addSongToPlaylist:function(playlistId){
-	      		alert(playlistId);
 	      		this.axios.get(this.serverUrl+'/playlist/addSong',{
 	      			params:{
 	      				songId:this.song.id,

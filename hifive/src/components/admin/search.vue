@@ -273,15 +273,15 @@
 					console.log(error);
 				});
 			},
-			setSong: function(item){
-        		this.$store.state.song.id = item
-      		},
-      		setAlbum: function(item){
-        		this.$store.state.album = item
-      		},
-      		setArtist: function(item){
-        		this.$store.state.album = item
-      		},
+			// setSong: function(item){
+   //      		this.$store.state.song.id = item
+   //    		},
+   //    		setAlbum: function(item){
+   //      		this.$store.state.album = item
+   //    		},
+   //    		setArtist: function(item){
+   //      		this.$store.state.album = item
+   //    		},
 		},
 		
 	};

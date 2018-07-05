@@ -18,14 +18,16 @@
 
 			<div v-if="isLogin">
 				<el-dropdown placement="bottom-start" @command="handleCommand">
-					<img :src="this.$store.state.user.image" class="user_image">
+					<router-link tag="a" to="/user/mymusic">
+						<img :src="this.$store.state.user.image" class="user_image">
+					</router-link>
 					<el-dropdown-menu slot="dropdown">
-						<el-dropdown-item command="a">
+						<!-- <el-dropdown-item command="a">
 							<router-link tag="a" to="/user/mymusic">
 								<img :src="this.$store.state.user.image" class="inner_userImage">
-								<span style="color:black;">{{this.$store.state.user.name}}</span>
+								<span style="color:black;text-align:center">{{this.$store.state.user.name}}</span>
 							</router-link>
-						</el-dropdown-item>
+						</el-dropdown-item> -->
 
 						<el-dropdown-item command="b" style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">修改个人资料</el-dropdown-item>
 
@@ -94,7 +96,7 @@
 								<el-input type="password" v-model="loginUser.pwd" placeholder="请输入密码"></el-input>
 							</el-form-item>
 						</el-form>
-						<div class="dialog-footer">
+						<div class="dialog-footer" style="text-align:center">
 							<el-button type="primary" @click="login('loginUser')">登录</el-button>
 							<el-button @click="dialogFormVisible = false">取 消</el-button>
 							<div style="margin-top:20px">
@@ -131,7 +133,7 @@
 								<el-input v-model="registerUser.securityAnswer" placeholder="请输入密保问题的答案"></el-input>
 							</el-form-item>
 						</el-form>
-						<div class="dialog-footer">
+						<div class="dialog-footer" style="text-align:center">
 							<el-button type="primary" @click="register('registerUser')">注册</el-button>
 							<el-button @click="dialogFormVisible = false">取 消</el-button>
 						</div>
@@ -146,14 +148,28 @@
 <script>
 
 	export default {
+		created() {
+			if(!this.$store.state.isLogin) {
+				this.$store.state.isLogin = JSON.parse(sessionStorage.getItem('isLogin'));
+				if(this.$store.state.isLogin) {
+					this.$store.state.user = JSON.parse(sessionStorage.getItem('user'));
+					this.$store.state.likeSongs = JSON.parse(sessionStorage.getItem('likeSongs'));
+					this.$store.state.likeAlbums = JSON.parse(sessionStorage.getItem('likeAlbums'));
+					this.$store.state.playlistList = JSON.parse(sessionStorage.getItem('playlistList'));
+					this.$store.state.search.name = sessionStorage.getItem('inputTxt');
+
+					this.$store.state.rankType = JSON.parse(sessionStorage.getItem('rankType'));
+					this.$store.state.currentIndex = JSON.parse(sessionStorage.getItem('currentIndex'));
+					this.$store.state.currentSong = JSON.parse(sessionStorage.getItem('currentSong'));
+					this.$store.state.songList = JSON.parse(sessionStorage.getItem('songList'));
+				}
+			}
+		},
 		mounted () {
 			// if(sessionStorage.getItem('curTitle'))
 			// 	this.curTitle = sessionStorage.getItem('curTitle');
 			this.isLogin = this.$store.state.isLogin;
 			this.curTitle = this.$route.name;
-			if(this.isLogin == true) {
-				// this.getUserMesg();
-			}
 			if(this.$route.name == '搜索') {
 				this.inputTxt = this.$store.state.search.name;
 			}
@@ -342,6 +358,7 @@
 					return;
 				}
 				this.$store.state.search.name = this.inputTxt;
+				sessionStorage.setItem('inputTxt', this.$store.state.search.name);
 				this.$router.push('/user/black');
 			},
 			getUserMesg: function() {
@@ -377,6 +394,11 @@
 				} else if(command == 'd'){
 					this.$store.state.user = {};
 					this.$store.state.isLogin = false;
+					sessionStorage.removeItem('user');
+					sessionStorage.removeItem('isLogin');
+					sessionStorage.removeItem('likeSongs');
+					sessionStorage.removeItem('likeAlbums');
+					sessionStorage.removeItem('playlistList');
 					if(this.$route.name == '我的音乐') {
 						this.$router.push('/');
 					}
@@ -399,6 +421,7 @@
 							this.dialogFormVisible = false;
 							this.$router.push('/admin/artist');
 							this.$store.state.isLogin = true;
+							sessionStorage.setItem('isLogin', this.$store.state.isLogin);
 							this.axios.get(this.$store.state.serverUrl + "/user/getInfo", {
 								params: {
 									id: this.loginUser.id
@@ -408,6 +431,7 @@
 								this.user = res.data;
 								this.user.image = this.$store.state.serverUrl + this.user.image;
 								this.$store.state.user = this.user;
+								sessionStorage.setItem('user', JSON.stringify(this.$store.state.user));
 							})
 							.catch(function (error) {
 								console.log(error);
@@ -416,6 +440,7 @@
 						if(tip == 1) {
 							this.dialogFormVisible = false;
 							this.$store.state.isLogin = true;
+							sessionStorage.setItem('isLogin', this.$store.state.isLogin);
 							this.axios.get(this.$store.state.serverUrl + "/user/showMyMusic", {
 								params: {
 									id: this.loginUser.id
@@ -425,7 +450,7 @@
 								this.user = res.data;
 								this.user.image = this.$store.state.serverUrl + this.user.image;
 								this.$store.state.user = this.user;
-
+								sessionStorage.setItem('user', JSON.stringify(this.$store.state.user));
 								// this.$store.state.likeSongs = res.data.likeSongList;
 								this.$store.state.likeSongs = this.user.likeSongList;
 								this.$store.state.likeAlbums = this.user.likeAlbumList;
@@ -441,6 +466,9 @@
 								}
 								
 								this.$store.state.playlistList = this.user.playlistList;
+								sessionStorage.setItem('likeSongs', JSON.stringify(this.$store.state.likeSongs));
+								sessionStorage.setItem('likeAlbums', JSON.stringify(this.$store.state.likeAlbums));
+								sessionStorage.setItem('playlistList', JSON.stringify(this.$store.state.playlistList));
 								if(this.$route.name == '我的音乐')
 									this.$router.push('/user/mymusic');
 								else
@@ -506,6 +534,11 @@
 							this.$store.state.isLogin = false;
 							this.modifyPwdVisible = false;
 							this.dialogFormVisible = true;
+							sessionStorage.removeItem('user');
+							sessionStorage.removeItem('isLogin');
+							sessionStorage.removeItem('likeSongs');
+							sessionStorage.removeItem('likeAlbums');
+							sessionStorage.removeItem('playlistList');
 						}
 						else if(tip == false) {
 							alert("修改密码失败");
@@ -543,6 +576,7 @@
 								this.user = res.data;
 								this.user.image = this.$store.state.serverUrl + this.user.image;
 								this.$store.state.user = this.user;
+								sessionStorage.setItem('user', JSON.stringify(this.$store.state.user));
 							})
 							.catch(function (error) {
 								console.log(error);
@@ -609,6 +643,10 @@
 <style>
 	body {
 		margin: 0;
+	}
+	a {
+		 text-decoration:none;
+		 out-line: none;
 	}
 	.header {
 		border-bottom: 1px solid #E6E6E6;
