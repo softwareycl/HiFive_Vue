@@ -219,7 +219,7 @@
         editRules:{
           name: [
         { required: true, message: '请输入歌手姓名', trigger: 'blur' },
-        { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }
+        { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' }
         ],
         style:[
         {required: true, message: '请选择专辑流派', trigger: 'blur'},
@@ -246,11 +246,14 @@
         addRules: {
         	name:[
         { required:true, message:'请输入专辑名称', trigger:'blur'},
-        { min: 1, max: 20, message:'长度在1到20个字符', trigger:'blur'}],
+        { min: 1, max: 50, message:'长度在1到50个字符', trigger:'blur'}],
         	region:[
         { required: true, message:'请输入专辑所属地区', trigger:'blur'},],
         	style:[
-        { required: true, message:'请输入专辑风格', trigger:'blur'}]
+        { required: true, message:'请输入专辑风格', trigger:'blur'}],
+          intro:[
+        { min: 1, max: 680, message:'最多680个字符', trigger:'blur'}
+          ]
         },
         artist:{},
         editArtist:{},
