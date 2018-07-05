@@ -118,17 +118,20 @@
           _region = this.region;
           _gender = this.gender;
           this.initial = _initial;
-          _page = this.page;
+          _page = 1;
+          this.page = 1;
         } else if(_region != -1){
           _initial = this.initial;
           _gender = this.gender;
           this.region = _region;
-          _page = this.page
+          _page = 1;
+          this.page = 1;
         } else {
           _region = this.region;
           _initial = this.initial;
           this.gender = _gender;
-          _page = this.page;
+          _page = 1;
+          this.page = 1;
         }
         this.axios.get(this.serverUrl + "/artist/filterArtist", {
           params: {
