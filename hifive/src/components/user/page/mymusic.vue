@@ -314,6 +314,7 @@ export default {
                         break;
                     }
                 }
+                sessionStorage.setItem('likeSongs', JSON.stringify(this.$store.state.likeSongs));
                 this.$message({
                   showClose: true,
                   message: '歌曲已被取消收藏',
@@ -393,6 +394,7 @@ export default {
                             break;
                         }
                     }
+                    sessionStorage.setItem('likeAlbums', JSON.stringify(this.$store.state.likeAlbums));
                     this.$message({
                       showClose: true,
                       message: '专辑已被取消收藏',
@@ -476,6 +478,7 @@ export default {
                         break;
                     }
                 }
+                sessionStorage.setItem('playlistList', JSON.stringify(this.$store.state.playlistList));
                 this.$message({
                   showClose: true,
                   message: '删除歌单成功',
@@ -507,6 +510,7 @@ export default {
                 if(response.data!=-1){
                   var thisPlaylist={id:response.data,name:this.newPlaylist.name,intro:this.newPlaylist.intro};
                   this.state.playlistList.push(thisPlaylist);
+                  sessionStorage.setItem('playlistList', JSON.stringify(this.$store.state.playlistList));
                   this.getMyPlaylist();
                   this.playlistPaginationChange(Math.floor((this.allPlaylist.length-1)/10)+1);
                   this.dialogVisible=false;
@@ -572,13 +576,13 @@ export default {
             })
             .then(res => {
                 this.user = res.data;
-                this.user.image = this.serverUrl + this.user.image;
                 this.allPlaylist=this.user.playlistList;
                 for(var i=0;i<this.allPlaylist.length;i++){
                     this.$set(this.allPlaylist[i],'Flag',false);
                     this.$set(this.allPlaylist[i],'isopen',false);
                 }
                 this.state.playlistList=this.allPlaylist;
+                sessionStorage.setItem('playlistList', JSON.stringify(this.$store.state.playlistList));
             })
             .catch(function (error) {
                 console.log(error);
@@ -619,6 +623,9 @@ export default {
                 this.state.likeSongs=this.allSong;
                 this.state.likeAlbums=this.allAlbum;
                 this.state.playlistList=this.allPlaylist;
+                sessionStorage.setItem('likeSongs', JSON.stringify(this.$store.state.likeSongs));
+                sessionStorage.setItem('likeAlbums', JSON.stringify(this.$store.state.likeAlbums));
+                sessionStorage.setItem('playlistList', JSON.stringify(this.$store.state.playlistList));
             })
             .catch(function (error) {
                 console.log(error);
