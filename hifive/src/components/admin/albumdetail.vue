@@ -31,7 +31,7 @@
             <el-input v-model="editAlbum.name" style="width:50%;"></el-input>
           </el-form-item>
           <el-form-item label="专辑封面" prop="image">
-            <el-upload ref="upload1" :auto-upload="false" action="http://192.168.20.99:8080/hifive/upload/uploadAlbumImage" :data={id:album.id} :show-file-list="false" :on-change="editImage" :before-upload="beforeAvatarUpload">
+            <el-upload ref="upload1" :auto-upload="false" action="http://192.168.20.99:8080/hifive/upload/uploadAlbumImage" :data={id:album.id} :show-file-list="false" :on-change="editImage" :before-upload="beforeAvatarUpload" :on-success="upload1Success" :on-error="handleError">
               <img :src="editAlbum.image" class="img">
             </el-upload>
           </el-form-item>
@@ -67,7 +67,7 @@
             </el-date-picker>
           </el-form-item>
           <el-form-item style="margin-left:25%;">
-            <el-button type="primary" @click="submitForm1">完成</el-button>
+            <el-button type="primary" @click="uploadForm1">完成</el-button>
             <el-button @click="editDialogVisible=false">取消</el-button>
           </el-form-item>
         </el-form>
@@ -78,13 +78,13 @@
             <el-input v-model="addSong.name" style="width:50%;"></el-input>
           </el-form-item>
           <el-form-item label="歌曲图片" prop="image">
-            <el-upload ref="upload2" :auto-upload="false" action="http://192.168.20.99:8080/hifive/upload/uploadSongImage" :data={id:addSong.id} :show-file-list="false" :on-change="addImage" :before-upload="beforeAvatarUpload">
+            <el-upload ref="upload2" :auto-upload="false" action="http://192.168.20.99:8080/hifive/upload/uploadSongImage" :data={id:addSong.id} :show-file-list="false" :on-change="addImage" :before-upload="beforeAvatarUpload" :on-success="upload2Success" :on-error="handleError">
               <img :src="addSong.image" class="img">
             </el-upload>
-            <el-upload ref="upload3" :auto-upload="false" action="http://192.168.20.99:8080/hifive/upload/uploadSongFile" :data={id:addSong.id} :limit="1" :on-change="addFilePath" :on-exceed="handleExceed" style="height:90px;">
+            <el-upload ref="upload3" :auto-upload="false" action="http://192.168.20.99:8080/hifive/upload/uploadSongFile" :data={id:addSong.id} :on-change="addFilePath" :on-success="upload3Success" :on-error="handleError" style="height:90px;">
               <el-button slot="trigger">选取歌曲文件</el-button>
             </el-upload>
-            <el-upload ref="upload4" :auto-upload="false" action="http://192.168.20.99:8080/hifive/upload/uploadLyrics" :data={id:addSong.id} :limit="1" :on-change="addLyricsPath" :on-exceed="handleExceed" style="height:90px;">
+            <el-upload ref="upload4" :auto-upload="false" action="http://192.168.20.99:8080/hifive/upload/uploadLyrics" :data={id:addSong.id} :on-change="addLyricsPath" :on-success="upload4Success" :on-error="handleError" style="height:90px;">
               <el-button slot="trigger">选取歌词文件</el-button>
             </el-upload>
           </el-form-item>
@@ -122,7 +122,7 @@
             </el-date-picker>
           </el-form-item>
           <el-form-item style="margin-left:25%;">
-            <el-button type="primary" @click="submitForm2">完成</el-button>
+            <el-button type="primary" @click="uploadForm2">完成</el-button>
             <el-button @click="addDialogVisible=false">取消</el-button>
           </el-form-item>
         </el-form>
@@ -183,6 +183,7 @@
     data(){
       return{
         isOverflow:'',
+        isImgChange:false,
         editRules: {
         name: [
         { required: true, message: '请输入专辑名称', trigger: 'blur' },
@@ -349,27 +350,147 @@
           intro:this.album.intro,}
         this.editAlbum=temp;
       },
-      editImage:function(file){
+      editImage:function(file,filelist){
+        this.isImgChange=true;
         this.editAlbum.image=file.url;
+        if(filelist.length>1){
+          filelist.splice(0,1);
+        }
       },
-      addImage:function(file,){
+      addImage:function(file,filelist){
         this.addSong.image=file.url;
+        if(filelist.length>1){
+          filelist.splice(0,1);
+        }
       },
-      addFilePath:function(file){
+      addFilePath:function(file,filelist){
         this.addSong.filePath=file.url;
+        if(filelist.length>1){
+          filelist.splice(0,1);
+        }
       },
-      addLyricsPath:function(file){
+      addLyricsPath:function(file,filelist){
         this.addSong.lyricsPath=file.url;
+        if(filelist.length>1){
+          filelist.splice(0,1);
+        }
       },
-      handleExceed:function(){
+      handleError:function(){
         this.$message({
           showClose: true,
-          message: '最多只能上传一个文件',
+          message: '上传失败',
           type: 'error'
         });
       },
+      uploadForm1:function(){
+        this.$refs["editAlbum"].validate((valid) => {
+          if (valid) {
+            if(this.isImgChange){
+              this.$refs.upload1.submit();
+              this.isImgChange=false;
+            }
+            else{
+              this.submitForm1();
+            }
+          }
+          else {
+            this.$message({
+              showClose: true,
+              message: '格式不正确',
+              type: 'error'
+            });
+          }
+        });
+      },
+      upload1Success:function(){
+        this.submitForm1();
+      },
+      submitForm1:function(){
+        this.axios.post(this.serverUrl+'/album/modifyAlbum',{
+          id:this.editAlbum.id,
+          name:this.editAlbum.name,
+          intro:this.editAlbum.intro,
+          region:this.editAlbum.region,
+          style:this.editAlbum.style,
+          releaseDate:this.editAlbum.releaseDate,
+        })
+        .then(response =>{
+          if(response){
+            this.getAlbumInfo();
+            this.editDialogVisible=false;
+            this.$message({
+              showClose: true,
+              message: '专辑编辑成功',
+              type: 'success'
+            });
+          }
+          else{
+            this.$message({
+              showClose: true,
+              message: '会话超时',
+              type: 'error'
+            });
+          }
+        })
+        .catch(function(err){
+          console.log(err);
+        });
+      },
+      uploadForm2:function(){
+        this.$refs["addSong"].validate((valid) => {
+          if (valid) {
+            this.$refs.upload2.submit();
+          }
+          else {
+            this.$message({
+              showClose: true,
+              message: '格式不正确',
+              type: 'error'
+            });
+          }
+        });
+      },
+      upload2Success:function(){
+        this.$refs.upload3.submit();
+      },
+      upload3Success:function(){
+        this.$refs.upload4.submit();
+      },
+      upload4Success:function(){
+        this.submitForm2();
+      },
+      submitForm2:function(){
+        this.axios.post(this.serverUrl+'/song/addSong',{
+          name:this.addSong.name,
+          albumId:this.album.id,
+          language:this.addSong.language,
+          style:this.addSong.style,
+          releaseDate:this.addSong.releaseDate,
+        })
+        .then(response =>{
+          if(response!=-1){
+            this.addSong.id=response.data;
+            this.getAlbumInfo();
+            this.addDialogVisible=false;
+            this.$message({
+              showClose: true,
+              message: '歌曲添加成功',
+              type: 'success'
+            });
+          }
+          else{
+            this.$message({
+              showClose: true,
+              message: '会话超时',
+              type: 'error'
+            });
+          }
+        })
+        .catch(function(err){
+          console.log(err);
+        });
+      },
       deleteAlbum:function(){
-        alert(this.album.id);
         this.$confirm('确认删除？')
         .then(_ => {
           this.axios.get(this.serverUrl+'/album/removeAlbum',{
@@ -401,7 +522,6 @@
         .catch(_ => {});
       },
       deleteSong:function(row,index){
-        alert(row.id);
         this.$confirm('确认删除？')
         .then(_ => {
           this.axios.get(this.serverUrl+'/song/removeSong',{
@@ -433,107 +553,16 @@
         .catch(_ => {});
       },
       beforeAvatarUpload(file) {
-        const isJPG = file.type === 'image/jpeg';
+        const isType = file.type === 'image/jpg'||'image/jpeg'||'image/png';
         const isLt2M = file.size / 1024 / 1024 < 2;
 
-        if (!isJPG) {
-          this.$message.error('上传头像图片只能是 JPG 格式!');
+        if (!isType) {
+          this.$message.error('上传头像图片只能是jpg/jpeg/png格式!');
         }
         if (!isLt2M) {
           this.$message.error('上传头像图片大小不能超过 2MB!');
         }
-        return isJPG && isLt2M;
-      },
-      submitForm1:function(){
-        this.$refs["editAlbum"].validate((valid) => {
-          if (valid) {
-            this.axios.post(this.serverUrl+'/album/modifyAlbum',{
-              id:this.editAlbum.id,
-              name:this.editAlbum.name,
-              intro:this.editAlbum.intro,
-              region:this.editAlbum.region,
-              style:this.editAlbum.style,
-              releaseDate:this.editAlbum.releaseDate,
-            })
-            .then(response =>{
-              if(response){
-                this.$refs.upload1.submit();
-                this.getAlbumInfo();
-                this.editDialogVisible=false;
-                this.$message({
-                  showClose: true,
-                  message: '专辑编辑成功',
-                  type: 'success'
-                });
-              }
-              else{
-                this.$message({
-                  showClose: true,
-                  message: '会话超时',
-                  type: 'error'
-                });
-              }
-            })
-            .catch(function(err){
-              console.log(err);
-            });
-          } 
-          else {
-            this.$message({
-              showClose: true,
-              message: '格式不正确',
-              type: 'error'
-            });
-            return false;
-          }
-        });
-      },
-      submitForm2:function(){
-        this.$refs["addSong"].validate((valid) => {
-          if (valid) {
-            console.log(this.addSong);
-            this.axios.post(this.serverUrl+'/song/addSong',{
-              name:this.addSong.name,
-              albumId:this.album.id,
-              language:this.addSong.language,
-              style:this.addSong.style,
-              releaseDate:this.addSong.releaseDate,
-            })
-            .then(response =>{
-              if(response!=-1){
-                this.addSong.id=response.data;
-                this.$refs.upload2.submit();
-                this.$refs.upload3.submit();
-                this.$refs.upload4.submit();
-                this.getAlbumInfo();
-                this.editDialogVisible=false;
-                this.$message({
-                  showClose: true,
-                  message: '歌曲添加成功',
-                  type: 'success'
-                });
-              }
-              else{
-                this.$message({
-                  showClose: true,
-                  message: '会话超时',
-                  type: 'error'
-                });
-              }
-            })
-            .catch(function(err){
-              console.log(err);
-            });
-          } 
-          else {
-            this.$message({
-              showClose: true,
-              message: '格式不正确',
-              type: 'error'
-            });
-            return false;
-          }
-        });
+        return isType && isLt2M;
       },
       timestampToTime: function(timestamp) {
         var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000

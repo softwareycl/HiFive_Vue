@@ -23,7 +23,7 @@
       				<p class="font_rep" style="float: left; margin-right: 10px; margin-bottom: 20px;">代表作:{{artist.representative}}</p>
       				<p style="width: 100px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 1;overflow: hidden; float: left;" class="font_des">简介:{{artist.intro}}</p>
       				<el-popover placement="left" title="歌手简介" trigger="click" style="float: left;">
-      					<p class="font_des">{{artist.intro}}</p>
+      					<p class="font_des" style="width: 600px">{{artist.intro}}</p>
       					<el-button type="text" slot="reference" style="color: black; margin-left: 20px; padding-top: 8px;" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">[更多]</el-button>
       				</el-popover>
       			</div>
