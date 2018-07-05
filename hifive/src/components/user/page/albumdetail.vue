@@ -139,10 +139,10 @@
       rules: {
         name: [
         { required: true, message: '请输入歌单名称', trigger: 'blur' },
-        { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
+        { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' }
         ],
         intro: [
-        { min: 1, max: 140, message: '长度在 140 个字符以内', trigger: 'blur' }
+        { min: 1, max: 680, message: '长度在 680 个字符以内', trigger: 'blur' }
         ]
       },
       isOverflow:'',
