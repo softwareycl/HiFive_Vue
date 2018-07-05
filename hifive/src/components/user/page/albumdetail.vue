@@ -47,7 +47,7 @@
               <el-table-column label="歌曲" width=300>
                 <template slot-scope="scope">
                   <router-link :to="{ path: '/user/songdetail', query: { id: scope.row.id }}">
-                    <p style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.name}}</p>
+                    <span style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.name}}</span>
                   </router-link>
                 </template>
               </el-table-column>
@@ -74,7 +74,7 @@
               <el-table-column label="歌手" width=150>
                 <template slot-scope="scope">
                   <router-link :to="{ path: '/user/artistdetail', query: { id: scope.row.artistId }}">
-                    <p style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.artistName}}</p>
+                    <span style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.artistName}}</span>
                   </router-link>
                 </template>
               </el-table-column>

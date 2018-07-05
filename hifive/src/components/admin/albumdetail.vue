@@ -135,14 +135,14 @@
               <el-table-column label="歌曲" width=400>
                 <template slot-scope="scope">
                   <router-link :to="{ path: '/admin/songdetail', query: { id: scope.row.id }}">
-                    <p style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.name}}</p>
+                    <span style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.name}}</span>
                   </router-link>
                 </template>
               </el-table-column>
               <el-table-column label="歌手" width=200>
                 <template slot-scope="scope">
                   <router-link :to="{ path: '/admin/artistdetail', query: { id: scope.row.artistId }}">
-                    <p style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.artistName}}</p>
+                    <span style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.artistName}}</span>
                 </router-link>
                 </template>
               </el-table-column>
@@ -212,6 +212,7 @@
         ],
         language:[
         {required: true, message: '请输入歌曲语种', trigger: 'blur'},
+        { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' }
         ],
         style:[
         {required: true, message: '请选择歌曲流派', trigger: 'blur'},
