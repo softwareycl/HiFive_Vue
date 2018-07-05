@@ -19,15 +19,17 @@
               <p class="font_other" style="float: left; margin-right: 10px;">职业:{{artist.occupation}}</p>
             </div>
             <div style=" width: 900px; margin-top: 5px;">
-              <p class="font_rep" style="float: left; margin-right: 10px; margin-bottom: 20px;">代表作:{{artist.representative}}</p>
-              <p style="width: 100px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 1;overflow: hidden; float: left;" class="font_des">简介:{{artist.intro}}</p>
-              <el-popover placement="left" title="歌手简介" trigger="click" style="float: left;">
-                <p class="font_des">{{artist.intro}}</p>
-                <el-button type="text" slot="reference" style="color: black; margin-left: 20px; padding-top: 8px;" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">[更多]</el-button>
+              <p v-if="artist.representative != null && artist.representative != ''" class="font_rep" style="float: left; margin-right: 10px; margin-bottom: 20px;">代表作:{{artist.representative}}</p>
+              <p v-if="artist.intro != null && artist.intro != ''" style="width: 100px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 1;overflow: hidden; float: left;" class="font_des">简介:{{artist.intro}}</p>
+              <el-popover v-if="artist.intro != null && artist.intro != ''" placement="left" title="歌手简介" trigger="click" style="float: left;">
+                <p class="font_des" style="width: 600px">{{artist.intro}}</p>
+                <el-button type="text" slot="reference" style="color: black; margin-left: 20px; padding-top: 8px" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">[更多]</el-button>
               </el-popover>
             </div>
-            <el-button icon="el-icon-edit" v-on:click="clickOnEdit">编辑歌手</el-button>
-            <el-button icon="el-icon-delete" v-on:click="deleteArtist">删除歌手</el-button>
+            <div style="margin-top: 65px;">
+              <el-button icon="el-icon-edit" v-on:click="clickOnEdit">编辑歌手</el-button>
+              <el-button icon="el-icon-delete" v-on:click="deleteArtist">删除歌手</el-button>
+            </div>
           </el-col>
         </el-row>
         <div style="width: 1000px;margin-left: 300px; margin-top:40px; margin-bottom: 10px">
@@ -199,6 +201,7 @@
 <script>
   import vHead from '../admin/header.vue'
   import vFoot from '../user/common/footer.vue'
+  import emptyImage from '../../assets/暂无图片.png'
   
   export default {
      components: {
@@ -226,6 +229,15 @@
         ],
         country:[
         {required: true, message: '请选择歌手所属国家', trigger: 'blur'},
+        ],
+        gender:[
+        {required:true, message:'请选择歌手性别', trigger:'blur'},
+        ],
+        initial:[
+        {required:true, message:'请选择歌手姓名首字母', trigger:'blur'},
+        ],
+        birthplace:[
+        {required:true, message:'请输入歌手出生地', trigger:'blur'},
         ],
         birthday:[
         {required: true, message: '请选择歌手生日', trigger: 'blur'},
@@ -447,10 +459,11 @@
       this.$refs["editArtist"].validate((valid) => {
         if(valid) {
         	if(this.editArtist.region == '内地') {this.editArtist.region = '1';}
-        	else if(this.editArtist.region == '港台') this.editArtist.region = '2';
-        	else if(this.editArtist.region == '欧美') this.editArtist.region = '3';
-        	else if(this.editArtist.region == '日韩') this.editArtist.region = '4';
-        	else if(this.editArtist.region == '其他') this.editArtist.region = '5';
+        	else if(this.editArtist.region == '港台') {this.editArtist.region = '2';}
+        	else if(this.editArtist.region == '欧美') {this.editArtist.region = '3';}
+        	else if(this.editArtist.region == '日韩') {this.editArtist.region = '4';}
+        	else if(this.editArtist.region == '其他') {this.editArtist.region = '5';}
+
 
 	        this.axios.post(this.serverUrl+'/artist/modifyArtist',{
 	          id:this.editArtist.id,
@@ -555,7 +568,7 @@
             type: 'error'
           });
         }
-        this.$router.go(0);        
+        this.$router.go(0);
       })
       .catch(function(err){
         console.log(err);
@@ -606,7 +619,11 @@
       .then(response => {
         this.artist = response.data;
           console.log(this.artist);
-          this.artist.image = this.serverUrl + this.artist.image;
+          if(this.artist.image == null){
+            this.artist.image = emptyImage;
+          } else {
+            this.artist.image = this.serverUrl + this.artist.image;
+          }
           this.artist.birthday = this.timestampToTime(this.artist.birthday);
           for (var i = 0; i < this.artist.albumList.length; i++) {
             this.artist.albumList[i].image = this.serverUrl + this.artist.albumList[i].image;
