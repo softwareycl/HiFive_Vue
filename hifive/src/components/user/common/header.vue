@@ -158,10 +158,10 @@
 					this.$store.state.playlistList = JSON.parse(sessionStorage.getItem('playlistList'));
 					this.$store.state.search.name = sessionStorage.getItem('inputTxt');
 
-					this.$store.state.rankType = JSON.parse(sessionStorage.getItem('rankType'));
-					this.$store.state.currentIndex = JSON.parse(sessionStorage.getItem('currentIndex'));
-					this.$store.state.currentSong = JSON.parse(sessionStorage.getItem('currentSong'));
-					this.$store.state.songList = JSON.parse(sessionStorage.getItem('songList'));
+					// this.$store.state.rankType = JSON.parse(sessionStorage.getItem('rankType'));
+					// this.$store.state.currentIndex = JSON.parse(sessionStorage.getItem('currentIndex'));
+					// this.$store.state.currentSong = JSON.parse(sessionStorage.getItem('currentSong'));
+					// this.$store.state.songList = JSON.parse(sessionStorage.getItem('songList'));
 				}
 			}
 		},
