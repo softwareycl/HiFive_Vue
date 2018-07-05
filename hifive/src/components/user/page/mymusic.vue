@@ -576,6 +576,7 @@ export default {
             })
             .then(res => {
                 this.user = res.data;
+                this.user.image = this.serverUrl + this.user.image;
                 this.allPlaylist=this.user.playlistList;
                 for(var i=0;i<this.allPlaylist.length;i++){
                     this.$set(this.allPlaylist[i],'Flag',false);
