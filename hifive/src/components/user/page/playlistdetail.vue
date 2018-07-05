@@ -2,79 +2,81 @@
     <div>
         <v-header></v-header>
     <div class="playlistDetail" :data="playlist">
-        <el-row :gutter="50">
-            <el-col :span="4" :offset="3">
-                <div>
-                    <img align=right style="width:230px;height:230px;margin-top:20px" :src="playlist.image" onerror="this.style.display='none'">
-                </div>
-            </el-col>
-            <el-col :span="12">
-                <div>
-                    <h2>{{playlist.name}}</h2>
-                    <div class="intro">
-                        <p>简介</p>
-                        <p id="playlistIntro">{{playlist.intro}}</p>
-                        <el-popover v-if="isOverflow" placement="left" title="歌单简介" trigger="click">
-                        <p>{{playlist.intro}}</p>
-                        <el-button type="text" slot="reference" style="color:black">[更多]</el-button>
+        <el-row>
+            <div class="playlistInfo">
+                <el-col :span="5" :offset="4">
+                    <div>
+                        <img style="width:230px;height:230px;margin-top:20px;" :src="playlist.image" onerror="this.style.display='none'">
+                    </div>
+                </el-col>
+                <el-col :span="10">
+                    <div>
+                        <h2>{{playlist.name}}</h2>
+                        <div class="intro">
+                            <p>简介</p>
+                            <p id="playlistIntro">{{playlist.intro}}</p>
+                            <el-popover v-if="isOverflow" placement="left" title="歌单简介" trigger="click">
+                            <p>{{playlist.intro}}</p>
+                            <el-button type="text" slot="reference" style="color:black">[更多]</el-button>
+                            </el-popover>
+                        </div>  
+
+                        <el-button class="btn2" type="primary" icon="el-icon-caret-right" v-on:click="playAllSong">播放全部</el-button>
+
+                        <el-popover
+                        ref=""
+                        placement="right" width="500"
+                        trigger="click">
+                            <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
+                                <el-form-item label="歌单名称" prop="name">
+                                    <el-input v-model="ruleForm.name" placeholder="请输入歌单名称"></el-input>
+                                </el-form-item>
+                                <el-form-item label="歌单简介" prop="intro">
+                                    <el-input type="textarea" v-model="ruleForm.intro" placeholder="请输入歌单简介"></el-input>
+                                </el-form-item>
+                                <el-form-item label="上传图片" prop="image">
+                                    <el-upload
+                                    ref="uploadImage"
+                                    action="http://192.168.20.99:8080/hifive/upload/uploadPlaylistImage"
+                                    list-type="picture-card"
+                                    :show-file-list="false"
+                                    :data={id:ruleForm.id} 
+                                    :on-change="editImage"                    
+                                    :before-upload="beforeAvatarUpload">
+                                    <i class="el-icon-plus"></i>
+                                    </el-upload>
+                                    <el-dialog :visible.sync="dialogVisible">
+                                    <img width="100%" :src="ruleForm.image" alt="">
+                                    </el-dialog>
+                                </el-form-item>
+                                <el-form-item>
+                                    <el-button type="primary" @click="submitForm('ruleForm')">完成</el-button>
+                                    <el-button @click="dialogVisible=false">取消</el-button>
+                                </el-form-item>
+                            </el-form>
+
+                            <el-button class="btn2" slot="reference">编辑歌单</el-button>
                         </el-popover>
-                    </div>  
 
-                    <el-button class="btn2" type="primary" icon="el-icon-caret-right" v-on:click="playAllSong">播放全部</el-button>
-
-                    <el-popover
-                    ref=""
-                    placement="right" width="500"
-                    trigger="click">
-                        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
-                            <el-form-item label="歌单名称" prop="name">
-                                <el-input v-model="ruleForm.name" placeholder="请输入歌单名称"></el-input>
-                            </el-form-item>
-                            <el-form-item label="歌单简介" prop="intro">
-                                <el-input type="textarea" v-model="ruleForm.intro" placeholder="请输入歌单简介"></el-input>
-                            </el-form-item>
-                            <el-form-item label="上传图片" prop="image">
-                                <el-upload
-                                ref="uploadImage"
-                                action="http://192.168.20.99:8080/hifive/upload/uploadPlaylistImage"
-                                list-type="picture-card"
-                                :show-file-list="false"
-                                :data={id:ruleForm.id} 
-                                :on-change="editImage"                    
-                                :before-upload="beforeAvatarUpload">
-                                <i class="el-icon-plus"></i>
-                                </el-upload>
-                                <el-dialog :visible.sync="dialogVisible">
-                                <img width="100%" :src="ruleForm.image" alt="">
-                                </el-dialog>
-                            </el-form-item>
-                            <el-form-item>
-                                <el-button type="primary" @click="submitForm('ruleForm')">完成</el-button>
-                                <el-button @click="dialogVisible=false">取消</el-button>
-                            </el-form-item>
-                        </el-form>
-
-                        <el-button class="btn2" slot="reference">编辑歌单</el-button>
-                    </el-popover>
-
-                    <el-dropdown trigger="click" @command="handlePlaylistCommand">
-                    <el-button class="btn2" icon="el-icon-plus">添加到<i class="el-icon-arrow-down el-icon--right"></i>
-                        </el-button>
-                        <el-dropdown-menu slot="dropdown" :data="playlistList">
-                            <el-dropdown-item command="playqueue" @click.native ="addAllToSongList()">播放队列</el-dropdown-item>
-                            <div v-if="isLogin">
-                                <el-dropdown-item disabled divided>我喜欢</el-dropdown-item>
-                                <el-dropdown-item v-for="playlist in playlistList" :key="playlist.id" 
-                                :command='{type:"playlist",params:playlist.id}'>{{playlist.name}}</el-dropdown-item>
-                                <el-dropdown-item command="newplaylist" divided>添加到新歌单</el-dropdown-item>
-                            </div>
-                            <el-dropdown-item v-else command="login" divided>登录后添加到歌单</el-dropdown-item>
-                        </el-dropdown-menu>
-                    </el-dropdown>
-                </div>
-            </el-col>
+                        <el-dropdown trigger="click" @command="handlePlaylistCommand">
+                        <el-button class="btn2" icon="el-icon-plus">添加到<i class="el-icon-arrow-down el-icon--right"></i>
+                            </el-button>
+                            <el-dropdown-menu slot="dropdown" :data="playlistList">
+                                <el-dropdown-item command="playqueue" @click.native ="addAllToSongList()">播放队列</el-dropdown-item>
+                                <div v-if="isLogin">
+                                    <el-dropdown-item v-for="playlist in playlistList" :key="playlist.id" 
+                                    :command='{type:"playlist",params:playlist.id}'>{{playlist.name}}</el-dropdown-item>
+                                    <el-dropdown-item command="newplaylist" divided>添加到新歌单</el-dropdown-item>
+                                </div>
+                                <el-dropdown-item v-else command="login" divided>登录后添加到歌单</el-dropdown-item>
+                            </el-dropdown-menu>
+                        </el-dropdown>
+                    </div>
+                </el-col>
+            </div>
         </el-row>
         <el-row>
+            <el-col :span="15.5" :offset="4">
             <div class="playlistSongList">
                 <el-table :data="songsView" 
                 max-height="1350"
@@ -111,17 +113,17 @@
                         </el-dropdown>
                     </span>
                     <el-dialog title="创建歌单" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
-                        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
-                        <el-form-item label="歌单名称" prop="name">
-                            <el-input v-model="ruleForm.name" placeholder="请输入歌单名称"></el-input>
-                        </el-form-item>
-                        <el-form-item label="歌单简介" prop="intro">
-                            <el-input type="textarea" v-model="ruleForm.intro" placeholder="请输入歌单简介"></el-input>
-                        </el-form-item>
-                        <el-form-item>
-                            <el-button type="primary" @click="submitForm">完成</el-button>
-                            <el-button @click="dialogVisible=false">取消</el-button>
-                        </el-form-item>
+                        <el-form :model="newPlaylist" :rules="rules" ref="newPlaylist" label-width="100px">
+                            <el-form-item label="歌单名称" prop="name">
+                                <el-input v-model="newPlaylist.name" placeholder="请输入歌单名称"></el-input>
+                            </el-form-item>
+                            <el-form-item label="歌单简介" prop="intro">
+                                <el-input type="textarea" v-model="newPlaylist.intro" placeholder="请输入歌单简介"></el-input>
+                            </el-form-item>
+                            <el-form-item>
+                                <el-button type="primary" @click="submitForm">完成</el-button>
+                                <el-button @click="dialogVisible=false">取消</el-button>
+                            </el-form-item>
                         </el-form>
                     </el-dialog>
                     <span v-if="scope.row.Flag"> <el-button icon="el-icon-download" circle 
@@ -155,11 +157,17 @@
                 </el-table-column>
                 </el-table>
                 <br>
+
+                <br>
+            </div>
+        </el-col>
+        </el-row>
+        <el-row>
+            <el-col :span="16" :offset="4">
                 <el-pagination class="pagination" :page-count="pageCount" 
                 layout="prev, pager, next" 
                 @current-change="handleChange"></el-pagination>
-                <br>
-            </div>
+            </el-col>
         </el-row>
     </div>
 
@@ -170,7 +178,8 @@
 <script>
   import vHeader from "../common/header.vue";
   import vNav from "../common/navigation.vue";
-  import vFoot from "../common/footer.vue"
+  import vFoot from "../common/footer.vue";
+  import emptyImage from '../../../assets/暂无图片.png'
 export default {
    components: {
       vHeader,
@@ -179,193 +188,11 @@ export default {
     data(){
         return{
             id:'',
-            playlist:{          
-                name:"歌单", 
-                intro:'这是歌单简介',
-                //image:'',             
-            },
+            playlist:{},
             index:1,
             songsView:[],
-            playlistSongList: [
-                {
-                name:'zzz',
-                artistName:'aaa',
-                albumName:'bbb',
-                duration:"04:30",
-                Flag:false,
-                isopen:false,
-                },
-                {
-                name:'zzz',
-                artistName:'aaa',
-                albumName:'bbb',
-                duration:"04:30",
-                },
-                {
-                name:'zzz',
-                artistName:'aaa',
-                albumName:'bbb',
-                duration:"04:30",
-                },
-                {
-                name:'zzz',
-                artistName:'aaa',
-                albumName:'bbb',
-                duration:"04:30",
-                },
-                {
-                name:'zzz',
-                artistName:'aaa',
-                albumName:'bbb',
-                duration:"04:30",
-                },
-                {
-                name:'zzz',
-                artistName:'aaa',
-                albumName:'bbb',
-                duration:"04:30",
-                },
-                {
-                name:'zzz',
-                artistName:'aaa',
-                albumName:'bbb',
-                duration:"04:30",
-                },
-                {
-                name:'zzz',
-                artistName:'aaa',
-                albumName:'bbb',
-                duration:"04:30",
-                },
-                {
-                name:'zzz',
-                artistName:'aaa',
-                albumName:'bbb',
-                duration:"04:30",
-                },
-                {
-                name:'zzz',
-                artistName:'aaa',
-                albumName:'bbb',
-                duration:"04:30",
-                },
-                {
-                name:'zzz',
-                artistName:'aaa',
-                albumName:'bbb',
-                duration:"04:30",
-                },
-                {
-                name:'zzz',
-                artistName:'aaa',
-                albumName:'bbb',
-                duration:"04:30",
-                },
-                {
-                name:'zzz',
-                artistName:'aaa',
-                albumName:'bbb',
-                duration:"04:30",
-                },
-                {
-                name:'zzz',
-                artistName:'aaa',
-                albumName:'bbb',
-                duration:"04:30",
-                },
-                {
-                name:'zzz',
-                artistName:'aaa',
-                albumName:'bbb',
-                duration:"04:30",
-                },
-                {
-                name:'zzz',
-                artistName:'aaa',
-                albumName:'bbb',
-                duration:"04:30",
-                },
-                {
-                name:'zzz',
-                artistName:'aaa',
-                albumName:'bbb',
-                duration:"04:30",
-                },
-                {
-                name:'zzz',
-                artistName:'aaa',
-                albumName:'bbb',
-                duration:"04:30",
-                },
-                {
-                name:'zzz',
-                artistName:'aaa',
-                albumName:'bbb',
-                duration:"04:30",
-                },
-                {
-                name:'zzz',
-                artistName:'aaa',
-                albumName:'bbb',
-                duration:"04:30",
-                },
-                {
-                name:'zzz',
-                artistName:'aaa',
-                albumName:'bbb',
-                duration:"04:30",
-                },
-                {
-                name:'zzz',
-                artistName:'aaa',
-                albumName:'bbb',
-                duration:"04:30",
-                },
-                {
-                name:'zzz',
-                artistName:'aaa',
-                albumName:'bbb',
-                duration:"04:30",
-                },
-                {
-                name:'zzz',
-                artistName:'aaa',
-                albumName:'bbb',
-                duration:"04:30",
-                },
-                {
-                name:'zzz',
-                artistName:'aaa',
-                albumName:'bbb',
-                duration:"04:30",
-                },
-                {
-                name:'zzz',
-                artistName:'aaa',
-                albumName:'bbb',
-                duration:"04:30",
-                },
-                {
-                name:'zzz',
-                artistName:'aaa',
-                albumName:'bbb',
-                duration:"04:30",
-                },
-                {
-                name:'zzz',
-                artistName:'aaa',
-                albumName:'bbb',
-                duration:"04:30",
-                },
-                {
-                name:'zzz',
-                artistName:'aaa',
-                albumName:'bbb',
-                duration:"04:30",
-                },
-            ],
+            playlistSongList: [],
             isOverflow:'',
-            //isLogin:false,
             dialogVisible:false,
             dialogImageUrl: '',
             notDelete:false,
@@ -380,27 +207,20 @@ export default {
                 { min: 1, max: 140, message: '长度在 140 个字符以内', trigger: 'blur' }
                 ]
             },
+            newPlaylist: {
+                id:'',
+                name: '',
+                intro: '',
+                type:'',
+                info:''
+            },
             ruleForm: {
-            id: '',
-            name: '',
-            intro: '',
-            image:'',
+                id: '',
+                name: '',
+                intro: '',
+                image:'',
             },
-            playlistList:[{
-            id:'1',
-            name:'1',
-            count:'',
-            },
-            {
-            id:'2',
-            name:'2',
-            count:'',
-            },
-            {
-            id:'3',
-            name:'3',
-            count:'',
-            }],
+            playlistList:[],
         }
     },
     computed: {
@@ -412,14 +232,15 @@ export default {
       }
     },
     created() {
+      window.scrollTo(0,0);
       this.id = this.$route.query.id;
     },
     mounted() {
-        // this.getPlaylistList(this.userID);
+        this.getPlaylistIntro();
         this.handleOverflow();
         this.pagination(1);
         this.computePageCount();
-        //this.getPlaylistIntro();
+        
     },
     methods: {
         indexMethod(index) {
@@ -436,13 +257,8 @@ export default {
           }
         },
         playAllSong:function(){
-          //传递歌曲id给player
-            this.$store.state.songList = [];
-            for(var i = 0; i < this.playlistSongList.length; i++){
-                this.$store.state.songList.push(this.playlistSongList[i]);
-            }
-            this.$store.state.currentSong = this.playlistSongList[0];
-            this.$store.state.currentIndex = 0;
+            //传递歌曲id给player
+            this.$store.dispatch("play", [this.playlistSongList, 0, false]);
         },
         handlePlaylistCommand:function(command){
           if(command=="login"){
@@ -580,21 +396,33 @@ export default {
           }
         },
         getPlaylistList:function(){
-        //无提交，返回歌单列表
+            if(this.isLogin){
+                this.playlistList=this.state.playlistList;
+            }
+            else{
+                return false;
+            }
         },
         getPlaylistIntro: function(){
-            this.playlist.id = 1;
           this.axios.get(this.serverUrl+'/playlist/getInfo',{
                 params:{
-                  id:this.playlist.id
+                  id:this.id
                 }
               })
               .then(response => {
                 console.log(response.data);
                 this.playlist = response.data;
-                this.playlist.image = this.serverUrl + this.playlist.image;
+                if(this.playlist.image == null){
+                    this.playlist.image = emptyImage;
+                } else {
+                    this.playlist.image = this.serverUrl + this.playlist.image;
+                }
+                
                 this.playlistSongList = this.playlist.songList;
-                for(var i = 0; i < this.songList.length; i++){
+                for(var i = 0; i < this.playlistSongList.length; i++){
+                    this.playlistSongList[i].filePath = this.serverUrl + this.playlistSongList[i].filePath;
+                    this.playlistSongList[i].image = this.serverUrl + this.playlistSongList[i].image;
+                    this.playlistSongList[i].lyricsPath = this.serverUrl + this.playlistSongList[i].lyricsPath;
                     this.$set(this.playlistSongList[i],'Flag',false);
                     this.$set(this.playlistSongList[i],'isopen',false);
                 }
@@ -667,30 +495,7 @@ export default {
             this.pageCount = Math.ceil(parseFloat(this.playlistSongList.length) / 20);
         },
         addAllToSongList: function(){
-            if(this.$store.state.songList.length == 0){
-                this.$store.state.songList = [];
-                for(var i = 0; i < this.playlistSongList.length; i++){
-                    this.$store.state.songList.push(this.playlistSongList[i]);
-                }
-                this.$store.state.currentSong = this.$store.state.songList[0];
-                this.$store.state.currentIndex = 0;
-            } else {
-                for(var m = 0; m < this.playlistSongList.length; m++){
-                    var song = this.playlistSongList[m];
-                    var songId = song.id;
-                    if(this.$store.state.currentSong.id != songId){
-                        for(var i = 0; i < this.$store.state.songList.length; i++){
-                            if(this.$store.state.songList[i].id == songId){
-                                this.$store.state.songList.splice(i, 1);
-                                if(i < this.$store.state.currentIndex)
-                                    this.$store.state.currentIndex=this.$store.state.currentIndex-1;
-                                break;
-                            }
-                        }
-                        this.$store.state.songList.push(song);
-                    }
-                }
-            }
+            this.$store.dispatch("addToSongList", this.playlistSongList);
         },
         addToSongList: function(index){
             index = (this.page - 1) * 20 + index;
@@ -750,7 +555,7 @@ export default {
             .catch(function(err){
               console.log(err);
             });
-      },
+        },
         //上传图片
         editImage:function(file,){
             this.ruleForm.image=file.url;
@@ -763,15 +568,75 @@ export default {
             }
             return isJPG && isLt2M;
         },
+        createPlaylist: function(){
+            this.$refs["newPlaylist"].validate((valid) => {
+                if (valid) {
+                    this.axios.post(this.serverUrl+'/playlist/create',{
+                        name:this.newPlaylist.name,
+                        intro:this.newPlaylist.intro
+                    })
+                    .then(response =>{
+                        if(response.data != -1){
+                            var thisPlaylist={id:response.data,name:this.newPlaylist.name,intro:this.newPlaylist.intro};
+                            this.state.playlistList.push(thisPlaylist);
+                            this.getMyPlaylist();
+                            this.playlistPaginationChange(Math.floor((this.allPlaylist.length-1)/10)+1);
+                            this.dialogVisible=false;
+                            this.$refs["newPlaylist"].resetFields();
+                            this.$message({
+                                showClose: true,
+                                message: '歌单创建成功',
+                                type: 'success'
+                            });
+                            if(this.newPlaylist.type==''){
+                                return false;
+                            }
+                            else if(this.newPlaylist.type=="song"){
+                                this.addSongToPlaylist(this.newPlaylist.info,response.data);
+                            }
+                            else if(this.newPlaylist.type=="album"){
+                                this.addAlbumToPlaylist(this.newPlaylist.info,response.data);
+                            }
+                            else{
+                                this.addPlaylistToPlaylist(this.newPlaylist.info,response.data);
+                            }
+                        }
+                        else{
+                            this.$message({
+                                showClose: true,
+                                message: '会话超时',
+                                type: 'error'
+                            });
+                        }
+                    })
+                    .catch(function(err){
+                        console.log(err);
+                    });
+                } 
+                else {
+                    this.$message({
+                        showClose: true,
+                        message: '格式不正确',
+                        type: 'error'
+                    });
+                    return false;
+                }
+            });
+        }
     }
 
 }
 </script>
 
 <style scoped>
+el-row{
+    width: 1000px;
+}
+
 .playlistDetail{
-    width:90%;
+    /*width:90%;*/
     height:100%;
+    /*margin-left: 100px;*/
 }
 
 #playlistIntro{
@@ -781,8 +646,8 @@ export default {
     overflow: hidden;
 }
 .songTable{
-    width:80%;
-    margin-left:132px;
+    /*width:100%;*/
+    /*margin-left:132px;*/
     overflow:hidden;
 }
 .btn2{
@@ -794,7 +659,7 @@ export default {
 }
 .pagination {
     font-size: 30px;
-    margin-left:500px;
+    padding-left:-300px;
 }
 .el-popover{
   width:550px;

@@ -307,15 +307,6 @@ export default{
              console.log(command.param2.ID)
             }
         },
-        playAllSong:function(){
-            //传递所有歌曲ID给player.vue
-            this.$store.state.songList = [];
-            for(var i = 0; i < this.songs.length; i++){
-                this.$store.state.songList.push(this.songs[i]);
-            }
-            this.$store.state.currentSong = this.songs[0];
-            this.$store.state.currentIndex = 0;
-        },
         handleClose(done) {
             this.$confirm('确认关闭？')
                 .then(_ => {
@@ -373,6 +364,10 @@ export default{
             //传递歌曲ID给player.vue
             var startIndex = (this.page - 1) * 20 + index;
             this.$store.dispatch("play", [this.songs, startIndex, false]);
+        },
+        playAllSong:function(){
+            //传递所有歌曲ID给player.vue
+            this.$store.dispatch("play", [this.songs, 0, false]);
         },
     },
     
