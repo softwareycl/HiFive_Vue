@@ -50,7 +50,7 @@
         </el-row>
         <div class="addArtist">
         <el-popover
-        ref="" placement="bottom" width="800" height="1000" trigger="click">
+        ref="" placement="bottom" width="800" height="1000" trigger="click" v-model="popoverVisible">
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm" 
             label-width="100px" label-position="right"
             class="demo-form-inline" :inline="true">
@@ -59,7 +59,7 @@
              </el-form-item>
                 <el-form-item label="歌手名称" prop="name" size="large">
                   <div class="bigIntro">
-                    <el-input v-model="ruleForm.name" placeholder="20字以内"></el-input>
+                    <el-input v-model="ruleForm.name" placeholder="30字以内"></el-input>
                   </div>
                 </el-form-item>
                 <el-form-item label="性别" prop="genders" v-model="ruleForm.genders">
@@ -81,28 +81,18 @@
                     format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd">
                     </el-date-picker>
                   </div>
-                </el-form-item>
-                <el-form-item label="职业" prop="occupation">
-                  <div class="intro">
-                    <el-input v-model="ruleForm.occupation" placeholder="10字以内"></el-input>
-                  </div>
-                </el-form-item>
+                </el-form-item>               
                 <el-form-item label="国籍" prop="country">
                   <div class="intro">
-                    <el-input v-model="ruleForm.country" placeholder="请输入歌手国籍"></el-input>
+                    <el-input v-model="ruleForm.country" placeholder="15字以内"></el-input>
                   </div>
                 </el-form-item>
                 <el-form-item label="出生地" prop="birthplace">
                   <div class="intro">
                     <el-input v-model="ruleForm.birthplace" placeholder="30字以内"></el-input>
                   </div>
-                </el-form-item>
-                <el-form-item label="代表作品" prop="representative">
-                  <div class="intro">
-                    <el-input v-model="ruleForm.representative" placeholder="30字以内"></el-input>
-                  </div>
-                </el-form-item>
-                <el-form-item label="名字首字母" prop="initials">
+                </el-form-item>                
+                <el-form-item label="首字母" prop="initials">
                   <div class="intro">
                     <el-select v-model="ruleForm.initials" placeholder="请选择">
                         <el-option label="A" value="A"></el-option>
@@ -136,53 +126,66 @@
                 </el-form-item>
                 <el-form-item label="歌手地区" prop="regions">
                   <div class="intro">
-                    <!--<el-select v-model="value2" placeholder="请选择">
-                        <el-option
-                        v-for="item in ruleForm.regions"
-                        :key="item.value2"
-                        :label="item.label2"
-                        :value="item.value2">
-                        </el-option>-->
                       <el-select v-model="ruleForm.regions" placeholder="请选择">
-                        <el-option label="内地" value="1"></el-option>
-                        <el-option label="港台" value="2"></el-option>
-                        <el-option label="欧美" value="3"></el-option>
-                        <el-option label="日韩" value="4"></el-option>
-                        <el-option label="其他" value="5"></el-option>
+                        <el-option label="全部" value="1"></el-option>
+                        <el-option label="内地" value="2"></el-option>
+                        <el-option label="港台" value="3"></el-option>
+                        <el-option label="欧美" value="4"></el-option>
+                        <el-option label="日韩" value="5"></el-option>
+                        <el-option label="其他" value="6"></el-option>
                     </el-select>
+                  </div>
+                </el-form-item>
+                <el-form-item label="职业" prop="occupation">
+                  <div class="intro">
+                    <el-input v-model="ruleForm.occupation" placeholder="10字以内"></el-input>
+                  </div>
+                </el-form-item>
+                <el-form-item label="代表作品" prop="representative">
+                  <div class="intro">
+                    <el-input v-model="ruleForm.representative" placeholder="30字以内"></el-input>
                   </div>
                 </el-form-item>
                 <el-form-item label="歌手简介" prop="intro">
                   <div class="bigIntro">
-                    <el-input type="textarea" :rows="3" v-model="ruleForm.intro" placeholder="请输入歌手简介，650字以内"></el-input>               
+                    <el-input type="textarea" :rows="3" v-model="ruleForm.intro" placeholder="请输入歌手简介，680字以内"></el-input>               
                   </div>
                   </el-form-item>
                 <el-form-item label="上传图片" prop="image">
-                  <div class="intro">
+                  <div class="bigIntro">
                     <el-upload
                     class="avatar-uploader"
                     ref="uploadImage"
                     :auto-upload="false"
-                    action="http://192.168.20.99:8080/hifive/upload/uploadSongImage"
+                    action="http://192.168.20.99:8080/hifive/upload/uploadArtistImage"
                     :show-file-list="false"
-                    :data={id:addArtist.id} 
-                    :on-change="addImage"                    
-                    :before-upload="beforeAvatarUpload">
+                    :data={id:ruleForm.id} 
+                    :on-change="addImage"  
+                    :on-success="handleAvatarSuccess"                  
+                    :before-upload="beforeAvatarUpload"
+                    accept=".jpg, .jpeg, png"
+                     >
+                    <!--<img v-if="ruleForm.image" :src="ruleForm.image" class="avatar">
+                    <el-button type="primary" v-else class="el-icon-plus avatar-uploader-icon">点击上传</el-button>-->
                     <img v-if="ruleForm.image" :src="ruleForm.image" class="avatar">
-                    <el-button type="primary" v-else class="el-icon-plus avatar-uploader-icon">点击上传</el-button>
+                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                     </el-upload>
+                  </div>
+                  <div clss="imageTip">
+                    <div>图片大小不超过2M</div>        
+                    <div>上传图片格式为:jpg/jpeg/png</div>
                   </div>
                 </el-form-item>
                 <br>
                 <el-form-item>
                   <div>
                     <el-button  class="formbtn" type="primary" @click="submitForm('ruleForm')">完成</el-button>
-                    <el-button @click="dialogVisible=false">取消</el-button>
+                    <el-button @click="cancelAdd" >取消</el-button>
                   </div>
                 </el-form-item>
             </el-form>
 
-            <el-button id="addbtn" slot="reference" @click="addArtist">
+            <el-button id="addbtn" slot="reference" @click="popoverVisible=true">
                 <i class="el-icon-plus"></i>添加歌手</el-button>
         </el-popover>
         </div>
@@ -225,27 +228,24 @@
         page: 1,
         pageCount: 5,
         singers: [],
-        dialogVisible:false,
+        popoverVisible:false,
         imageUrl:'',
-        items:['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'],
-        pickerOptions: {
-          disabledDate(time) {
-            return time.getTime() > Date.now();
-          },          
-        },
+        items:['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'],      
         rules: {
             name: [
               { required: true, message: '请输入歌手名称', trigger: 'blur' },
-              { min: 1, max: 20, message: '长度在 1 到 20 个字', trigger: 'blur' },
+              { min: 1, max: 30, message: '长度在 1 到 30 个字', trigger: 'blur' },
             ],
             genders: [
               { required: true, message: '请选择性别', trigger: 'change' }
             ],
             birthday: [
-              { type: 'date', required: true, message: '请选择生日', trigger: 'change' }
+              //{ type: 'date', required: true, message: '请选择生日', trigger: 'change' }
+              { type: 'string', required: true, message: '请选择生日', trigger: 'change' }
             ],
             birthplace: [
               { max: 30, message: '长度在 30 字以内', trigger: 'blur' },
+              { required: true, message: '请选择出生地', trigger: 'change' }
             ],
             occupation: [
               { max: 10, message: '长度在 10 字以内', trigger: 'blur' },
@@ -253,7 +253,10 @@
             representative: [
               { max: 30, message: '长度在 30 字以内', trigger: 'blur' },
             ],
- 
+            country: [
+              { min: 1,max: 15, message: '长度在 15 字以内', trigger: 'blur' },
+              { required: true, message: '请选择国籍', trigger: 'change' }
+            ],
             initials: [
               { required: true, message: '请选择名字首字母', trigger: 'change' }
             ],
@@ -261,14 +264,14 @@
               { required: true, message: '请选择地区', trigger: 'change' }
             ],
             intro: [
-              { required: true, message: '请输入歌手简介', trigger: 'blur' },
-              { min: 1, max: 650, message: '长度在 650 字以内', trigger: 'blur' },
+              { min: 1, max: 680, message: '长度在 680 字以内', trigger: 'blur' },
             ],
-            image:[
-              { required: true, message: '请添加歌手图片', trigger: 'blur' },
-            ]
+            // image:[
+            //   { required: true, message: '请添加歌手图片', trigger: 'blur' },
+            // ]
         },
         ruleForm: {
+        id:'',
         name: '',
         /*genders:[{//1男2女3组合
           label:'男',
@@ -289,23 +292,6 @@
         intro: '',
         country:'',
         image:'',
-        /*regions: [{
-          value2:'1',
-          label2:'内地'
-        },{
-          value2:'2',
-          label2:'港台'
-        },{
-          value2:'3',
-          label2:'欧美'
-        },{
-          value2:'4',
-          label2:'日韩'
-        },{
-          value2:'5',
-          label2:'其他'
-        },
-        ],*/
         regions:'',
         initials:'',
         },
@@ -345,7 +331,7 @@
       handleCurrentChange: function(val){
         this.singerDisplay(0,'!',0,val);
       },
-      timeToTimestamp: function(timestamp) {
+      timeStampToTime: function(timestamp) {
         var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
         var Y = date.getFullYear() + '-';
         var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
@@ -452,13 +438,19 @@
         }
       },
       //上传歌手图片
-      addImage:function(file,){
-        this.addArtist.image=file.url;
+      addImage:function(file){
+        this.ruleForm.image=file.url;
+      },
+      handleAvatarSuccess: function() {
+        alert("上传成功");
       },
       beforeAvatarUpload(file) {
+        const isType = file.type === 'image/jpg'||'image/jpeg'||'image/png';
         //image大小2M以内
         const isLt2M = file.size / 1024 / 1024 < 2;
-
+        if (!isType) {
+          this.$message.error('上传头像图片只能是jpg/jpeg/png格式!');
+        }
         if (!isLt2M) {
           this.$message.error('上传图片大小不能超过 2MB!');
         }
@@ -471,11 +463,10 @@
       submitForm:function(){
         this.$refs["ruleForm"].validate((valid) => {
           if (valid) {
-            console.log(this.addArtist);
             this.axios.post(this.serverUrl+'/artist/addArtist',{
               name:this.ruleForm.name,
-              initial:this.ruleForm.ianitial,
-              region:this.ruleForm.region,
+              initial:this.ruleForm.initials,
+              region:this.ruleForm.regions,
               gender:this.ruleForm.genders,
               birthplace:this.ruleForm.birthplace,
               occupation:this.ruleForm.occupation,
@@ -487,13 +478,15 @@
             .then(response =>{
               if(response!=-1){
                 this.ruleForm.id=response.data;
-                this.$refs.uploadImage.submit();           
-                this.editDialogVisible=false;
+                this.$refs.uploadImage.submit(); 
+                this.$refs.ruleForm.resetFields();          
+                this.popoverVisible=false;                
                 this.$message({
                   showClose: true,
                   message: '歌手添加成功',
                   type: 'success'
                 });
+                this.singerDisplay(0,'@',0,1);
               }
               else{
                 this.$message({
@@ -517,6 +510,15 @@
           }
         });
       },
+      cancelAdd: function(done){
+        this.$confirm('确认关闭？')
+        .then(_ => {
+          this.$refs.ruleForm.resetFields();
+          this.popoverVisible=false;
+          done();
+        })
+        .catch(_ => {});
+      }
     }  
  }
 </script>
@@ -660,7 +662,7 @@ a {text-decoration: none; color: black}
   margin-top: 250px;
 }
 .intro{
-  width:220px;
+  width:225px;
 }
 .bigIntro{
   width:690px;
@@ -676,5 +678,31 @@ a {text-decoration: none; color: black}
 .navTitle{
   font-size: 23px;
   text-align:center;
+}
+.avatar-uploader{
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  float:left;
+  margin-right: 15px;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 150px;
+  height: 150px;
+  line-height: 150px;
+  text-align: center;
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  margin-right: 15px;
+}
+.avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
+}
+.imageTip{
+  float:right;
 }
 </style>
