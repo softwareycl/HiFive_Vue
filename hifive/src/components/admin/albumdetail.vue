@@ -187,7 +187,7 @@
         editRules: {
         name: [
         { required: true, message: '请输入专辑名称', trigger: 'blur' },
-        { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' }
+        { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }
         ],
         style:[
         {required: true, message: '请选择专辑流派', trigger: 'blur'},
@@ -205,7 +205,7 @@
         addRules: {
         name: [
         { required: true, message: '请输入歌曲名称', trigger: 'blur' },
-        { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' }
+        { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }
         ],
         image:[
         {required: true, message: '请上传歌曲图片', trigger: 'blur'},
