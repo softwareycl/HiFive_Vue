@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <v-head></v-head>
-    <div id="albumdetail" :data="album">
+    <div v-if="this.state.isLogin" id="albumdetail" :data="album">
       <el-row :gutter="50">
         <el-col :span="4" :offset="3">
           <div>
@@ -619,6 +619,9 @@
     computed:{
       serverUrl(){
         return this.$store.state.serverUrl;
+      },
+      state(){
+        return this.$store.state;
       }
     },
     mounted(){

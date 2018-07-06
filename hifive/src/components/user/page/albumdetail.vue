@@ -200,7 +200,7 @@
         .then(response =>{
           if(response){
             this.state.likeAlbums.push(this.album);
-            sessionStorage.setItem('likeAlbums', JSON.stringify(this.$store.state.likeAlbums));
+            sessionStorage.setItem('likeAlbums', JSON.stringify(this.state.likeAlbums));
             this.album.isCollected=true;
             this.$message({
               showClose: true,
@@ -244,7 +244,7 @@
               break;
             }
           }
-          sessionStorage.setItem('likeAlbums', JSON.stringify(this.$store.state.likeAlbums));
+          sessionStorage.setItem('likeAlbums', JSON.stringify(this.state.likeAlbums));
           this.album.isCollected=false;
           this.$message({
             showClose: true,
@@ -364,7 +364,7 @@
             if(response.data!=-1){
               var thisPlaylist={id:response.data,name:this.newPlaylist.name,intro:this.newPlaylist.intro};
               this.state.playlistList.push(thisPlaylist);
-              sessionStorage.setItem('playlistList', JSON.stringify(this.$store.state.playlistList));
+              sessionStorage.setItem('playlistList', JSON.stringify(this.state.playlistList));
               this.dialogVisible=false;
               this.$refs["newPlaylist"].resetFields();
               this.$message({

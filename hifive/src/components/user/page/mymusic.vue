@@ -21,11 +21,11 @@
                         </el-form-item>
                     </el-form>
                 </el-dialog>
-                <el-tabs value="1" @tab-click="tab" style="width:90%;position:relative;left:5%;bottom:-27px;">
-                    <el-tab-pane name="1">
+                <el-tabs style="width:90%;position:relative;left:5%;bottom:-27px;">
+                    <el-tab-pane>
                         <span class="tab1" slot="label">我喜欢</span>
-                        <el-tabs value="1" style="width:100%;">
-                            <el-tab-pane  name="1">
+                        <el-tabs style="width:100%;">
+                            <el-tab-pane>
                                 <span class="tab2" slot="label">歌曲 {{allSong.length}}</span>
                                 <div>
                                     <el-button type="primary" icon="el-icon-caret-right" style="background-color:#31C27C;margin-top:30px;" onmouseover="this.style.backgroundColor='#2CAF6F';" onmouseout="this.style.backgroundColor='#31C27C';" v-on:click="playAllSong">播放全部</el-button>
@@ -78,7 +78,7 @@
                                     <el-pagination v-if="allSong.length>10" :current-page.sync=currentPageOfSong align=center layout="prev, pager, next" :total="allSong.length" @current-change="songPaginationChange"></el-pagination>
                                 </div>
                             </el-tab-pane>
-                            <el-tab-pane name="2">
+                            <el-tab-pane>
                                 <span class="tab2" slot="label">专辑 {{allAlbum.length}}</span>
                                 <div>
                                     <el-table :data="albumList" :stripe=true style="width: 100%;margin-top:30px;" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">    <el-table-column label="专辑">
@@ -128,7 +128,7 @@
                             </el-tab-pane>
                         </el-tabs>
                     </el-tab-pane>
-                    <el-tab-pane name="2">
+                    <el-tab-pane>
                         <span class="tab1" slot="label">我创建的歌单</span>
                         <div>
                            <el-button icon="el-icon-plus" style="margin-top:10px;" v-on:click="dialogVisible=true">新建歌单</el-button>
@@ -277,6 +277,7 @@ export default {
             })
             .then(response =>{
               if(response){
+                this.getMyPlaylist();
                 this.$message({
                   showClose: true,
                   message: '已成功添加到歌单',
@@ -307,14 +308,14 @@ export default {
             .then(response =>{
               if(response){
                 this.allSong.splice((this.currentPageOfSong-1)*10+index,1);
-                this.songPaginationChange(this.currentPageOfSong);
-                for(var i=0;i<this.state.likeSongs.length;i++){
-                    if(this.state.likeSongs[i].id==row.id){
-                        this.state.likeSongs.splice(i,1);
-                        break;
-                    }
+                this.state.likeSongs=this.allSong;
+                sessionStorage.setItem('likeSongs', JSON.stringify(this.state.likeSongs));
+                if(this.songList.length==1){
+                    this.songPaginationChange(this.currentPageOfSong-1);
                 }
-                sessionStorage.setItem('likeSongs', JSON.stringify(this.$store.state.likeSongs));
+                else{
+                    this.songPaginationChange(this.currentPageOfSong);
+                }
                 this.$message({
                   showClose: true,
                   message: '歌曲已被取消收藏',
@@ -358,6 +359,7 @@ export default {
             })
             .then(response =>{
               if(response){
+                this.getMyPlaylist();
                 this.$message({
                   showClose: true,
                   message: '已成功添加到歌单',
@@ -382,19 +384,19 @@ export default {
                 this.axios.get(this.serverUrl+'/user/unlikeAlbum',{
                   params:{
                     albumId:row.id
-                }
-            })
+                  }
+                })
                 .then(response =>{
                   if(response){
-                    this.allAlbum.splice((this.currentPageOfAlbum-1)*10+index,1);
-                    this.albumPaginationChange(this.currentPageOfAlbum);
-                    for(var i=0;i<this.state.likeAlbums.length;i++){
-                        if(this.state.likeAlbums[i].id==row.id){
-                            this.state.likeAlbums.splice(i,1);
-                            break;
-                        }
+                    this.allAlbum.splice((this.currentPageOfPlaylist-1)*10+index,1);
+                    this.state.likeAlbums=this.allAlbum;
+                    sessionStorage.setItem('likeAlbums', JSON.stringify(this.state.likeAlbums));
+                    if(this.albumList.length==1){
+                        this.albumPaginationChange(this.currentPageOfAlbum-1);
                     }
-                    sessionStorage.setItem('likeAlbums', JSON.stringify(this.$store.state.likeAlbums));
+                    else{
+                        this.albumPaginationChange(this.currentPageOfAlbum);
+                    }
                     this.$message({
                       showClose: true,
                       message: '专辑已被取消收藏',
@@ -471,14 +473,14 @@ export default {
             .then(response =>{
               if(response){
                 this.allPlaylist.splice((this.currentPageOfPlaylist-1)*10+index,1);
-                this.playlistPaginationChange(this.currentPageOfPlaylist);
-                for(var i=0;i<this.state.playlistList.length;i++){
-                    if(this.state.playlistList[i].id==row.id){
-                        this.state.playlistList.splice(i,1);
-                        break;
-                    }
+                this.state.playlistList=this.allPlaylist;
+                sessionStorage.setItem('playlistList', JSON.stringify(this.state.playlistList));
+                if(this.playlistList.length==1){
+                    this.playlistPaginationChange(this.currentPageOfPlaylist-1);
                 }
-                sessionStorage.setItem('playlistList', JSON.stringify(this.$store.state.playlistList));
+                else{
+                    this.playlistPaginationChange(this.currentPageOfPlaylist);
+                }
                 this.$message({
                   showClose: true,
                   message: '删除歌单成功',
@@ -508,11 +510,6 @@ export default {
               })
               .then(response =>{
                 if(response.data!=-1){
-                  var thisPlaylist={id:response.data,name:this.newPlaylist.name,intro:this.newPlaylist.intro};
-                  this.state.playlistList.push(thisPlaylist);
-                  sessionStorage.setItem('playlistList', JSON.stringify(this.$store.state.playlistList));
-                  this.getMyPlaylist();
-                  this.playlistPaginationChange(Math.floor((this.allPlaylist.length-1)/10)+1);
                   this.dialogVisible=false;
                   this.$refs["newPlaylist"].resetFields();
                   this.$message({
@@ -521,7 +518,11 @@ export default {
                     type: 'success'
                   });
                   if(this.newPlaylist.type==''){
-                    return false;
+                    var thisPlaylist={id:response.data,name:this.newPlaylist.name,intro:this.newPlaylist.intro,count:0,Flag:false,isopen:false}
+                    this.allPlaylist.push(thisPlaylist);
+                    this.state.playlistList=this.allPlaylist;
+                    sessionStorage.setItem('playlistList', JSON.stringify(this.state.playlistList));
+                    this.playlistPaginationChange(Math.floor((this.allPlaylist.length-1)/10)+1);
                   }
                   else if(this.newPlaylist.type=="song"){
                     this.addSongToPlaylist(this.newPlaylist.info,response.data);
@@ -531,6 +532,7 @@ export default {
                   }
                   else{
                     this.addPlaylistToPlaylist(this.newPlaylist.info,response.data);
+                    this.playlistPaginationChange(Math.floor((this.allPlaylist.length-1)/10)+1);
                   }
                 }
                 else{
@@ -563,11 +565,6 @@ export default {
           if(D < 10) D = '0' + D;
           return Y+M+D;
         },
-        tab:function(tab){
-            if(tab.name=="2"){
-                this.getMyPlaylist();
-            }
-        },
         getMyPlaylist:function(){
             this.axios.get(this.serverUrl + "/user/showMyMusic", {
                 params: {
@@ -583,7 +580,7 @@ export default {
                     this.$set(this.allPlaylist[i],'isopen',false);
                 }
                 this.state.playlistList=this.allPlaylist;
-                sessionStorage.setItem('playlistList', JSON.stringify(this.$store.state.playlistList));
+                sessionStorage.setItem('playlistList', JSON.stringify(this.state.playlistList));
             })
             .catch(function (error) {
                 console.log(error);
@@ -624,9 +621,9 @@ export default {
                 this.state.likeSongs=this.allSong;
                 this.state.likeAlbums=this.allAlbum;
                 this.state.playlistList=this.allPlaylist;
-                sessionStorage.setItem('likeSongs', JSON.stringify(this.$store.state.likeSongs));
-                sessionStorage.setItem('likeAlbums', JSON.stringify(this.$store.state.likeAlbums));
-                sessionStorage.setItem('playlistList', JSON.stringify(this.$store.state.playlistList));
+                sessionStorage.setItem('likeSongs', JSON.stringify(this.state.likeSongs));
+                sessionStorage.setItem('likeAlbums', JSON.stringify(this.state.likeAlbums));
+                sessionStorage.setItem('playlistList', JSON.stringify(this.state.playlistList));
             })
             .catch(function (error) {
                 console.log(error);
@@ -637,6 +634,7 @@ export default {
                 return false;
             }
             else{
+                this.currentPageOfSong=page;
                 this.songList=[];
                 if(page==Math.floor((this.allSong.length-1)/10)+1){
                     for(var i=10*(page-1);i<this.allSong.length;i++){
@@ -655,6 +653,7 @@ export default {
                 return false;
             }
             else{
+                this.currentPageOfAlbum=page;
                 this.albumList=[];
                 if(page==Math.floor((this.allAlbum.length-1)/10)+1){
                     for(var i=10*(page-1);i<this.allAlbum.length;i++){
@@ -673,6 +672,7 @@ export default {
                 return false;
             }
             else{
+                this.currentPageOfPlaylist=page;
                 this.playlistList=[];
                 if(page==Math.floor((this.allPlaylist.length-1)/10)+1){
                     for(var i=10*(page-1);i<this.allPlaylist.length;i++){
