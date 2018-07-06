@@ -508,7 +508,7 @@
 
 <style>
 #albumdetail{
-  padding: 30px;
+  padding: 0px 30px;
 }
 .spHeight td{
   height:70px;
