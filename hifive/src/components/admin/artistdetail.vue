@@ -564,7 +564,9 @@
             this.$refs.upload2.submit();
           });
             this.isadded = false;
-          } 
+          } else {
+            this.getArtistInfo(this.artist.id);
+          }
           
           this.albumView.splice(0,this.albumView.length);
           

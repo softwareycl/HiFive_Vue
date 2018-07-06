@@ -644,7 +644,7 @@
 </script>
 <style>
 #albumdetail{
-  padding: 30px;
+  padding: 0px 30px;
 }
 .img {
     width: 178px;
