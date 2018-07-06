@@ -624,6 +624,7 @@
     },
     created(){
       this.album.id=this.$route.query.id;
+      window.scrollTo(0,0);
     },
     computed:{
       serverUrl(){

@@ -809,6 +809,9 @@ export default {
             }
         },
     },
+    created(){
+        window.scrollTo(0,0);
+    },
     computed:{
         serverUrl(){
           return this.$store.state.serverUrl;
