@@ -167,9 +167,10 @@
 						if(response){
 							this.state.likeSongs.push(this.song);
 							this.song.isCollected=true;
+							sessionStorage.setItem('likeSongs', JSON.stringify(this.$store.state.likeSongs));
 							this.$message({
 								showClose: true,
-								message: '收藏专辑成功',
+								message: '收藏歌曲成功',
 								type: 'success'
 							});
 						}  
