@@ -121,7 +121,8 @@
   import vHead from '../common/header.vue'
   import vNav from '../common/navigation.vue'
   import vFoot from '../common/footer.vue'
-  
+  import emptyImage from '../../../assets/暂无图片.png'
+
   export default {
      components: {
       vHead,
@@ -417,7 +418,11 @@
                 //console.log(response.data);
                 this.artist = response.data;
                 console.log(this.artist);
-                this.artist.image = this.serverUrl + this.artist.image;
+                if(this.artist.image == null){
+                  this.artist.image = emptyImage;
+                } else {
+                  this.artist.image = this.serverUrl + this.artist.image;
+                }
                 this.artist.birthday = this.timestampToTime(this.artist.birthday);
                 for (var i = 0; i < this.artist.albumList.length; i++) {
                   this.artist.albumList[i].image = this.serverUrl + this.artist.albumList[i].image;

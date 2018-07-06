@@ -64,7 +64,8 @@
 <script>
   import vHeader from "../common/header.vue";
   import vNav from "../common/navigation.vue";
-  import vFoot from "../common/footer.vue"
+  import vFoot from "../common/footer.vue";
+  import emptyImage from '../../../assets/暂无图片.png'
 
   export default {
    components: {
@@ -135,7 +136,11 @@
           this.albums = res.data;
           console.log(res.data);
           for(var i = 0; i < res.data.length; i++){
-            this.albums[i].image = this.serverUrl + this.albums[i].image;
+            if(this.albums[i].image == null){
+              this.albums[i].image = emptyImage;
+            } else {
+              this.albums[i].image = this.serverUrl + this.albums[i].image;
+            }
             this.albums[i].releaseDate = this.timestampToTime(this.albums[i].releaseDate);
           }
           
