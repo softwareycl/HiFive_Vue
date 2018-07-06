@@ -1,7 +1,7 @@
 <template>
     <div class="wrapper">
         <v-head></v-head>
-        <div v-if="this.state.isLogin" style="width:100%;height:1350px;">
+        <div v-if="this.state.isLogin" style="width:100%;height:1250px;">
             <div :data="user" class="background" :style="background">
                 <div style="width:100%;height:315px;">
                     <img :src="user.image" class="userImage">
