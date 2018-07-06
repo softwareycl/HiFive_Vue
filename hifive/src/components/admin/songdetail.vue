@@ -126,6 +126,7 @@
 				id: '',
 				flag: false,
 				img_change: false,
+				uploadSuccess: false,
 				song:{
 					id:'',
 					name:'',
@@ -239,35 +240,38 @@
 					this.$refs.upload.submit();
 					this.img_change = false;
 				}
-				// this.submitForm(_song);
-				// if(this.flag) {
-				// 	this.flag = false;
-				// 	if(this.img_change) {
-				// 		this.$refs.upload.submit();
-				// 		this.img_change = false;
-				// 	}
-				// 	this.axios.post(this.$store.state.serverUrl + "/song/modifySong", {
-				// 		id: this.editSong.id,
-				// 		name: this.editSong.name,
-				// 		language: this.editSong.language,
-				// 		style: this.getStyleNumber(this.editSong.style),
-				// 		releaseDate: this.editSong.releaseDate
-				// 	})
-				// 	.then(res => {
-				// 		var tip = res.data;
-				// 		if(tip == true) {
-				// 			alert("修改成功");
-				// 			this.dialogVisible = false;
-				// 			this.getIntro(this.id);
-				// 		}
-				// 		else if(tip == false) {
-				// 			alert("修改失败");
-				// 		}
-				// 	})
-				// 	.catch(function (error) {
-				// 		console.log(error);
-				// 	});
-				// }
+				if(this.uploadSuccess) {
+					this.uploadSuccess = false;
+					this.submitForm(_song);
+					if(this.flag) {
+						this.flag = false;
+						if(this.img_change) {
+							this.$refs.upload.submit();
+							this.img_change = false;
+						}
+						this.axios.post(this.$store.state.serverUrl + "/song/modifySong", {
+							id: this.editSong.id,
+							name: this.editSong.name,
+							language: this.editSong.language,
+							style: this.getStyleNumber(this.editSong.style),
+							releaseDate: this.editSong.releaseDate
+						})
+						.then(res => {
+							var tip = res.data;
+							if(tip == true) {
+								alert("修改成功");
+								this.dialogVisible = false;
+								this.getIntro(this.id);
+							}
+							else if(tip == false) {
+								alert("修改失败");
+							}
+						})
+						.catch(function (error) {
+							console.log(error);
+						});
+					}
+				}
 			},
 			submitForm:function(formName){
 				this.$refs[formName].validate((valid) => {
@@ -294,7 +298,7 @@
 					if(this.song.image == null) {
 						this.song.image = "../../../assets/暂无图片.png";
 					} else
-						this.song.image = this.serverUrl + this.song.image;
+						this.song.image = this.$store.state.serverUrl + this.song.image;
 					// this.song.image = this.$store.state.serverUrl + this.song.image;
 					this.song.lyricsPath = this.$store.state.serverUrl + this.song.lyricsPath;
 					this.song.releaseDate = this.timestampToTime(this.song.releaseDate);
@@ -350,31 +354,32 @@
 			// 	this.$refs.upload.submit();
 			// },
 			handleAvatarSuccess: function() {
-				this.submitForm(_song);
-				if(this.flag) {
-					this.flag = false;
-					this.axios.post(this.$store.state.serverUrl + "/song/modifySong", {
-						id: this.editSong.id,
-						name: this.editSong.name,
-						language: this.editSong.language,
-						style: this.getStyleNumber(this.editSong.style),
-						releaseDate: this.editSong.releaseDate
-					})
-					.then(res => {
-						var tip = res.data;
-						if(tip == true) {
-							alert("修改成功");
-							this.dialogVisible = false;
-							this.getIntro(this.id);
-						}
-						else if(tip == false) {
-							alert("修改失败");
-						}
-					})
-					.catch(function (error) {
-						console.log(error);
-					});
-				}
+				this.uploadSuccess = true;
+				// this.submitForm(_song);
+				// if(this.flag) {
+				// 	this.flag = false;
+				// 	this.axios.post(this.$store.state.serverUrl + "/song/modifySong", {
+				// 		id: this.editSong.id,
+				// 		name: this.editSong.name,
+				// 		language: this.editSong.language,
+				// 		style: this.getStyleNumber(this.editSong.style),
+				// 		releaseDate: this.editSong.releaseDate
+				// 	})
+				// 	.then(res => {
+				// 		var tip = res.data;
+				// 		if(tip == true) {
+				// 			alert("修改成功");
+				// 			this.dialogVisible = false;
+				// 			this.getIntro(this.id);
+				// 		}
+				// 		else if(tip == false) {
+				// 			alert("修改失败");
+				// 		}
+				// 	})
+				// 	.catch(function (error) {
+				// 		console.log(error);
+				// 	});
+				// }
 			},
 			previewImg: function(file,fileList) {
 				this.editSong.image = file.url;
