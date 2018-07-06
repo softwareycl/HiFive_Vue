@@ -273,6 +273,7 @@ export default {
             })
             .then(response =>{
               if(response){
+                this.getMyPlaylist(1);
                 this.$message({
                   showClose: true,
                   message: '已成功添加到歌单',
@@ -354,6 +355,7 @@ export default {
             })
             .then(response =>{
               if(response){
+                this.getMyPlaylist(1);
                 this.$message({
                   showClose: true,
                   message: '已成功添加到歌单',
@@ -517,11 +519,9 @@ export default {
                   }
                   else if(this.newPlaylist.type=="song"){
                     this.addSongToPlaylist(this.newPlaylist.info,response.data);
-                    this.getMyPlaylist(1);
                   }
                   else if(this.newPlaylist.type=="album"){
                     this.addAlbumToPlaylist(this.newPlaylist.info,response.data);
-                    this.getMyPlaylist(1);
                   }
                   else{
                     this.addPlaylistToPlaylist(this.newPlaylist.info,response.data);
