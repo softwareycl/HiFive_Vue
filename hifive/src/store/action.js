@@ -26,9 +26,9 @@ export default{
 	        state.currentIndex = startIndex;
 		} else {
 			var song = params[0];
-			state.songList.insert(song);
 			++state.currentIndex;
-			state.currentSong = state.songList[startIndex];
+			state.songList.splice(state.currentIndex, 0, song);
+			state.currentSong = state.songList[state.currentIndex];
 		}
 
 	},
