@@ -262,6 +262,7 @@
 							if(response.data!=-1){
 								var thisPlaylist={id:response.data,name:this.newPlaylist.name,intro:this.newPlaylist.intro};
 								this.state.playlistList.push(thisPlaylist);
+								sessionStorage.setItem('playlistList', JSON.stringify(this.$store.state.playlistList));
 								this.getPlaylistList();
 								this.dialogVisible=false;
 								this.$refs["newPlaylist"].resetFields();
