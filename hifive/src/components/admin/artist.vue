@@ -50,7 +50,7 @@
         </el-row>
         <div class="addArtist">
         <el-popover
-        ref="" placement="bottom" width="800" height="1000" trigger="click" v-model="popoverVisible">
+        ref="" placement="top" width="820" trigger="click" v-model="popoverVisible">
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm" 
             label-width="100px" label-position="right"
             class="demo-form-inline" :inline="true">
@@ -120,19 +120,19 @@
                         <el-option label="W" value="W"></el-option>
                         <el-option label="X" value="X"></el-option>
                         <el-option label="Y" value="Y"></el-option>
-                        <el-option label="Z" value="Z"></el-option>                        
+                        <el-option label="Z" value="Z"></el-option>
+                        <el-option label="其他" value="#"></el-option>               
                     </el-select>
                   </div>
                 </el-form-item>
                 <el-form-item label="歌手地区" prop="regions">
                   <div class="intro">
                       <el-select v-model="ruleForm.regions" placeholder="请选择">
-                        <el-option label="全部" value="1"></el-option>
-                        <el-option label="内地" value="2"></el-option>
-                        <el-option label="港台" value="3"></el-option>
-                        <el-option label="欧美" value="4"></el-option>
-                        <el-option label="日韩" value="5"></el-option>
-                        <el-option label="其他" value="6"></el-option>
+                        <el-option label="内地" value="1"></el-option>
+                        <el-option label="港台" value="2"></el-option>
+                        <el-option label="欧美" value="3"></el-option>
+                        <el-option label="日韩" value="4"></el-option>
+                        <el-option label="其他" value="5"></el-option>
                     </el-select>
                   </div>
                 </el-form-item>
@@ -265,24 +265,10 @@
             intro: [
               { min: 1, max: 680, message: '长度在 680 字以内', trigger: 'blur' },
             ],
-            // image:[
-            //   { required: true, message: '请添加歌手图片', trigger: 'blur' },
-            // ]
         },
         ruleForm: {
         id:'',
         name: '',
-        /*genders:[{//1男2女3组合
-          label:'男',
-          value:'1'
-        },{
-          label:'女',
-          value:'2'
-        },{
-          label:'组合',
-          value:'3'
-        }
-        ],*/
         genders:'',
         birthplace: '',
         occupation: '',
@@ -349,17 +335,17 @@
           _region = this.region;
           _gender = this.gender;
           this.initial = _initial;
-          _page = this.page;
+          _page = this.page = 1;
         } else if(_region != -1){
           _initial = this.initial;
           _gender = this.gender;
           this.region = _region;
-          _page = this.page
+          _page = this.page = 1;
         } else {
           _region = this.region;
           _initial = this.initial;
           this.gender = _gender;
-          _page = this.page;
+          _page = this.page = 1;
         }
         this.axios.get(this.serverUrl + "/artist/filterArtist", {
           params: {
@@ -453,7 +439,7 @@
         if (!isLt2M) {
           this.$message.error('上传图片大小不能超过 2MB!');
         }
-        return isJPG && isLt2M;
+        return isType && isLt2M;
       },
 
       addArtist: function(){
@@ -477,7 +463,10 @@
             .then(response =>{
               if(response!=-1){
                 this.ruleForm.id=response.data;
-                this.$refs.uploadImage.submit(); 
+                alert(this.ruleForm.id);
+                this.$nextTick(() => {
+                  this.$refs.uploadImage.submit(); 
+                });
                 this.$refs.ruleForm.resetFields();          
                 this.popoverVisible=false;                
                 this.$message({
@@ -654,9 +643,7 @@ a {text-decoration: none; color: black}
     margin-left: 37%;
     margin-bottom: 20px;
 }
-.addArtist{
-    overflow:hidden;
-}
+
 .footer{
   margin-top: 250px;
 }
@@ -703,5 +690,9 @@ a {text-decoration: none; color: black}
 }
 .imageTip{
   float:right;
+}
+.demo-form-inline{
+  height:600px;
+  overflow: auto;
 }
 </style>

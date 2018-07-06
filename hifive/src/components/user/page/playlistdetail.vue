@@ -47,6 +47,7 @@
                                     :on-change="editImage"
                                     :before-upload="beforeAvatarUpload"
                                     :on-success="handleAvatarSuccess"
+                                    :on-error="uploadFail"
                                     accept=".jpg, .jpeg, .png">
                                     <img v-if="ruleForm.image" style="width:150px;height:150px" :src="ruleForm.image" alt="">
                                     <i v-else class="el-icon-plus avatar-uploader-icon"></i>
@@ -618,6 +619,9 @@ export default {
             })
             .catch(_ => { });
 
+        },
+        uploadFail: function(err, file, fileList){
+            alert("上传失败");
         }
     }
 
