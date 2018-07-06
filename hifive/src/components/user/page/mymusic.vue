@@ -214,11 +214,7 @@ export default {
                 { min: 1, max: 680, message: '长度在 680 个字符以内', trigger: 'blur' }
                 ]
             },
-            user:{
-                id:'',
-                name:'',
-                image:'',
-            },
+            user:{},
             songList:[],
             albumList:[],
             playlistList:[],
@@ -443,7 +439,6 @@ export default {
             })
             .then(response =>{
               if(response){
-                this.getMyPlaylist();
                 this.$message({
                   showClose: true,
                   message: '已成功添加到歌单',
@@ -510,8 +505,6 @@ export default {
               })
               .then(response =>{
                 if(response.data!=-1){
-                  this.dialogVisible=false;
-                  this.$refs["newPlaylist"].resetFields();
                   this.$message({
                     showClose: true,
                     message: '歌单创建成功',
@@ -532,8 +525,13 @@ export default {
                   }
                   else{
                     this.addPlaylistToPlaylist(this.newPlaylist.info,response.data);
+                    this.getMyPlaylist();
+                    console.log(this.allPlaylist.length);
                     this.playlistPaginationChange(Math.floor((this.allPlaylist.length-1)/10)+1);
+                    console.log(this.allPlaylist.length);
                   }
+                  this.dialogVisible=false;
+                  this.$refs["newPlaylist"].resetFields();
                 }
                 else{
                   this.$message({
@@ -579,6 +577,7 @@ export default {
                     this.$set(this.allPlaylist[i],'Flag',false);
                     this.$set(this.allPlaylist[i],'isopen',false);
                 }
+                console.log(this.allPlaylist.length);
                 this.state.playlistList=this.allPlaylist;
                 sessionStorage.setItem('playlistList', JSON.stringify(this.state.playlistList));
             })
@@ -630,12 +629,12 @@ export default {
             });
         },
         songPaginationChange:function(page){
+            this.songList=[];
             if(this.allSong.length==0){
                 return false;
             }
             else{
                 this.currentPageOfSong=page;
-                this.songList=[];
                 if(page==Math.floor((this.allSong.length-1)/10)+1){
                     for(var i=10*(page-1);i<this.allSong.length;i++){
                         this.songList.push(this.allSong[i]);
@@ -649,12 +648,12 @@ export default {
             }
         },
         albumPaginationChange:function(page){
+            this.albumList=[];
             if(this.allAlbum.length==0){
                 return false;
             }
             else{
                 this.currentPageOfAlbum=page;
-                this.albumList=[];
                 if(page==Math.floor((this.allAlbum.length-1)/10)+1){
                     for(var i=10*(page-1);i<this.allAlbum.length;i++){
                         this.albumList.push(this.allAlbum[i]);
@@ -668,12 +667,12 @@ export default {
             }
         },
         playlistPaginationChange:function(page){
+            this.playlistList=[];
             if(this.allPlaylist.length==0){
                 return false;
             }
             else{
                 this.currentPageOfPlaylist=page;
-                this.playlistList=[];
                 if(page==Math.floor((this.allPlaylist.length-1)/10)+1){
                     for(var i=10*(page-1);i<this.allPlaylist.length;i++){
                         this.playlistList.push(this.allPlaylist[i]);
