@@ -163,8 +163,7 @@
                     :on-change="addImage"  
                     :on-success="handleAvatarSuccess"                  
                     :before-upload="beforeAvatarUpload"
-                    accept=".jpg, .jpeg, png"
-                     >
+                    accept=".jpg, .jpeg, .png">
                     <!--<img v-if="ruleForm.image" :src="ruleForm.image" class="avatar">
                     <el-button type="primary" v-else class="el-icon-plus avatar-uploader-icon">点击上传</el-button>-->
                     <img v-if="ruleForm.image" :src="ruleForm.image" class="avatar">
@@ -449,7 +448,7 @@
         //image大小2M以内
         const isLt2M = file.size / 1024 / 1024 < 2;
         if (!isType) {
-          this.$message.error('上传头像图片只能是jpg/jpeg/png格式!');
+          this.$message.error('上传图片只能是jpg/jpeg/png格式!');
         }
         if (!isLt2M) {
           this.$message.error('上传图片大小不能超过 2MB!');
