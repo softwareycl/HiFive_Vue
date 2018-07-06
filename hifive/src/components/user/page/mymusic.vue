@@ -30,14 +30,21 @@
                                 <div>
                                     <el-button type="primary" icon="el-icon-caret-right" style="background-color:#31C27C;margin-top:30px;" onmouseover="this.style.backgroundColor='#2CAF6F';" onmouseout="this.style.backgroundColor='#31C27C';" v-on:click="playAllSong">播放全部</el-button>
                                     <el-table :data="songList" :stripe=true style="width:100%;margin-top: 10px;" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">
-                                        <el-table-column label="歌曲">
+                                        <el-table-column label="歌曲" width=60>
+                                            <template slot-scope="scope">
+                                                <router-link :to="{ path: '/user/songdetail', query: { id: scope.row.id }}">
+                                                    <img :src=scope.row.image class="smallImage">
+                                                </router-link>
+                                            </template>
+                                        </el-table-column>
+                                        <el-table-column label=" " width=350>
                                             <template slot-scope="scope">
                                                 <router-link :to="{ path: '/user/songdetail', query: { id: scope.row.id }}">
                                                     <span class="font_link" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.name}}</span>
                                                 </router-link>
                                             </template>
                                         </el-table-column>
-                                        <el-table-column label=" ">
+                                        <el-table-column label=" " width=200>
                                             <template slot-scope="scope">
                                                 <span v-if="scope.row.Flag"> <el-button icon="el-icon-caret-right" circle v-on:click="playSong(scope.$index)"></el-button> </span>
                                                 <span v-if="scope.row.Flag"> 
@@ -54,14 +61,14 @@
                                                 <span v-if="scope.row.Flag"> <el-button icon="el-icon-download" circle v-on:click="downloadSong(scope.row)"></el-button></span>
                                             </template>
                                         </el-table-column>
-                                        <el-table-column label="歌手">
+                                        <el-table-column label="歌手" width=240>
                                             <template slot-scope="scope">
                                                 <router-link :to="{ path: '/user/artistdetail', query: { id: scope.row.artistId }}">
                                                     <span class="font_link" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.artistName}}</span>
                                                 </router-link>
                                             </template>
                                         </el-table-column>
-                                        <el-table-column label="专辑">
+                                        <el-table-column label="专辑" width=240>
                                             <template slot-scope="scope">
                                                 <router-link :to="{ path: '/user/albumdetail', query: { id: scope.row.albumId }}">
                                                     <span class="font_link" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.albumName}}</span>
@@ -81,15 +88,22 @@
                             <el-tab-pane>
                                 <span class="tab2" slot="label">专辑 {{allAlbum.length}}</span>
                                 <div>
-                                    <el-table :data="albumList" :stripe=true style="width: 100%;margin-top:30px;" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">    
-                                        <el-table-column label="专辑">
+                                    <el-table :data="albumList" :stripe=true style="width: 100%;margin-top:30px;" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">
+                                        <el-table-column label="专辑" width=60>
                                             <template slot-scope="scope">
+                                                <router-link :to="{ path: '/user/albumdetail', query: { id: scope.row.id }}">
+                                                    <img :src=scope.row.image class="smallImage">
+                                                </router-link>
+                                            </template>
+                                        </el-table-column>    
+                                        <el-table-column label=" ">
+                                            <template slot-scope="scope" width=350>
                                                 <router-link :to="{ path: '/user/albumdetail', query: { id: scope.row.id }}">
                                                     <span class="font_link" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.name}}</span>
                                                 </router-link>
                                             </template>
                                         </el-table-column>
-                                        <el-table-column label=" ">
+                                        <el-table-column label=" " width=200>
                                             <template slot-scope="scope">
                                                 <span v-if="scope.row.Flag"> <el-button icon="el-icon-caret-right" circle v-on:click="playAlbum(scope.row)"></el-button></span>
                                                 <span v-if="scope.row.Flag"> 
@@ -105,12 +119,12 @@
                                                 </span>
                                             </template>
                                         </el-table-column>
-                                        <el-table-column label="曲目数">
+                                        <el-table-column label="曲目数" width=240>
                                             <template slot-scope="scope">
                                                 <span class="font_other">{{scope.row.count}}</span>
                                             </template>
                                         </el-table-column>
-                                        <el-table-column label="歌手">
+                                        <el-table-column label="歌手" width=240>
                                             <template slot-scope="scope">
                                                 <router-link :to="{ path: '/user/artistdetail', query: { id: scope.row.artistId }}">
                                                     <span class="font_link" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.artistName}}</span>
@@ -133,15 +147,22 @@
                         <span class="tab1" slot="label">我创建的歌单</span>
                         <div>
                             <el-button icon="el-icon-plus" style="margin-top:10px;" v-on:click="dialogVisible=true">新建歌单</el-button>
-                            <el-table :data="playlistList" :stripe=true style="width: 100%;margin-top:10px;" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">    
-                                <el-table-column label="歌单">
+                            <el-table :data="playlistList" :stripe=true style="width: 100%;margin-top:10px;" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">
+                                <el-table-column label="歌单" width=60>
+                                    <template slot-scope="scope">
+                                        <router-link :to="{ path: '/user/playlistdetail', query: { id: scope.row.id }}">
+                                            <img :src=scope.row.image class="smallImage">
+                                        </router-link>
+                                    </template>
+                                </el-table-column>    
+                                <el-table-column label=" " width=400>
                                     <template slot-scope="scope">
                                         <router-link :to="{ path: '/user/playlistdetail', query: { id: scope.row.id }}">
                                             <span class="font_link" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.name}}</span>
                                         </router-link>
                                     </template>
                                 </el-table-column>
-                                <el-table-column label=" ">
+                                <el-table-column label=" " width=200>
                                     <template slot-scope="scope">
                                         <span v-if="scope.row.Flag"> <el-button icon="el-icon-caret-right" circle v-on:click="playPlaylist(scope.row)"></el-button></span>
                                         <span v-if="scope.row.Flag"> 
@@ -157,7 +178,7 @@
                                         </span>
                                     </template>
                                 </el-table-column>
-                                <el-table-column label="曲目数">
+                                <el-table-column label="曲目数" width=300>
                                     <template slot-scope="scope">
                                         <span class="font_other">{{scope.row.count}}</span>
                                     </template>
@@ -518,7 +539,7 @@ export default {
                     type: 'success'
                   });
                   if(this.newPlaylist.type==''){
-                    var thisPlaylist={id:response.data,name:this.newPlaylist.name,intro:this.newPlaylist.intro,count:0,Flag:false,isopen:false}
+                    var thisPlaylist={id:response.data,name:this.newPlaylist.name,intro:this.newPlaylist.intro,image:require('../../../assets/暂无图片.png'),count:0,Flag:false,isopen:false}
                     this.allPlaylist.push(thisPlaylist);
                     this.state.playlistList=this.allPlaylist;
                     sessionStorage.setItem('playlistList', JSON.stringify(this.state.playlistList));
@@ -575,9 +596,20 @@ export default {
             })
             .then(res => {
                 this.user = res.data;
-                this.user.image = this.serverUrl + this.user.image;
+                if(this.user.image==null){
+                    this.user.image=require('../../../assets/暂无图片.png');
+                }
+                else{
+                    this.user.image = this.serverUrl + this.user.image;
+                }
                 this.allPlaylist=this.user.playlistList;
                 for(var i=0;i<this.allPlaylist.length;i++){
+                    if(this.allPlaylist[i].image==null){
+                        this.allPlaylist[i].image=require('../../../assets/暂无图片.png');
+                    }
+                    else{
+                        this.allPlaylist[i].image=this.serverUrl+this.allPlaylist[i].image;
+                    }
                     this.$set(this.allPlaylist[i],'Flag',false);
                     this.$set(this.allPlaylist[i],'isopen',false);
                 }
@@ -597,24 +629,45 @@ export default {
             })
             .then(res => {
                 this.user = res.data;
-                this.user.image = this.serverUrl + this.user.image;
+                if(this.user.image==null){
+                    this.user.image=require('../../../assets/暂无图片.png');
+                }
+                else{
+                    this.user.image = this.serverUrl + this.user.image;
+                }
                 this.allSong=this.user.likeSongList;
                 this.allAlbum = this.user.likeAlbumList;
                 this.allPlaylist=this.user.playlistList;
                 for(var i=0;i<this.allSong.length;i++){
-                    this.allSong[i].image=this.serverUrl+this.allSong[i].image;
+                    if(this.allSong[i].image==null){
+                        this.allSong[i].image=require('../../../assets/暂无图片.png');
+                    }
+                    else{
+                        this.allSong[i].image=this.serverUrl+this.allSong[i].image;
+                    }
                     this.allSong[i].filePath=this.serverUrl+this.allSong[i].filePath;
                     this.allSong[i].lyricsPath=this.serverUrl+this.allSong[i].lyricsPath;
                     this.$set(this.allSong[i],'Flag',false);
                     this.$set(this.allSong[i],'isopen',false);
                 }
                 for(var i=0;i<this.allAlbum.length;i++){
-                    this.allAlbum[i].image=this.serverUrl+this.allAlbum[i].image;
+                    if(this.allAlbum[i].image==null){
+                        this.allAlbum[i].image=require('../../../assets/暂无图片.png');
+                    }
+                    else{
+                        this.allAlbum[i].image=this.serverUrl+this.allAlbum[i].image;
+                    }
                     this.allAlbum[i].releaseDate=this.timestampToTime(this.allAlbum[i].releaseDate);
                     this.$set(this.allAlbum[i],'Flag',false);
                     this.$set(this.allAlbum[i],'isopen',false);
                 }
                 for(var i=0;i<this.allPlaylist.length;i++){
+                    if(this.allPlaylist[i].image==null){
+                        this.allPlaylist[i].image=require('../../../assets/暂无图片.png');
+                    }
+                    else{
+                        this.allPlaylist[i].image=this.serverUrl+this.allPlaylist[i].image;
+                    }
                     this.$set(this.allPlaylist[i],'Flag',false);
                     this.$set(this.allPlaylist[i],'isopen',false);
                 }
@@ -719,6 +772,11 @@ export default {
 	border-radius:100%;
 	margin-top:80px;
 	margin-left:45%;
+}
+.smallImage{
+    width:50px;
+    height:50px;
+    display:block;
 }
 .tab1{
     color:white;

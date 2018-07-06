@@ -302,8 +302,8 @@ export default {
     },
     methods:{
         enterSongImage:function(event){
-            event.target.style.transform='scale(1.2)';
-            event.target.parentNode.parentNode.children[1].style.transform='scale(1.2)';
+            event.target.style.transform='scale(1.1)';
+            event.target.parentNode.parentNode.children[1].style.transform='scale(1.1)';
             event.target.parentNode.parentNode.children[1].style.opacity=1;
         },
         leaveSongImage:function(event){
@@ -317,7 +317,7 @@ export default {
             }
         },
         enterAlbumImage:function(event){
-            event.target.style.transform='scale(1.3)';
+            event.target.style.transform='scale(1.1)';
             event.target.parentNode.parentNode.children[1].style.transform='scale(1.5)';
             event.target.parentNode.parentNode.children[1].style.opacity=1;
         },
@@ -414,7 +414,12 @@ export default {
             .then(response => {
                 this.songList = response.data;
                 for(var i = 0; i < this.songList.length; i++){
-                    this.songList[i].image = this.serverUrl + this.songList[i].image;
+                    if(this.songList[i].image==null){
+                        this.songList[i].image=require('../../../assets/暂无图片.png');
+                    }
+                    else{
+                        this.songList[i].image = this.serverUrl + this.songList[i].image;
+                    }
                     this.songList[i].filePath = this.serverUrl + this.songList[i].filePath;
                     this.songList[i].lyricsPath = this.serverUrl + this.songList[i].lyricsPath;
                 }
@@ -438,7 +443,12 @@ export default {
             .then(response => {
                 this.albumList = response.data;
                 for(var i = 0; i < this.albumList.length; i++){
-                    this.albumList[i].image = this.serverUrl + this.albumList[i].image;
+                    if(this.albumList[i].image==null){
+                        this.albumList[i].image=require('../../../assets/暂无图片.png');
+                    }
+                    else{
+                        this.albumList[i].image = this.serverUrl + this.albumList[i].image;
+                    }
                 }
                 for(var i=this.albumList.length ; i < 40; i++)
                 {
@@ -460,11 +470,6 @@ export default {
               .then(response => {
                 var rank;
                 rank = response.data;
-                for(var i = 0; i < rank.length; i++){
-                    rank[i].image = this.serverUrl + rank[i].image;
-                    rank[i].filePath = this.serverUrl + rank[i].filePath;
-                    rank[i].lyricsPath = this.serverUrl + rank[i].lyricsPath;
-                }
                 for(var i = rank.length; i < 4; i++){
                     rank.push(song);
                 }

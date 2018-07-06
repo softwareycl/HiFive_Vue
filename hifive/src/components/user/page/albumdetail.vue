@@ -431,7 +431,12 @@
       })
       .then(response => {
         this.album = response.data;
-        this.album.image = this.serverUrl + this.album.image;
+        if(this.album.image==null){
+          this.album.image=require('../../../assets/暂无图片.png');
+        }
+        else{
+          this.album.image = this.serverUrl + this.album.image;
+        }
         this.album.releaseDate = this.timestampToTime(this.album.releaseDate);
         this.album.style = this.style[this.album.style];
         this.songList = this.album.songList;
@@ -490,7 +495,7 @@
 </script>
 
 
-<style scoped>
+<style>
 #albumdetail{
   padding: 30px;
 }
