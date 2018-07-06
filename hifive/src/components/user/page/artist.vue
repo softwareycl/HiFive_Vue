@@ -72,7 +72,8 @@
 <script>
     import vHeader from "../common/header.vue";
     import vNav from "../common/navigation.vue";
-    import vFoot from "../common/footer.vue"
+    import vFoot from "../common/footer.vue";
+    import emptyImage from '../../../assets/暂无图片.png'
     
     export default {
      data() {
@@ -145,8 +146,12 @@
           this.singers = res.data;
           console.log(this.singers);
           for(var i = 0; i < res.data.length; i++){
+            if(this.singers[i].image == null){
+              this.singers[i].image = emptyImage;
+            } else {
             this.singers[i].image = this.serverUrl + this.singers[i].image;
           }
+        }
           
           console.log(this.singers)
 
