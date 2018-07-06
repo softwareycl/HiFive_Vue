@@ -414,14 +414,14 @@
     },
 
     A_pagination: function(_albums,_albumPage){
-      this.albumPageCount = Math.ceil(parseFloat(_albums.length) / 4);
+      this.albumPageCount = Math.ceil(parseFloat(_albums.length) / 8);
       if(_albumPage != this.albumPage){
         this.albumPage = _albumPage;
         this.albumView.splice(0,this.albumView.length);
         }
-      for (var i = 0; i < 4; i++) {
-        if(_albums[((this.albumPage - 1)*4)+i] != null){
-          var album = _albums[((this.albumPage - 1)*4)+i];
+      for (var i = 0; i < 8; i++) {
+        if(_albums[((this.albumPage - 1)*8)+i] != null){
+          var album = _albums[((this.albumPage - 1)*8)+i];
           this.albumView.push(album);
         }
       } 
