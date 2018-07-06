@@ -361,22 +361,22 @@
 				sessionStorage.setItem('inputTxt', this.$store.state.search.name);
 				this.$router.push('/user/black');
 			},
-			getUserMesg: function() {
-				this.axios.get(this.serverUrl + "/user/getInfo", {
-					params: {
+			// getUserMesg: function() {
+			// 	this.axios.get(this.serverUrl + "/user/getInfo", {
+			// 		params: {
 						
-					}
-				})
-				.then(res => {
-					this.user = res.data;
-					for(var i = 0; i < res.data.length; i++){
-						this.user[i].image = this.serverUrl + this.user[i].image;
-					}
-				})
-				.catch(function (error) {
-					console.log(error);
-				});
-			},
+			// 		}
+			// 	})
+			// 	.then(res => {
+			// 		this.user = res.data;
+			// 		for(var i = 0; i < res.data.length; i++){
+			// 			this.user[i].image = this.serverUrl + this.user[i].image;
+			// 		}
+			// 	})
+			// 	.catch(function (error) {
+			// 		console.log(error);
+			// 	});
+			// },
 			handleCommand: function(command) {
 				if(command == 'a') {
 

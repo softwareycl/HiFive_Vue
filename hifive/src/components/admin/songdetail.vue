@@ -28,7 +28,7 @@
 						</div>
 						<div style="margin-top:20px">
 							<el-button type="primary" icon="el-icon-edit" style="background-color:#31C27C;display:block;float:left;margin-right:10px" onmouseover="this.style.backgroundColor='#2CAF6F';" onmouseout="this.style.backgroundColor='#31C27C';" v-on:click="edit">编辑</el-button>
-							<el-upload action="http://192.168.20.99:8080/hifive/upload/uploadSongFile" :data={id:this.song.id} :on-success="uploadSongSuccess" :on-error="handleError" style="height:90px;float:left;margin-right:10px">
+							<el-upload action="http://192.168.20.99:8080/hifive/upload/uploadSongFile" :data={id:this.song.id} :on-success="uploadSongSuccess" :on-error="handleError" ref="uploadSong" style="height:90px;float:left;margin-right:10px">
 								<el-button slot="trigger">上传歌曲文件</el-button>
 							</el-upload>
 							<el-button icon="el-icon-delete" v-on:click="deleteSong">删除</el-button>
@@ -40,7 +40,7 @@
 				<el-col :span="8" :offset="3">
 					<div style="margin-bottom:30px;">
 						<p class="font_songLry" style="font-size:20px">歌词</p>
-						<el-upload class="lyr-uploader" action="http://192.168.20.99:8080/hifive/upload/uploadLyrics" :data={id:this.song.id} :on-success="handleLyrSuccess" :on-error="handleError">
+						<el-upload class="lyr-uploader" action="http://192.168.20.99:8080/hifive/upload/uploadLyrics" :data={id:this.song.id} :on-success="handleLyrSuccess" :on-error="handleError" ref="uploadLyr">
 							<el-button slot="trigger" size="small" type="primary">上传歌词</el-button>
 						</el-upload>
 						<div v-bind:class="{fold: isfold}" id="lyr"></div>
@@ -291,7 +291,11 @@
 				})
 				.then(res => {
 					this.song = res.data;
-					this.song.image = this.$store.state.serverUrl + this.song.image;
+					if(this.song.image == null) {
+						this.song.image = "../../../assets/暂无图片.png";
+					} else
+						this.song.image = this.serverUrl + this.song.image;
+					// this.song.image = this.$store.state.serverUrl + this.song.image;
 					this.song.lyricsPath = this.$store.state.serverUrl + this.song.lyricsPath;
 					this.song.releaseDate = this.timestampToTime(this.song.releaseDate);
 					this.song.style = this.style[this.song.style];
@@ -385,6 +389,7 @@
 				return;
 			},
 			handleLyrSuccess: function() {
+				this.$refs.uploadLyr.clearFiles();
 				this.axios.get(this.$store.state.serverUrl + "/song/getInfo", {
 					params: {
 						id: this.song.id,
@@ -412,6 +417,7 @@
 				});
 			},
 			uploadSongSuccess: function() {
+				this.$refs.uploadSong.clearFiles();
 				this.axios.get(this.$store.state.serverUrl + "/song/getInfo", {
 					params: {
 						id: this.song.id,

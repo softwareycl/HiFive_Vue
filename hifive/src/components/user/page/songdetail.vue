@@ -101,9 +101,6 @@
 			vFoot
 		},
 		computed: {
-			song () {
-				return this.$store.state.song;
-			},
 			state () {
 				return this.$store.state;
 			},
@@ -154,7 +151,7 @@
 		},
 		methods: {
 			playSong: function() {
-
+				this.$store.dispatch("play", [this.song, 0, true]);
 			},
 			collect:function(){
 				if(this.isLogin){
@@ -305,9 +302,13 @@
 				})
 				.then(res => {
 					this.song = res.data;
-					this.song.image = this.serverUrl + this.song.image;
+					if(this.song.image == null) {
+						this.song.image = "../../../assets/暂无图片.png";
+					} else
+						this.song.image = this.serverUrl + this.song.image;
 					this.song.lyricsPath = this.serverUrl + this.song.lyricsPath;
 					this.song.releaseDate = this.timestampToTime(this.song.releaseDate);
+					this.song.filePath = this.serverUrl + this.song.filePath;
 					this.song.style = this.style[this.song.style];
 					this.$set(this.song,'isCollected',false);
 					this.getIsCollected();

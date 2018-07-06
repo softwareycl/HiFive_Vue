@@ -11,7 +11,7 @@
 		</div>
 		<div class="search_main">
 			<div class="search_song" v-if="curTitle == '歌曲'">
-				<el-table :data="songList" style="width: 100%" :stripe="true" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">
+				<el-table :data="songList" style="width: 100%" :stripe="true" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="search_spHeight">
 					<el-table-column label="歌曲">
 						<template slot-scope="scope">
 							<router-link tag="a" :to="{path:'/user/songdetail',query:{id:scope.row.id}}">
@@ -21,7 +21,7 @@
 					</el-table-column>
 					<el-table-column label=" ">
 						<template slot-scope="scope">
-							<span v-if="scope.row.Flag"> <el-button icon="el-icon-caret-right" circle v-on:click="playSong(scope.row)"></el-button> </span>
+							<span v-if="scope.row.Flag"> <el-button icon="el-icon-caret-right" circle v-on:click="playSong(scope.$index)"></el-button> </span>
 							<span v-if="scope.row.Flag"> 
 								<el-dropdown trigger="click" placement="bottom-start" @visible-change="handle(scope.row,$event)" @command="handleSongCommand">
 									<el-button icon="el-icon-plus" circle></el-button>
@@ -205,8 +205,8 @@
 			}
 		},
 		methods: {
-			playSong: function() {
-
+			playSong: function(index) {
+				this.$store.dispatch("play", [this.songList, index, false]);
 			},
 			cur_title: function(title) {
 				this.curTitle = title;
@@ -257,7 +257,9 @@
 					this.newPlaylist.info=command.params.id;
 				}
 				else if(command.type=="playqueue"){
-					
+					var song = this.songList[command.params];
+					var songs = [song];
+					this.$store.dispatch("addToSongList", songs);
 				}
 				else{
 					this.addSongToPlaylist(command.param2.id,command.param1);
@@ -383,7 +385,10 @@
 					for(var i = 0; i < this.songList.length; i++){
 						this.$set(this.songList[i],'Flag',false);
 						this.$set(this.songList[i],'isopen',false);
-					}				
+						this.songList[i].image = this.serverUrl + this.songList[i].image;
+						this.songList[i].lyricsPath = this.serverUrl + this.songList[i].lyricsPath;
+						this.songList[i].filePath = this.serverUrl + this.songList[i].filePath
+					}
 				})
 				.catch(function (error) {
 					console.log(error);
@@ -507,7 +512,7 @@
 		margin: 10px 100px;
 	}
 
-	.spHeight td{
+	.search_spHeight td{
 		height: 65px;
 	}
 
