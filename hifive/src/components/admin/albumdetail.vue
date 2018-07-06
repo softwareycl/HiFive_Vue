@@ -2,7 +2,7 @@
   <div class="wrapper">
     <v-head></v-head>
     <div v-if="this.state.isLogin" id="albumdetail" :data="album">
-      <el-row :gutter="50">
+      <el-row :gutter="50" style="background: linear-gradient(#F2F2F2, #FFFFFF);">
         <el-col :span="4" :offset="3">
           <div>
             <img align=right style="width:230px;height:230px;margin-top:20px" :src=album.image>
@@ -656,11 +656,6 @@
 }
 .el-popover{
   width:550px;
-  height:200px;
-  word-wrap: break-word; 
-  word-break: normal; 
-  overflow-x:hidden;
-  overflow-y:scroll;
 }
 .font_albumName{
   font-family:"Microsoft YaHei";
