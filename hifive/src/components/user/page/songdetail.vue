@@ -90,6 +90,7 @@
 		created() {
 			// sessionStorage.setItem('songDetail_id', this.$route.query.id);
 			this.id = this.$route.query.id;
+			window.scrollTo(0,0);
 		},
 		mounted() {
 			this.isLogin=this.state.isLogin;
@@ -304,7 +305,8 @@
 					this.song = res.data;
 					if(this.song.image == null) {
 						this.song.image = "../../../assets/暂无图片.png";
-					} else
+					}
+					else
 						this.song.image = this.serverUrl + this.song.image;
 					this.song.lyricsPath = this.serverUrl + this.song.lyricsPath;
 					this.song.releaseDate = this.timestampToTime(this.song.releaseDate);
