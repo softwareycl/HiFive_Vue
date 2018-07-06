@@ -655,7 +655,7 @@
 }
 .el-popover{
   width:550px;
-  height:150px;
+  height:200px;
   word-wrap: break-word; 
   word-break: normal; 
   overflow-x:hidden;
