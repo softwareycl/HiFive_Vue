@@ -1,11 +1,11 @@
 <template>
     <div class="wrapper">
         <v-head></v-head>
-        <div v-if="this.state.isLogin" style="width:100%;height:1250px;">
+        <div v-if="this.state.isLogin">
             <div :data="user" class="background" :style="background">
                 <div style="width:100%;height:315px;">
                     <img :src="user.image" class="userImage">
-            	    <p align=center style="font-size: x-large;color:white;">{{user.name}}</p>
+                    <p align=center style="font-size: x-large;color:white;">{{user.name}}</p>
                 </div>
                 <el-dialog title="创建歌单" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
                     <el-form :model="newPlaylist" :rules="rules" ref="newPlaylist" label-width="100px">
@@ -81,7 +81,8 @@
                             <el-tab-pane>
                                 <span class="tab2" slot="label">专辑 {{allAlbum.length}}</span>
                                 <div>
-                                    <el-table :data="albumList" :stripe=true style="width: 100%;margin-top:30px;" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">    <el-table-column label="专辑">
+                                    <el-table :data="albumList" :stripe=true style="width: 100%;margin-top:30px;" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">    
+                                        <el-table-column label="专辑">
                                             <template slot-scope="scope">
                                                 <router-link :to="{ path: '/user/albumdetail', query: { id: scope.row.id }}">
                                                     <span class="font_link" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.name}}</span>
@@ -106,7 +107,7 @@
                                         </el-table-column>
                                         <el-table-column label="曲目数">
                                             <template slot-scope="scope">
-                                                    <span class="font_other">{{scope.row.count}}</span>
+                                                <span class="font_other">{{scope.row.count}}</span>
                                             </template>
                                         </el-table-column>
                                         <el-table-column label="歌手">
@@ -131,46 +132,48 @@
                     <el-tab-pane>
                         <span class="tab1" slot="label">我创建的歌单</span>
                         <div>
-                           <el-button icon="el-icon-plus" style="margin-top:10px;" v-on:click="dialogVisible=true">新建歌单</el-button>
-                           <el-table :data="playlistList" :stripe=true style="width: 100%;margin-top:10px;" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">    
-                            <el-table-column label="歌单">
-                                <template slot-scope="scope">
-                                    <router-link :to="{ path: '/user/playlistdetail', query: { id: scope.row.id }}">
-                                        <span class="font_link" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.name}}</span>
-                                    </router-link>
-                                </template>
-                            </el-table-column>
-                            <el-table-column label=" ">
-                                <template slot-scope="scope">
-                                    <span v-if="scope.row.Flag"> <el-button icon="el-icon-caret-right" circle v-on:click="playPlaylist(scope.row)"></el-button></span>
-                                    <span v-if="scope.row.Flag"> 
-                                        <el-dropdown trigger="click" placement="bottom-start" @visible-change="handle(scope.row,$event)" @command="handlePlaylistCommand">
-                                            <el-button icon="el-icon-plus" circle></el-button>
-                                            <el-dropdown-menu slot="dropdown" :data="allPlaylist">
-                                                <el-dropdown-item :command='{type:"playqueue",params:scope.row}'>播放队列</el-dropdown-item>
-                                                <el-dropdown-item disabled divided>我喜欢</el-dropdown-item>
-                                                <el-dropdown-item v-for="playlist in allPlaylist" :key="playlist.id" :command='{type:"playlist",param1:playlist.id,param2:scope.row}'>{{playlist.name}}</el-dropdown-item>
-                                                <el-dropdown-item :command='{type:"newplaylist",params:scope.row}' divided>添加到新歌单</el-dropdown-item>
-                                            </el-dropdown-menu>
-                                        </el-dropdown>
-                                    </span>
-                                </template>
-                            </el-table-column>
-                            <el-table-column label="曲目数">
-                                <template slot-scope="scope">
-                                    <span class="font_other">{{scope.row.count}}</span>
-                                </template>
-                            </el-table-column>
-                            <el-table-column label=" ">
-                                <template slot-scope="scope">
-                                    <span v-if="scope.row.Flag"><el-button icon="el-icon-delete" circle v-on:click="deletePlaylist(scope.row,scope.$index)"></el-button></span>
-                                </template>
-                            </el-table-column>
-                        </el-table>
-                        <el-pagination v-if="allPlaylist.length>10" :current-page.sync=currentPageOfPlaylist align=center layout="prev, pager, next" :total="allPlaylist.length" @current-change="playlistPaginationChange"></el-pagination>
-                    </div>
+                            <el-button icon="el-icon-plus" style="margin-top:10px;" v-on:click="dialogVisible=true">新建歌单</el-button>
+                            <el-table :data="playlistList" :stripe=true style="width: 100%;margin-top:10px;" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">    
+                                <el-table-column label="歌单">
+                                    <template slot-scope="scope">
+                                        <router-link :to="{ path: '/user/playlistdetail', query: { id: scope.row.id }}">
+                                            <span class="font_link" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.name}}</span>
+                                        </router-link>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column label=" ">
+                                    <template slot-scope="scope">
+                                        <span v-if="scope.row.Flag"> <el-button icon="el-icon-caret-right" circle v-on:click="playPlaylist(scope.row)"></el-button></span>
+                                        <span v-if="scope.row.Flag"> 
+                                            <el-dropdown trigger="click" placement="bottom-start" @visible-change="handle(scope.row,$event)" @command="handlePlaylistCommand">
+                                                <el-button icon="el-icon-plus" circle></el-button>
+                                                <el-dropdown-menu slot="dropdown" :data="allPlaylist">
+                                                    <el-dropdown-item :command='{type:"playqueue",params:scope.row}'>播放队列</el-dropdown-item>
+                                                    <el-dropdown-item disabled divided>我喜欢</el-dropdown-item>
+                                                    <el-dropdown-item v-for="playlist in allPlaylist" :key="playlist.id" :command='{type:"playlist",param1:playlist.id,param2:scope.row}'>{{playlist.name}}</el-dropdown-item>
+                                                    <el-dropdown-item :command='{type:"newplaylist",params:scope.row}' divided>添加到新歌单</el-dropdown-item>
+                                                </el-dropdown-menu>
+                                            </el-dropdown>
+                                        </span>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column label="曲目数">
+                                    <template slot-scope="scope">
+                                        <span class="font_other">{{scope.row.count}}</span>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column label=" ">
+                                    <template slot-scope="scope">
+                                        <span v-if="scope.row.Flag"><el-button icon="el-icon-delete" circle v-on:click="deletePlaylist(scope.row,scope.$index)"></el-button></span>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                            <el-pagination v-if="allPlaylist.length>10" :current-page.sync=currentPageOfPlaylist align=center layout="prev, pager, next" :total="allPlaylist.length" @current-change="playlistPaginationChange"></el-pagination>
+                        </div>
                     </el-tab-pane>
                 </el-tabs>
+                <br style="clear:both;">
+                <br style="clear:both;">
             </div>
         </div>
         <v-foot></v-foot>
@@ -704,7 +707,7 @@ export default {
 }
 .background{
 	width:100%;
-	height:382px;
+	height:auto;
 }
 .userImage{
     width:150px;
