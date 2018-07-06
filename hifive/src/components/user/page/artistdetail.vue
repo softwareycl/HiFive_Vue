@@ -54,9 +54,8 @@
                     	<el-dropdown trigger="click" placement="bottom-start" @visible-change="handle(scope.row,$event)" @command="handleSongCommand">
                      		<el-button icon="el-icon-plus" circle></el-button>
                      			<el-dropdown-menu slot="dropdown" :data="playlistList">
-                        		<el-dropdown-item command="playqueue">播放队列</el-dropdown-item>
+                        		<el-dropdown-item :command='{type:"playqueue",params:scope.$index}'>播放队列</el-dropdown-item>
                         		 <div v-if="isLogin">
-                          		<el-dropdown-item disabled divided>我喜欢</el-dropdown-item>
                           		<el-dropdown-item v-for="playlist in playlistList" :key="playlist.id" :command='{type:"playlist",param1:playlist.id,param2:scope.row}'>{{playlist.name}}</el-dropdown-item>
                           		<el-dropdown-item command="newplaylist" divided>添加到新歌单</el-dropdown-item>
                         		 </div>
@@ -256,26 +255,11 @@
           row.isopen=event;
         },
     playAllSong:function(){
-		  this.$store.state.songList=this.artist.songList;
+		  this.$store.dispatch("play", [this.artist.songList,0,false]);
 		},
 
-		handlealbumNameCommand:function(command){
-  			if(command=="login"){
-    			window.location.href='/';
-  		}
-  			if(command=="newplaylist"){
-    			this.dialogVisible=true;
-  		}
-  		else if(command=="playqueue"){
-		//传递所有歌曲ID给player.vue
-		}
-		else{
-		//提交专辑ID和歌单ID，返回false则用户会话超时
-			console.log(command.params);
-		}
-	},
-		playSong:function(row){
-		  this.$store.state.songList=this.artist.songList[index];
+		playSong:function(index){
+		  this.$store.dispatch("play", [this.artist.songList,index,false]);
 	},
     handleSongCommand:function(command){
       if(command=="login"){
@@ -284,8 +268,11 @@
       else if(command=="newplaylist"){
         this.dialogVisible=true;
       }
-      else if(command=="playqueue"){
-        this.$store.state.songList.push(this.artist.songList[index]);
+      else if(command.type=="playqueue"){
+        var index = command.params;
+        var song = this.artist.songList[index];
+        var songs = [song];
+        this.$store.dispatch("addToSongList", songs);
       }
       else{
         this.axios.get(this.serverUrl + '/playlist/addSong',{
@@ -359,44 +346,21 @@
             }
           });
 	},
-		downloadSong:function(row){
-		if(this.isLogin){
-      this.axios.get(this.serverUrl+'/download/downloadSong',{
-        params:{
-          id:row.id
-        }
-      })
-      .then(response =>{
-        if(response){
-          this.$message({
-            showClose: true,
-            message: '下载成功',
-            type: 'success'
-          });
-        }
-        else{
-          this.$message({
-            showClose: true,
-            message: '下载失败',
-            type: 'error'
-          });
-        }
-      })
-      .catch(function(err){
-        console.log(err);
-      });
-    }
-    else{
-      //询问要不要登录
-      this.$confirm('还未登录,是否现在登录?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-      }).then(() => {
-        window.location.href='/';
-      }).catch(() => {
-      });
-    }
-},
+    downloadSong:function(row){
+            if(this.isLogin){
+                window.location.href = this.serverUrl + "/download/downloadSong?id=" + row.id;
+            } else {
+                //询问要不要登录
+                this.$confirm('还未登录,是否现在登录?', '提示', {
+                  confirmButtonText: '确定',
+                  cancelButtonText: '取消',
+                }).then(() => {
+                  window.location.href='/';
+                }).catch(() => {
+                });
+            }
+        },
+
 
     timestampToTime: function(timestamp) {
         var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
