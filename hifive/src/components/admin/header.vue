@@ -31,6 +31,9 @@
 					this.$store.state.user = JSON.parse(sessionStorage.getItem('user'));
 					this.$store.state.search.name = sessionStorage.getItem('inputTxt');
 				}
+				else {
+					this.$router.push('/');
+				}
 			}
 		},
 		mounted () {

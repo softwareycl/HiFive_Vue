@@ -27,7 +27,10 @@
 							<span class="font_other">发行时间 : {{song.releaseDate}}</span>
 						</div>
 						<div style="margin-top:20px">
-							<el-button type="primary" icon="el-icon-edit" style="background-color:#31C27C" onmouseover="this.style.backgroundColor='#2CAF6F';" onmouseout="this.style.backgroundColor='#31C27C';" v-on:click="edit">编辑</el-button>
+							<el-button type="primary" icon="el-icon-edit" style="background-color:#31C27C;display:block;float:left;margin-right:10px" onmouseover="this.style.backgroundColor='#2CAF6F';" onmouseout="this.style.backgroundColor='#31C27C';" v-on:click="edit">编辑</el-button>
+							<el-upload action="http://192.168.20.99:8080/hifive/upload/uploadSongFile" :data={id:this.song.id} :on-success="uploadSongSuccess" :on-error="handleError" style="height:90px;float:left;margin-right:10px">
+								<el-button slot="trigger">上传歌曲文件</el-button>
+							</el-upload>
 							<el-button icon="el-icon-delete" v-on:click="deleteSong">删除</el-button>
 						</div>
 					</div>
@@ -37,9 +40,8 @@
 				<el-col :span="8" :offset="3">
 					<div style="margin-bottom:30px;">
 						<p class="font_songLry" style="font-size:20px">歌词</p>
-						<el-upload class="lyr-uploader" action="http://192.168.20.99:8080/hifive/upload/uploadLyrics" :data={id:this.song.id} :limit="1" :on-exceed="exceedTip" :on-success="handleLyrSuccess">
+						<el-upload class="lyr-uploader" action="http://192.168.20.99:8080/hifive/upload/uploadLyrics" :data={id:this.song.id} :on-success="handleLyrSuccess" :on-error="handleError">
 							<el-button slot="trigger" size="small" type="primary">上传歌词</el-button>
-
 						</el-upload>
 						<div v-bind:class="{fold: isfold}" id="lyr"></div>
 						<button v-if="isfold" @click="isfold = false" style="border:0px;background-color:transparent;margin-top:10px;outline:none;cursor:pointer;color:#31C27C">[展开]</button>
@@ -54,7 +56,7 @@
 					</el-form-item>
 					<el-form-item label="歌曲图片" prop="image">
 						<img :src="editSong.image" class="avatar" style="margin-right:20px">
-						<el-upload class="avatar-uploader" ref="upload" :data={id:editSong.id} :on-change="previewImg" action="http://192.168.20.99:8080/hifive/upload/uploadSongImage" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload" :on-error="handleLyrError" accept=".jpg, .jpeg, png" :auto-upload="false">
+						<el-upload class="avatar-uploader" ref="upload" :data={id:editSong.id} :on-change="previewImg" action="http://192.168.20.99:8080/hifive/upload/uploadSongImage" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload" :on-error="handleError" accept=".jpg, .jpeg, png" :auto-upload="false">
 							<el-button slot="trigger" size="small" type="primary">点击更改图片</el-button>
 							<div>
 								<div>图片大小不超过2M</div>				
@@ -85,7 +87,7 @@
 					</el-form-item>
 					<el-form-item label="发行时间" prop="releaseDate">
 						<!-- <el-input v-model="editSong.artistName" ></el-input> -->
-						<el-date-picker type="date" :placeholder="editSong.releaseDate" v-model="editSong.releaseDate" style="width: 100%;"></el-date-picker>
+						<el-date-picker type="date" placeholder="请选择发行时间" format="yyyy年 MM月 dd日" value-format="yyyy-MM-dd" v-model="editSong.releaseDate" style="width: 100%;"></el-date-picker>
 					</el-form-item>
 					<el-form-item>
 						<el-button type="primary" @click="finishEdit('editSong')">完成</el-button>
@@ -185,7 +187,6 @@
 		},
 		methods: {
 			deleteSong:function(){ 
-				alert(this.song.name);
 				this.$confirm('确认删除？')
 				.then(_ => {
 					this.axios.get(this.serverUrl+'/song/removeSong',{
@@ -378,7 +379,7 @@
 					fileList.splice(0, 1);
 				}
 			},
-			handleLyrError: function(err) {
+			handleError: function(err) {
 				console.log(err);
 				alert('上传失败');
 				return;
@@ -404,6 +405,22 @@
 						console.log(error);
 					});
 					this.editSong.lyricsPath = this.song.lyricsPath;
+					alert('上传成功');
+				})
+				.catch(function (error) {
+					console.log(error);
+				});
+			},
+			uploadSongSuccess: function() {
+				this.axios.get(this.$store.state.serverUrl + "/song/getInfo", {
+					params: {
+						id: this.song.id,
+					}
+				})
+				.then(res => {
+					this.song.filePath = this.$store.state.serverUrl + res.data.filePath;
+					this.editSong.filePath = this.song.filePath;
+					alert('上传成功');
 				})
 				.catch(function (error) {
 					console.log(error);
@@ -418,9 +435,9 @@
 				}
 				return number;
 			},
-			exceedTip: function() {
-				this.$message('每次最多上传一个文件');
-			},
+			// exceedTip: function() {
+			// 	this.$message('每次最多上传一个文件');
+			// },
 		},
 	};
 </script>
