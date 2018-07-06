@@ -273,7 +273,6 @@ export default {
             })
             .then(response =>{
               if(response){
-                this.getMyPlaylist();
                 this.$message({
                   showClose: true,
                   message: '已成功添加到歌单',
@@ -355,7 +354,6 @@ export default {
             })
             .then(response =>{
               if(response){
-                this.getMyPlaylist();
                 this.$message({
                   showClose: true,
                   message: '已成功添加到歌单',
@@ -519,16 +517,15 @@ export default {
                   }
                   else if(this.newPlaylist.type=="song"){
                     this.addSongToPlaylist(this.newPlaylist.info,response.data);
+                    this.getMyPlaylist(1);
                   }
                   else if(this.newPlaylist.type=="album"){
                     this.addAlbumToPlaylist(this.newPlaylist.info,response.data);
+                    this.getMyPlaylist(1);
                   }
                   else{
                     this.addPlaylistToPlaylist(this.newPlaylist.info,response.data);
-                    this.getMyPlaylist();
-                    console.log(this.allPlaylist.length);
-                    this.playlistPaginationChange(Math.floor((this.allPlaylist.length-1)/10)+1);
-                    console.log(this.allPlaylist.length);
+                    this.getMyPlaylist(Math.floor((this.allPlaylist.length-1)/10)+1);
                   }
                   this.dialogVisible=false;
                   this.$refs["newPlaylist"].resetFields();
@@ -563,7 +560,7 @@ export default {
           if(D < 10) D = '0' + D;
           return Y+M+D;
         },
-        getMyPlaylist:function(){
+        getMyPlaylist:function(page){
             this.axios.get(this.serverUrl + "/user/showMyMusic", {
                 params: {
                     id: this.user.id
@@ -577,9 +574,9 @@ export default {
                     this.$set(this.allPlaylist[i],'Flag',false);
                     this.$set(this.allPlaylist[i],'isopen',false);
                 }
-                console.log(this.allPlaylist.length);
                 this.state.playlistList=this.allPlaylist;
                 sessionStorage.setItem('playlistList', JSON.stringify(this.state.playlistList));
+                this.playlistPaginationChange(page);
             })
             .catch(function (error) {
                 console.log(error);
