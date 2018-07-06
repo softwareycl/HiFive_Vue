@@ -3,7 +3,7 @@
 		<v-head></v-head>
 		<v-nav></v-nav>
 		<div class="song_detail">
-			<el-row :gutter="50">
+			<el-row :gutter="50" style="background: linear-gradient(#F2F2F2, #FFFFFF);">
 				<el-col :span="4" :offset="4">
 					<div>
 						<img align=right style="margin-top:25px;height:235px;width:235px" :src="song.image">
@@ -412,7 +412,7 @@
 <style scoped>
 	.song_detail {
 		min-height: 600px;
-		padding: 30px;
+		padding: 5px 30px;
 	}
 	.font_songName{
 		font-family:"Microsoft YaHei";
