@@ -26,6 +26,21 @@ export default{
 	        state.currentIndex = startIndex;
 		} else {
 			var song = params[0];
+			if(state.currentSong.id == song.id){
+				var audio = player.methods.getAudio();
+				audio.currentTime = 0;
+				return;
+			}
+
+			for(var i = 0; i < state.songList.length; i++){
+                if(state.songList[i].id == song.id){
+                    state.songList.splice(i, 1);
+                    if(i < state.currentIndex)
+                        state.currentIndex=state.currentIndex-1;
+                    break;
+                }
+            }
+
 			++state.currentIndex;
 			state.songList.splice(state.currentIndex, 0, song);
 			state.currentSong = state.songList[state.currentIndex];

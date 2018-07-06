@@ -229,6 +229,7 @@
         singers: [],
         popoverVisible:false,
         imageUrl:'',
+        hasChangeImage: false,
         items:['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'],      
         rules: {
             name: [
@@ -424,10 +425,12 @@
       },
       //上传歌手图片
       addImage:function(file){
+        this.hasChangeImage = true;
         this.ruleForm.image=file.url;
       },
       handleAvatarSuccess: function() {
         alert("上传成功");
+        this.singerDisplay(0,'@',0,1);
       },
       beforeAvatarUpload(file) {
         const isType = file.type === 'image/jpg'||'image/jpeg'||'image/png';
@@ -439,7 +442,7 @@
         if (!isLt2M) {
           this.$message.error('上传图片大小不能超过 2MB!');
         }
-        return isType && isLt2M;
+        return (isType && isLt2M);
       },
 
       addArtist: function(){
@@ -463,10 +466,12 @@
             .then(response =>{
               if(response!=-1){
                 this.ruleForm.id=response.data;
-                alert(this.ruleForm.id);
-                this.$nextTick(() => {
-                  this.$refs.uploadImage.submit(); 
-                });
+                if(this.hasChangeImage){
+                  this.$nextTick(() => {
+                    this.$refs.uploadImage.submit(); 
+                  });
+                }
+                
                 this.$refs.ruleForm.resetFields();          
                 this.popoverVisible=false;                
                 this.$message({
@@ -474,7 +479,10 @@
                   message: '歌手添加成功',
                   type: 'success'
                 });
-                this.singerDisplay(0,'@',0,1);
+                if(!hasChangeImage){
+                  this.singerDisplay(0,'@',0,1);
+                }
+                
               }
               else{
                 this.$message({
