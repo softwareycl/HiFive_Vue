@@ -59,8 +59,8 @@
           </el-form-item>
           <el-form-item label="图片：" prop="image">
             <img :src="editArtist.image" class="avatar" style=" width: 150px; height: 150px; margin-right: 20px;">
-            <el-upload class="avatar-uploader" ref="upload1" :on-change="previewImg"
-            action="http://192.168.20.99:8080/hifive/upload/uploadArtistImage" :data={id:artist.id} :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload" accept=".jpg, .jpeg, png" :auto-upload="false" >
+            <el-upload class="avatar-uploader" ref="upload1" :on-change="editImage"
+            action="http://192.168.20.99:8080/hifive/upload/uploadArtistImage" :data={id:artist.id} :show-file-list="false" :on-success="upload1Success" :before-upload="beforeAvatarUpload" accept=".jpg, .jpeg, png" :auto-upload="false" >
             <el-button slot="trigger" size="small" type="primary" style="margin-top: 20px;" @click="ischanged=true">点击选择图片</el-button>
             <div style="margin-top: 10px;">
               <div>图片大小不超过2M</div>        
@@ -127,7 +127,7 @@
           </div>
           <div>
             <el-form-item style="margin-left: 200px; margin-top: 50px">
-            <el-button type="primary" @click="submitForm">完成</el-button>
+            <el-button type="primary" @click="uploadForm">完成</el-button>
             <el-button @click="editDialogVisible=false">取消</el-button>
           </el-form-item>
           </div>
@@ -139,11 +139,11 @@
             <el-input v-model="addAlbum.name" clearable></el-input>
           </el-form-item>
           <el-form-item label="封面：" prop="image">
-           <img :src="addAlbum.image" class="avatar" style=" width: 150px; height: 150px;">
-            <el-upload class="avatar-uploader" ref="upload2" :on-change="previewImg2"
-            action="http://192.168.20.99:8080/hifive/upload/uploadAlbumImage" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload" accept=".jpg, .jpeg, png" :auto-upload="false" :data={id:addAlbum.id}>
+            <el-upload class="avatar-uploader" ref="upload2" :on-change="addImage" :data={id:addAlbum.id}
+            action="http://192.168.20.99:8080/hifive/upload/uploadAlbumImage" :show-file-list="false" :on-success="upload2Success" :before-upload="beforeAvatarUpload" accept=".jpg, .jpeg, .png" :auto-upload="false" >
+            <img :src="addAlbum.image" class="avatar" style=" width: 150px; height: 150px; margin-right: 20px;">
             <el-button slot="trigger" size="small" type="primary" @click="isadded=true">点击选择图片</el-button>
-            <div>
+            <div style="margin-top: 10px;">
               <div>图片大小不超过2M</div>        
               <div>上传图片格式为:jpg/jpeg/png</div>
             </div>
@@ -268,7 +268,7 @@
           intro:'',
         },
         albumView:[],
-        addAlbum:{},
+        addAlbum:{id:''},
         regionOptions: [{
           value: '内地',
           label: '内地',
@@ -401,6 +401,7 @@
 
     created() {
       this.artist.id = this.$route.query.id;
+      window.scrollTo(0,0);
     },
 
     mounted(){
@@ -413,7 +414,7 @@
     },
 
     A_pagination: function(_albums,_albumPage){
-      this.albumPageCount = Math.ceil(parseFloat(_albums.length) / 8);
+      this.albumPageCount = Math.ceil(parseFloat(_albums.length) / 4);
       if(_albumPage != this.albumPage){
         this.albumPage = _albumPage;
         this.albumView.splice(0,this.albumView.length);
@@ -458,74 +459,81 @@
         .catch(_ => {});
     },
 
-    submitForm: function() {
+    uploadForm: function() {
       this.$refs["editArtist"].validate((valid) => {
         if(valid) {
-        	if(this.editArtist.region == '内地') {this.editArtist.region = '1';}
-        	else if(this.editArtist.region == '港台') {this.editArtist.region = '2';}
-        	else if(this.editArtist.region == '欧美') {this.editArtist.region = '3';}
-        	else if(this.editArtist.region == '日韩') {this.editArtist.region = '4';}
-        	else if(this.editArtist.region == '其他') {this.editArtist.region = '5';}
-
-
-	        this.axios.post(this.serverUrl+'/artist/modifyArtist',{
-	          id:this.editArtist.id,
-	          name:this.editArtist.name,
-	          image:this.editArtist.image,
-	          initial:this.editArtist.initial,
-	          region:this.editArtist.region,
-	          gender:this.editArtist.gender,
-	          country:this.editArtist.country,
-	          intro:this.editArtist.intro,
-	          birthplace:this.editArtist.birthplace,
-	          occupation:this.editArtist.occupation,
-	          birthday:this.editArtist.birthday,
-	          representative:this.editArtist.representative,
-      })
-      .then(response => {
-        if(response) {
           if(this.ischanged){
-        	this.$refs.upload1.submit();
-      		}
-          this.albumView.splice(0,this.albumView.length);
-          this.getArtistInfo(this.editArtist.id);
-          this.editDialogVisible = false;
-          this.$message({
-            showClose:true,
-            message:'歌手信息编辑成功',
-            type:'success'
-          });
+        	 this.$refs.upload1.submit();
+           this.ischanged = false;
+      		} else{
+            this.submitForm();
         }
-        else{
-          this.$message({
-            showClose:true,
-            message:'会话超时',
-            type:'error'
-          });
-        }
-        this.$router.go(0);
+        // this.$router.go(0);
+      }  else {
+        this.$message({
+          showClose: true,
+          message: '格式不正确',
+          type: 'error'
+        });
+      }
+    });
+  },
+
+  submitForm: function() {
+      
+    if(this.editArtist.region == '内地') {this.editArtist.region = '1';}
+    else if(this.editArtist.region == '港台') {this.editArtist.region = '2';}
+    else if(this.editArtist.region == '欧美') {this.editArtist.region = '3';}
+    else if(this.editArtist.region == '日韩') {this.editArtist.region = '4';}
+    else if(this.editArtist.region == '其他') {this.editArtist.region = '5';}
+
+
+    this.axios.post(this.serverUrl+'/artist/modifyArtist',{
+      id:this.editArtist.id,
+      name:this.editArtist.name,
+      image:this.editArtist.image,
+      initial:this.editArtist.initial,
+      region:this.editArtist.region,
+      gender:this.editArtist.gender,
+      country:this.editArtist.country,
+      intro:this.editArtist.intro,
+      birthplace:this.editArtist.birthplace,
+      occupation:this.editArtist.occupation,
+      birthday:this.editArtist.birthday,
+      representative:this.editArtist.representative,
+    })
+    .then(response => {
+      if(response) {
+        this.albumView.splice(0,this.albumView.length);
+        this.getArtistInfo(this.editArtist.id);
+        this.editDialogVisible = false;
+        this.$message({
+          showClose:true,
+          message:'歌手信息编辑成功',
+          type:'success'
+        });
+      }
+      else{
+        this.$message({
+          showClose:true,
+          message:'会话超时',
+          type:'error'
+        });
+      }
+        // this.$router.go(0);
       })
       .catch(function(err){
         console.log(err);
       });
-    }
-        else {
-      this.$message({
-        showClose: true,
-        message: '格式不正确',
-        type: 'error'
-      });
-      return false;
-    }
-  });
   },
+
 
     submitForm1: function() {
       this.$refs["addAlbum"].validate((valid) => {
         if(valid) {
         	this.addDialogVisible=false;
 
-            if(this.addAlbum.region == '内地') this.addAlbum.region = '1';
+          if(this.addAlbum.region == '内地') this.addAlbum.region = '1';
         	else if(this.addAlbum.region == '港台') this.addAlbum.region = '2';
         	else if(this.addAlbum.region == '欧美') this.addAlbum.region = '3';
         	else if(this.addAlbum.region == '日韩') this.addAlbum.region = '4';
@@ -540,24 +548,27 @@
         	else if(this.addAlbum.style == '其他') this.addAlbum.style = 7;
         		
           this.axios.post(this.serverUrl+'/album/addAlbum',{
-        	id:this.addAlbum.id,
-          	name:this.addAlbum.name,
-	        image:this.addAlbum.image,
-	        artistId:this.artist.id,
-	        region:this.addAlbum.region,
-	        style:this.addAlbum.style,
-	        releaseDate:this.addAlbum.releaseDate,
+            name:this.addAlbum.name,
+  	        artistId:this.artist.id,
+  	        region:this.addAlbum.region,
+  	        style:this.addAlbum.style,
+  	        releaseDate:this.addAlbum.releaseDate,
             intro:this.addAlbum.intro,
       })
       .then(response =>{
-      	if(this.isadded){
-      		this.$refs.upload2.submit();
-      	}
-        if(response != -1) {
+        if(response.data != -1) {
           this.addAlbum.id = response.data;
-          this.getArtistInfo();
+          this.$refs["addAlbum"].resetFields();
+          if(this.isadded){
+            this.$nextTick(() => {
+            this.$refs.upload2.submit();
+          });
+            this.isadded = false;
+          } 
+          
+          this.albumView.splice(0,this.albumView.length);
+          
           this.editDialogVisible=false;
-          this.albumView.push(this.addAlbum);
           this.$message({
             showClose: true,
             message: '专辑添加成功',
@@ -571,7 +582,7 @@
             type: 'error'
           });
         }
-        this.$router.go(0);
+        //this.$router.go(0);
       })
       .catch(function(err){
         console.log(err);
@@ -588,19 +599,29 @@
       });
     },
 
-    previewImg: function(file) {
+    editImage:function(file,filelist){
         this.editArtist.image = file.url;
+        if(filelist.length>1){
+          filelist.splice(0,1);
+      }
     },
 
-    previewImg2: function(file) {
+    upload1Success:function(){
+      this.submitForm();
+    },
+
+    addImage: function(file,filelist) {
         this.addAlbum.image = file.url;
+        if(filelist.length>1){
+          filelist.splice(0,1);
+        }
     },
 
     beforeAvatarUpload: function(file) {
-      const isJPG = file.type === 'image/jpeg';
+      const isJPG = file.type === 'image/jpg'||'image/jpeg'||'image/png';
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isJPG) {
-        this.$message.error('上传头像图片只能是 JPG 格式!');
+        this.$message.error('上传头像图片只能是jpg/jpeg/png格式!');
       }
       if (!isLt2M) {
         this.$message.error('上传图片大小不能超过 2MB!');
@@ -609,14 +630,14 @@
       return isJPG && isLt2M;
     },
 
-    handleAvatarSuccess: function() {
-        alert("上传成功");
+    upload2Success: function() {
+        this.getArtistInfo(this.artist.id);
     },
 
     getArtistInfo: function(artistId){
       this.axios.get(this.serverUrl+'/artist/getInfo',{
         params:{
-          id:this.artist.id
+          id: artistId
         }
       })
       .then(response => {
@@ -628,8 +649,13 @@
             this.artist.image = this.serverUrl + this.artist.image;
           }
           this.artist.birthday = this.timestampToTime(this.artist.birthday);
+          
           for (var i = 0; i < this.artist.albumList.length; i++) {
-            this.artist.albumList[i].image = this.serverUrl + this.artist.albumList[i].image;
+            if(this.artist.albumList[i].image == null){
+              this.artist.albumList[i].image = emptyImage;
+            } else {
+              this.artist.albumList[i].image = this.serverUrl + this.artist.albumList[i].image;
+            }
             }
             this.A_pagination(this.artist.albumList,this.albumPage);
           })
@@ -740,4 +766,10 @@
         color: #31c27c;
       }
     }
+  .avatar {
+    width: 140px;
+    height: 140px;
+    float: left;
+    display: block;
+  }
   </style>
