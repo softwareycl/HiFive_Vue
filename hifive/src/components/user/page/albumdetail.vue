@@ -188,7 +188,7 @@
       }
     },
     playAllSong:function(){
-      
+      this.$store.dispatch("play", [this.songList, 0, false]);
     },
     collect:function(){
       if(this.isLogin){
@@ -274,7 +274,7 @@
         this.newPlaylist.info=this.album.id;
       }
       else if(command=="playqueue"){
-        
+        this.$store.dispatch("addToSongList", this.songList);
       }
       else{
         this.addAlbumToPlaylist(command.params);
@@ -308,14 +308,16 @@
       });
     },
     playSong:function(index){
-      
+      this.$store.dispatch("play", [this.songList, index, false]);
     },
     handleSongCommand:function(command){
       if(command=="login"){
         window.location.href='/';
       }
       else if(command.type=="playqueue"){
-        
+        var song=this.songList[command.params];
+        var songs=[song];
+        this.$store.dispatch("addToSongList",songs);
       }
       else if(command.type=="newplaylist"){
         this.dialogVisible=true;
@@ -441,6 +443,14 @@
         this.album.style = this.style[this.album.style];
         this.songList = this.album.songList;
         for(var i = 0; i < this.songList.length; i++){
+          if(this.songList[i].image==null){
+            this.songList[i].image=require('../../../assets/暂无图片.png');
+          }
+          else{
+            this.songList[i].image=this.serverUrl+this.songList[i].image;
+          }
+          this.songList[i].filePath=this.serverUrl+this.songList[i].filePath;
+          this.songList[i].lyricsPath=this.serverUrl+this.songList[i].lyricsPath;
           this.$set(this.songList[i],'Flag',false);
           this.$set(this.songList[i],'isopen',false);
         }

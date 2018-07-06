@@ -270,14 +270,16 @@ export default {
             row.isopen=event;
         },
         playAllSong:function(){
-            
+            this.$store.dispatch("play", [this.allSong, 0, false]);
         },
         playSong:function(index){
-            
+            this.$store.dispatch("play", [this.songList, index, false]);
         },
         handleSongCommand:function(command){
           if(command.type=="playqueue"){
-            
+            var song=this.songList[command.params];
+            var songs=[song];
+            this.$store.dispatch("addToSongList",songs);
           }
           else if(command.type=="newplaylist"){
             this.dialogVisible=true;
@@ -358,12 +360,44 @@ export default {
             })
             .catch(_ => {});
         },
-        playAlbum:function(){
-            
+        playAlbum:function(row){
+            this.axios.get(this.serverUrl+'/album/getSongsFromAlbum',{
+              params:{
+                id:row.id,
+              }
+            })
+            .then(response =>{
+                var songs = response.data;
+                for(var i = 0; i < songs.length; i++){
+                    songs[i].image = this.serverUrl + songs[i].image;
+                    songs[i].filePath = this.serverUrl + songs[i].filePath;
+                    songs[i].lyricsPath = this.serverUrl + songs[i].lyricsPath;
+                }
+                this.$store.dispatch("play", [songs, 0, false]); 
+            })
+            .catch(function(err){
+              console.log(err);
+            });
         },
         handleAlbumCommand:function(command){
           if(command.type=="playqueue"){
-            //
+            this.axios.get(this.serverUrl+'/album/getSongsFromAlbum',{
+              params:{
+                id:command.params.id,
+              }
+            })
+            .then(response =>{
+                var songs = response.data;
+                for(var i = 0; i < songs.length; i++){
+                    songs[i].image = this.serverUrl + songs[i].image;
+                    songs[i].filePath = this.serverUrl + songs[i].filePath;
+                    songs[i].lyricsPath = this.serverUrl + songs[i].lyricsPath;
+                }
+                this.$store.dispatch("addToSongList", songs); 
+            })
+            .catch(function(err){
+              console.log(err);
+            });
           }
           else if(command.type=="newplaylist"){
             this.dialogVisible=true;
@@ -442,12 +476,44 @@ export default {
             })
             .catch(_ => {});
         },
-        playPlaylist:function(){
-
+        playPlaylist:function(row){
+          this.axios.get(this.serverUrl+'/playlist/getSongs',{
+              params:{
+                id:row.id,
+              }
+            })
+            .then(response =>{
+                var songs = response.data;
+                for(var i = 0; i < songs.length; i++){
+                    songs[i].image = this.serverUrl + songs[i].image;
+                    songs[i].filePath = this.serverUrl + songs[i].filePath;
+                    songs[i].lyricsPath = this.serverUrl + songs[i].lyricsPath;
+                }
+                this.$store.dispatch("play", [songs,0,false]); 
+            })
+            .catch(function(err){
+              console.log(err);
+            });
         },
         handlePlaylistCommand:function(command){
           if(command.type=="playqueue"){
-            //
+            this.axios.get(this.serverUrl+'/playlist/getSongs',{
+              params:{
+                id:command.params.id,
+              }
+            })
+            .then(response =>{
+                var songs = response.data;
+                for(var i = 0; i < songs.length; i++){
+                    songs[i].image = this.serverUrl + songs[i].image;
+                    songs[i].filePath = this.serverUrl + songs[i].filePath;
+                    songs[i].lyricsPath = this.serverUrl + songs[i].lyricsPath;
+                }
+                this.$store.dispatch("addToSongList", songs); 
+            })
+            .catch(function(err){
+              console.log(err);
+            });
           }
           else if(command.type=="newplaylist"){
             this.dialogVisible=true;

@@ -470,6 +470,16 @@ export default {
               .then(response => {
                 var rank;
                 rank = response.data;
+                for(var i = 0; i < rank.length; i++){
+                    if(rank[i].image==null){
+                        rank[i].image=require('../../../assets/暂无图片.png');
+                    }
+                    else{
+                        rank[i].image=this.serverUrl+rank[i].image;
+                    }
+                    rank[i].filePath=this.serverUrl+rank[i].filePath;
+                    rank[i].lyricsPath=this.serverUrl+rank[i].lyricsPath;
+                }
                 for(var i = rank.length; i < 4; i++){
                     rank.push(song);
                 }
