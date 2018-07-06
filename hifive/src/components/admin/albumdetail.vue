@@ -122,7 +122,7 @@
             </el-date-picker>
           </el-form-item>
           <el-form-item style="margin-left:25%;">
-            <el-button type="primary" @click="uploadForm2">完成</el-button>
+            <el-button type="primary" @click="submitForm2">完成</el-button>
             <el-button @click="addDialogVisible=false">取消</el-button>
           </el-form-item>
         </el-form>
@@ -437,10 +437,54 @@
           console.log(err);
         });
       },
-      uploadForm2:function(){
+      upload2Success:function(){
+        this.$refs.upload3.submit();
+      },
+      upload3Success:function(){
+        this.$refs.upload4.submit();
+      },
+      upload4Success:function(){
+        this.addDialogVisible=false;
+        this.$message({
+          showClose: true,
+          message: '上传成功',
+          type: 'success'
+        });
+      },
+      submitForm2:function(){
         this.$refs["addSong"].validate((valid) => {
           if (valid) {
-            this.$refs.upload2.submit();
+            this.axios.post(this.serverUrl+'/song/addSong',{
+              name:this.addSong.name,
+              albumId:this.album.id,
+              language:this.addSong.language,
+              style:this.addSong.style,
+              releaseDate:this.addSong.releaseDate,
+            })
+            .then(response =>{
+              if(response.data!=-1){
+                this.addSong.id=response.data;
+                this.$nextTick(()=>{
+                  this.$refs.upload2.submit();
+                });
+                this.getAlbumInfo();
+                this.$message({
+                  showClose: true,
+                  message: '歌曲添加成功',
+                  type: 'success'
+                });
+              }
+              else{
+                this.$message({
+                  showClose: true,
+                  message: '会话超时',
+                  type: 'error'
+                });
+              }
+            })
+            .catch(function(err){
+              console.log(err);
+            });
           }
           else {
             this.$message({
@@ -449,46 +493,6 @@
               type: 'error'
             });
           }
-        });
-      },
-      upload2Success:function(){
-        this.$refs.upload3.submit();
-      },
-      upload3Success:function(){
-        this.$refs.upload4.submit();
-      },
-      upload4Success:function(){
-        this.submitForm2();
-      },
-      submitForm2:function(){
-        this.axios.post(this.serverUrl+'/song/addSong',{
-          name:this.addSong.name,
-          albumId:this.album.id,
-          language:this.addSong.language,
-          style:this.addSong.style,
-          releaseDate:this.addSong.releaseDate,
-        })
-        .then(response =>{
-          if(response!=-1){
-            this.addSong.id=response.data;
-            this.getAlbumInfo();
-            this.addDialogVisible=false;
-            this.$message({
-              showClose: true,
-              message: '歌曲添加成功',
-              type: 'success'
-            });
-          }
-          else{
-            this.$message({
-              showClose: true,
-              message: '会话超时',
-              type: 'error'
-            });
-          }
-        })
-        .catch(function(err){
-          console.log(err);
         });
       },
       deleteAlbum:function(){
@@ -626,14 +630,13 @@
     },
     mounted(){
       this.getAlbumInfo();
-      this.handleOverflow();
     },
-    updated: function (){
-    this.handleOverflow();
+    updated:function(){
+      this.handleOverflow();
     }
 }
 </script>
-<style scoped>
+<style>
 #albumdetail{
   padding: 30px;
 }
@@ -643,11 +646,11 @@
     display: block;
   }
 .spHeight td{
-  height:65px;
+  height:70px;
 }
 .el-popover{
   width:550px;
-  height:400px;
+  height:150px;
   word-wrap: break-word; 
   word-break: normal; 
   overflow-x:hidden;

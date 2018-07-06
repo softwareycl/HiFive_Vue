@@ -299,39 +299,43 @@ export default {
             window.location.href = this.serverUrl + "/download/downloadSong?id=" + row.id;
         },
         deleteSong:function(row,index){
-            this.axios.get(this.serverUrl+'/user/unlikeSong',{
-              params:{
-                songId:row.id
-              }
+            this.$confirm('确认删除？')
+            .then(_ => {
+                this.axios.get(this.serverUrl+'/user/unlikeSong',{
+                  params:{
+                    songId:row.id
+                }
             })
-            .then(response =>{
-              if(response){
-                this.allSong.splice((this.currentPageOfSong-1)*10+index,1);
-                this.state.likeSongs=this.allSong;
-                sessionStorage.setItem('likeSongs', JSON.stringify(this.state.likeSongs));
-                if(this.songList.length==1){
-                    this.songPaginationChange(this.currentPageOfSong-1);
+                .then(response =>{
+                  if(response){
+                    this.allSong.splice((this.currentPageOfSong-1)*10+index,1);
+                    this.state.likeSongs=this.allSong;
+                    sessionStorage.setItem('likeSongs', JSON.stringify(this.state.likeSongs));
+                    if(this.songList.length==1){
+                        this.songPaginationChange(this.currentPageOfSong-1);
+                    }
+                    else{
+                        this.songPaginationChange(this.currentPageOfSong);
+                    }
+                    this.$message({
+                      showClose: true,
+                      message: '歌曲已被取消收藏',
+                      type: 'success'
+                  });
                 }
                 else{
-                    this.songPaginationChange(this.currentPageOfSong);
+                    this.$message({
+                      showClose: true,
+                      message: '会话超时',
+                      type: 'error'
+                  });
                 }
-                this.$message({
-                  showClose: true,
-                  message: '歌曲已被取消收藏',
-                  type: 'success'
-                });
-              }
-              else{
-                this.$message({
-                  showClose: true,
-                  message: '会话超时',
-                  type: 'error'
-                });
-              }
             })
-            .catch(function(err){
-              console.log(err);
-            });
+                .catch(function(err){
+                  console.log(err);
+              });
+            })
+            .catch(_ => {});
         },
         playAlbum:function(){
             
@@ -703,7 +707,7 @@ export default {
 
 <style>
 .spHeight td{
-  height:65px;
+  height:70px;
 }
 .background{
 	width:100%;

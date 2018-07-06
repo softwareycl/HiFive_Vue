@@ -495,7 +495,7 @@
   padding: 30px;
 }
 .spHeight td{
-  height:65px;
+  height:70px;
 }
 .el-popover{
   width:550px;
