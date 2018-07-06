@@ -234,35 +234,39 @@
 				this.editSong.image = this.song.image;
 			},
 			finishEdit: function(_song) {
-				this.submitForm(_song);
-				if(this.flag) {
-					this.flag = false;
-					if(this.img_change) {
-						this.$refs.upload.submit();
-						this.img_change = false;
-					}
-					this.axios.post(this.$store.state.serverUrl + "/song/modifySong", {
-						id: this.editSong.id,
-						name: this.editSong.name,
-						language: this.editSong.language,
-						style: this.getStyleNumber(this.editSong.style),
-						releaseDate: this.editSong.releaseDate
-					})
-					.then(res => {
-						var tip = res.data;
-						if(tip == true) {
-							alert("修改成功");
-							this.dialogVisible = false;
-							this.getIntro(this.id);
-						}
-						else if(tip == false) {
-							alert("修改失败");
-						}
-					})
-					.catch(function (error) {
-						console.log(error);
-					});
+				if(this.img_change) {
+					this.$refs.upload.submit();
+					this.img_change = false;
 				}
+				// this.submitForm(_song);
+				// if(this.flag) {
+				// 	this.flag = false;
+				// 	if(this.img_change) {
+				// 		this.$refs.upload.submit();
+				// 		this.img_change = false;
+				// 	}
+				// 	this.axios.post(this.$store.state.serverUrl + "/song/modifySong", {
+				// 		id: this.editSong.id,
+				// 		name: this.editSong.name,
+				// 		language: this.editSong.language,
+				// 		style: this.getStyleNumber(this.editSong.style),
+				// 		releaseDate: this.editSong.releaseDate
+				// 	})
+				// 	.then(res => {
+				// 		var tip = res.data;
+				// 		if(tip == true) {
+				// 			alert("修改成功");
+				// 			this.dialogVisible = false;
+				// 			this.getIntro(this.id);
+				// 		}
+				// 		else if(tip == false) {
+				// 			alert("修改失败");
+				// 		}
+				// 	})
+				// 	.catch(function (error) {
+				// 		console.log(error);
+				// 	});
+				// }
 			},
 			submitForm:function(formName){
 				this.$refs[formName].validate((valid) => {
@@ -341,7 +345,31 @@
 			// 	this.$refs.upload.submit();
 			// },
 			handleAvatarSuccess: function() {
-				alert("上传成功");
+				this.submitForm(_song);
+				if(this.flag) {
+					this.flag = false;
+					this.axios.post(this.$store.state.serverUrl + "/song/modifySong", {
+						id: this.editSong.id,
+						name: this.editSong.name,
+						language: this.editSong.language,
+						style: this.getStyleNumber(this.editSong.style),
+						releaseDate: this.editSong.releaseDate
+					})
+					.then(res => {
+						var tip = res.data;
+						if(tip == true) {
+							alert("修改成功");
+							this.dialogVisible = false;
+							this.getIntro(this.id);
+						}
+						else if(tip == false) {
+							alert("修改失败");
+						}
+					})
+					.catch(function (error) {
+						console.log(error);
+					});
+				}
 			},
 			previewImg: function(file,fileList) {
 				this.editSong.image = file.url;
@@ -352,7 +380,7 @@
 			},
 			handleLyrError: function(err) {
 				console.log(err);
-				alert('上传图片失败');
+				alert('上传失败');
 				return;
 			},
 			handleLyrSuccess: function() {
