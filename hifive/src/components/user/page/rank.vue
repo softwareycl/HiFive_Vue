@@ -74,7 +74,7 @@
                     <el-table-column prop="index" width="50" type="index" :index="indexMethod"></el-table-column>
                     <el-table-column prop="name" label="歌曲" width="250">
                         <template slot-scope="scope">
-                            <router-link :to="{path:'/user/songdetail',query:{id:songs[scope.$index].id}}">
+                            <router-link :to="{path:'/user/songdetail',query:{id:songs[scope.$index+20*(page-1)].id}}">
                                 <el-button type="text" style="color:black;cursor:pointer;text-decoration: none" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.name}}</el-button>
                             </router-link>
                         </template>
@@ -121,7 +121,7 @@
 
                     <el-table-column prop="artist" label="歌手" width="200">
                         <template slot-scope="scope">            
-                            <router-link :to="{path:'/user/artistdetail',query:{id:songs[scope.$index].artistId}}">
+                            <router-link :to="{path:'/user/artistdetail',query:{id:songs[scope.$index+20*(page-1)].artistId}}">
                                 <el-button type="text" style="color:black;cursor:pointer;text-decoration:none" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.artistName}}
                                 </el-button>
                             </router-link>
@@ -248,7 +248,12 @@ export default{
             .then(res => {
                 this.songs = res.data;
                 for(var i = 0; i < res.data.length; i++){
-                    this.songs[i].image = this.serverUrl + this.songs[i].image;
+                    if(this.songs[i].image == null){
+                        this.songs[i].image = required("../../../assets/暂无图片.png");
+                    } else {
+                        this.songs[i].image = this.serverUrl + this.songs[i].image;
+                    }
+                    
                     this.songs[i].filePath = this.serverUrl + this.songs[i].filePath;
                     this.songs[i].lyricsPath = this.serverUrl + this.songs[i].lyricsPath;
                     this.$set(this.songs[i],'Flag',false);
