@@ -427,15 +427,25 @@
         });
       },
       upload2Success:function(){
+        this.$message({
+          showClose: true,
+          message: '歌曲图片上传成功',
+          type: 'success'
+        });
         this.$refs.upload3.submit();
       },
       upload3Success:function(){
+        this.$message({
+          showClose: true,
+          message: '歌曲文件上传成功',
+          type: 'success'
+        });
         this.$refs.upload4.submit();
       },
       upload4Success:function(){
         this.$message({
           showClose: true,
-          message: '上传成功',
+          message: '歌词文件上传成功',
           type: 'success'
         });
       },
@@ -452,6 +462,7 @@
             .then(response =>{
               if(response.data!=-1){
                 this.addDialogVisible=false;
+                this.$refs["addSong"].resetFields();
                 this.addSong.id=response.data;
                 this.$nextTick(()=>{
                   this.$refs.upload2.submit();
