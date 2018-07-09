@@ -20,7 +20,7 @@
               <p class="font_other">发行时间 : {{album.releaseDate}}</p>
             </div>
             <el-button icon="el-icon-edit" v-on:click="clickOnEdit">编辑专辑</el-button>
-            <el-button icon="el-icon-plus" v-on:click="addDialogVisible=true;">添加歌曲</el-button>
+            <el-button icon="el-icon-plus" v-on:click="clickOnAdd">添加歌曲</el-button>
             <el-button icon="el-icon-delete" v-on:click="deleteAlbum">删除专辑</el-button>
           </div>
         </el-col>
@@ -236,18 +236,6 @@
         editAlbum:{
         },
         addSong:{
-          id:'',
-          name:'',
-          image:require('../../assets/点击添加图片.png'),
-          artistId:'',
-          artistName:'',
-          albumName:'',
-          language:'',
-          style:'',
-          lyricsPath:'',
-          filePath:'',
-          region:'',
-          releaseDate:'',
         },
         songList: [],
         editDialogVisible:false,
@@ -342,6 +330,23 @@
           intro:this.album.intro,}
         this.editAlbum=temp;
       },
+      clickOnAdd:function(){
+        this.addDialogVisible=true;
+        var temp={
+          id:'',
+          name:'',
+          image:require('../../assets/点击添加图片.png'),
+          artistId:'',
+          artistName:'',
+          albumName:'',
+          language:'',
+          style:'',
+          lyricsPath:'',
+          filePath:'',
+          region:'',
+          releaseDate:'',}
+        this.addSong=temp;
+      },
       editImage:function(file,filelist){
         this.isImgChange=true;
         this.editAlbum.image=file.url;
@@ -380,7 +385,7 @@
           message: '歌曲图片上传失败',
           type: 'error'
         });
-        this.$refs.upload2.clearFiles();
+        this.addSong.image=require('../../assets/点击添加图片.png');
       },
       handleError3:function(){
         this.$message({
@@ -405,7 +410,9 @@
               this.$refs.upload1.submit();
               this.isImgChange=false;
             }
-            this.submitForm1();
+            else{
+                this.submitForm1();
+            }
           }
           else {
             this.$message({
@@ -450,8 +457,7 @@
           console.log(err);
         });
       },
-      upload2Success:function(){
-          this.$refs.upload2.clearFiles();
+      upload2Success:function(){     
       },
       upload3Success:function(){
           this.$refs.upload3.clearFiles();
