@@ -60,7 +60,7 @@
                       <el-dropdown-menu slot="dropdown" :data="playlistList">
                         <el-dropdown-item :command='{type:"playqueue",params:scope.$index}'>播放队列</el-dropdown-item>
                         <div v-if="isLogin">
-                          <el-dropdown-item disabled divided>我喜欢</el-dropdown-item>
+                          <el-dropdown-item divided :command='{type:"collect",params:scope.$index}'>我喜欢</el-dropdown-item>
                           <el-dropdown-item v-for="playlist in playlistList" :key="playlist.id" :command='{type:"playlist",param1:playlist.id,param2:scope.row}'>{{playlist.name}}</el-dropdown-item>
                           <el-dropdown-item :command='{type:"newplaylist",params:scope.row}' divided>添加到新歌单</el-dropdown-item>
                         </div>
@@ -310,6 +310,34 @@
     playSong:function(index){
       this.$store.dispatch("play", [this.songList, index, false]);
     },
+    collectSong:function(index){
+      this.axios.get(this.serverUrl+'/user/likeSong',{
+        params:{
+          songId:this.songList[index].id
+        }
+      })
+      .then(response =>{
+        if(response){
+          this.state.likeSongs.push(this.songList[index]);
+          sessionStorage.setItem('likeSongs', JSON.stringify(this.state.likeSongs));
+          this.$message({
+            showClose: true,
+            message: '收藏歌曲成功',
+            type: 'success'
+          });
+        }  
+        else{
+          this.$message({
+            showClose: true,
+            message: '会话超时',
+            type: 'error'
+          });
+        }
+      })
+      .catch(function(err){
+        console.log(err);
+      });
+    },
     handleSongCommand:function(command){
       if(command=="login"){
         window.location.href='/';
@@ -318,6 +346,9 @@
         var song=this.songList[command.params];
         var songs=[song];
         this.$store.dispatch("addToSongList",songs);
+      }
+      else if(command.type=="collect"){
+        this.collectSong(command.params);
       }
       else if(command.type=="newplaylist"){
         this.dialogVisible=true;
