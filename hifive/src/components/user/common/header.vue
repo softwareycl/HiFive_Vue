@@ -438,7 +438,7 @@
 							this.$router.push('/admin/artist');
 							this.$store.state.isLogin0 = true;
 							this.$store.state.isLogin = false;
-							sessionStorage.setItem('isLogin0', this.$store.state.isLogin);
+							sessionStorage.setItem('isLogin0', this.$store.state.isLogin0);
 							sessionStorage.setItem('isLogin', this.$store.state.isLogin);
 							this.axios.get(this.$store.state.serverUrl + "/user/getInfo", {
 								params: {
