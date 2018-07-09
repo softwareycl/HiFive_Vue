@@ -46,7 +46,10 @@
 											</el-radio-group>
 										</el-form-item>
 										<el-form-item label="密码" prop="pwd">
-											<el-input v-model="registerUser.pwd" placeholder="请输入密码"></el-input>
+											<el-input type="password" v-model="registerUser.pwd" placeholder="请输入密码"></el-input>
+										</el-form-item>
+										<el-form-item label="确认密码" prop="checkPass">
+											<el-input type="password" v-model="registerUser.checkPass"></el-input>
 										</el-form-item>
 										<el-form-item label="密保问题" prop="securityQuestion">
 											<el-select v-model="registerUser.securityQuestion" placeholder="请选择密保问题">
@@ -117,6 +120,15 @@
 					callback();
 				}
 			};
+			var validatePass3 = (rule, value, callback) => {
+				if (value === '') {
+					callback(new Error('请再次输入密码'));
+				} else if (value !== this.registerUser.pwd) {
+					callback(new Error('两次输入密码不一致!'));
+				} else {
+					callback();
+				}
+			};
 
 			return {
 				dialogFormVisible: false,
@@ -138,6 +150,7 @@
 					pwd: '',
 					securityQuestion: '',
 					securityAnswer: '',
+					checkPass: '',
 				},
 				rules: {
 					name: [
@@ -153,6 +166,9 @@
 					],
 					pwd: [
 					{ required: true, validator: validatePass, trigger: 'blur' },
+					],
+					checkPass: [
+					{ required: true, validator: validatePass3, trigger: 'blur' }
 					],
 					securityQuestion: [
 					{ required: true, message: '请选择密保问题', trigger: 'blur' },
@@ -185,13 +201,33 @@
 					.then(res => {
 						var tip = res.data;
 						if(tip == 0) {
-							alert("管理员登录成功");
 							this.dialogFormVisible = false;
 							this.$router.push('/admin/artist');
+							this.$store.state.isLogin0 = true;
+							this.$store.state.isLogin = false;
+							sessionStorage.setItem('isLogin0', this.$store.state.isLogin);
+							sessionStorage.setItem('isLogin', this.$store.state.isLogin);
+							this.axios.get(this.$store.state.serverUrl + "/user/getInfo", {
+								params: {
+									id: this.loginUser.id
+								}
+							})
+							.then(res => {
+								this.user = res.data;
+								this.user.image = this.$store.state.serverUrl + this.user.image;
+								this.$store.state.user = this.user;
+								sessionStorage.setItem('user', JSON.stringify(this.$store.state.user));
+							})
+							.catch(function (error) {
+								console.log(error);
+							});
 						}
 						if(tip == 1) {
 							this.dialogFormVisible = false;
+							this.$store.state.isLogin0 = false;
 							this.$store.state.isLogin = true;
+							sessionStorage.setItem('isLogin0', this.$store.state.isLogin0);
+							sessionStorage.setItem('isLogin', this.$store.state.isLogin);
 							this.axios.get(this.$store.state.serverUrl + "/user/showMyMusic", {
 								params: {
 									id: this.loginUser.id
@@ -201,28 +237,33 @@
 								this.user = res.data;
 								this.user.image = this.$store.state.serverUrl + this.user.image;
 								this.$store.state.user = this.user;
-
+								sessionStorage.setItem('user', JSON.stringify(this.$store.state.user));
 								// this.$store.state.likeSongs = res.data.likeSongList;
 								this.$store.state.likeSongs = this.user.likeSongList;
 								this.$store.state.likeAlbums = this.user.likeAlbumList;
 								// for(var i=0; i<this.us)
-								
 								for(var i=0; i<this.$store.state.likeSongs.length; i++) {
 									this.$store.state.likeSongs[i].image = this.$store.state.serverUrl + this.$store.state.likeSongs[i].image;
 									this.$store.state.likeSongs[i].filePath = this.$store.state.serverUrl + this.$store.state.likeSongs[i].filePath;
 									this.$store.state.likeSongs[i].lyricsPath = this.$store.state.serverUrl + this.$store.state.likeSongs[i].lyricsPath;
 								}
-
 								for(var i=0; i<this.$store.state.likeAlbums.length; i++) {
 									this.$store.state.likeAlbums[i].image = this.$store.state.serverUrl + this.$store.state.likeAlbums[i].image;
 									this.$store.state.likeAlbums[i].releaseDate = this.timestampToTime(this.$store.state.likeAlbums[i].releaseDate);
 								}
+								
 								this.$store.state.playlistList = this.user.playlistList;
+								sessionStorage.setItem('likeSongs', JSON.stringify(this.$store.state.likeSongs));
+								sessionStorage.setItem('likeAlbums', JSON.stringify(this.$store.state.likeAlbums));
+								sessionStorage.setItem('playlistList', JSON.stringify(this.$store.state.playlistList));
+								if(this.$route.name == '我的音乐')
+									this.$router.push('/user/mymusic');
+								else
+									this.$router.push('/user/black_login');
 							})
 							.catch(function (error) {
 								console.log(error);
 							});
-							this.$router.push('/user/mymusic');
 						}
 						else if(tip == 2) {
 							alert("用户不存在");

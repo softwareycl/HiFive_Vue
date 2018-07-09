@@ -119,7 +119,10 @@
 								<el-radio v-model="registerUser.gender" :label="2">女</el-radio>
 							</el-form-item>
 							<el-form-item label="密码" prop="pwd">
-								<el-input v-model="registerUser.pwd" placeholder="请输入密码"></el-input>
+								<el-input type="password" v-model="registerUser.pwd" placeholder="请输入密码"></el-input>
+							</el-form-item>
+							<el-form-item label="确认密码" prop="checkPass">
+							<el-input type="password" v-model="registerUser.checkPass"></el-input>
 							</el-form-item>
 							<el-form-item label="密保问题" prop="securityQuestion">
 								<el-select v-model="registerUser.securityQuestion" placeholder="请选择密保问题">
@@ -203,6 +206,15 @@
 					callback();
 				}
 			};
+			var validatePass3 = (rule, value, callback) => {
+				if (value === '') {
+					callback(new Error('请再次输入密码'));
+				} else if (value !== this.registerUser.pwd) {
+					callback(new Error('两次输入密码不一致!'));
+				} else {
+					callback();
+				}
+			};
 			var validateName = (rule, value, callback) => {
 				if (value === '') {
 					callback(new Error('请输入昵称'));
@@ -271,6 +283,7 @@
 					pwd: '',
 					securityQuestion: '',
 					securityAnswer: '',
+					checkPass: ''
 				},
 				inputTxt: '',
 
@@ -317,6 +330,9 @@
 					],
 					pwd: [
 					{ required: true, validator: validatePass, trigger: 'blur' },
+					],
+					checkPass: [
+					{ required: true, validator: validatePass3, trigger: 'blur' }
 					],
 					securityQuestion: [
 					{ required: true, message: '请选择密保问题', trigger: 'blur' },
@@ -420,7 +436,9 @@
 						if(tip == 0) {
 							this.dialogFormVisible = false;
 							this.$router.push('/admin/artist');
-							this.$store.state.isLogin = true;
+							this.$store.state.isLogin0 = true;
+							this.$store.state.isLogin = false;
+							sessionStorage.setItem('isLogin0', this.$store.state.isLogin);
 							sessionStorage.setItem('isLogin', this.$store.state.isLogin);
 							this.axios.get(this.$store.state.serverUrl + "/user/getInfo", {
 								params: {
@@ -439,7 +457,9 @@
 						}
 						if(tip == 1) {
 							this.dialogFormVisible = false;
+							this.$store.state.isLogin0 = false;
 							this.$store.state.isLogin = true;
+							sessionStorage.setItem('isLogin0', this.$store.state.isLogin0);
 							sessionStorage.setItem('isLogin', this.$store.state.isLogin);
 							this.axios.get(this.$store.state.serverUrl + "/user/showMyMusic", {
 								params: {

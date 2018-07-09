@@ -109,9 +109,6 @@
 			}
 		},
 		mounted () {
-			if(this.$store.state.isLogin == true) {
-				this.isLogin = true;
-			}
 			if(this.curTitle == '歌曲') {
 				this.getSongList(this.$store.state.search.name,this.page.cur);
 				this.getSongTotal(this.$store.state.search.name);
@@ -128,7 +125,6 @@
 		data () {
 			return {
 				dialogVisible:false,
-				isLogin:true,
 				ruleForm: {
 					name: '',
 					des: ''

@@ -25,14 +25,15 @@
 
 	export default {
 		created() {
-			if(!this.$store.state.isLogin) {
-				this.$store.state.isLogin = JSON.parse(sessionStorage.getItem('isLogin'));
-				if(this.$store.state.isLogin) {
+			if(!this.$store.state.isLogin0) {
+				this.$store.state.isLogin0 = JSON.parse(sessionStorage.getItem('isLogin0'));
+				if(this.$store.state.isLogin0) {
 					this.$store.state.user = JSON.parse(sessionStorage.getItem('user'));
 					this.$store.state.search.name = sessionStorage.getItem('inputTxt');
 				}
 				else {
-					this.$router.push('/');
+					alert('请以管理员身份登录');
+					this.$router.push('/user/home');
 				}
 			}
 		},
@@ -51,10 +52,10 @@
 				this.$router.push('/admin/artist')
 			},
 			exit: function() {
-				this.$store.state.isLogin = false;
+				this.$store.state.isLogin0 = false;
 				this.$router.push('/');
 				sessionStorage.removeItem('user');
-				sessionStorage.removeItem('isLogin');
+				sessionStorage.removeItem('isLogin0');
 			},
 			onSearch: function() {
 				if(this.inputTxt == '') {

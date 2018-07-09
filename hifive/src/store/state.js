@@ -1,4 +1,5 @@
 const state = {
+  isLogin0: false,
   isLogin: false,
   user: {},
   likeSongs: [],
