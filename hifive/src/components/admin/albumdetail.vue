@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <v-head></v-head>
-    <div v-if="this.state.isLogin" id="albumdetail" :data="album">
+    <div id="albumdetail" :data="album">
       <el-row :gutter="50" style="background: linear-gradient(#F2F2F2, #FFFFFF);">
         <el-col :span="4" :offset="3">
           <div>
