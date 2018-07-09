@@ -450,15 +450,6 @@
           console.log(err);
         });
       },
-      upload2Success:function(){
-        this.addSong.image=require('../../assets/点击添加图片.png');
-      },
-      upload3Success:function(filelist){
-        filelist=[];
-      },
-      upload4Success:function(filelist){
-        filelist=[];
-      },
       submitForm2:function(){
         this.$refs["addSong"].validate((valid) => {
           if (valid) {
@@ -472,13 +463,16 @@
             .then(response =>{
               if(response.data!=-1){
                 this.addDialogVisible=false;
-                this.$refs["addSong"].resetFields();
                 this.addSong.id=response.data;
                 this.$nextTick(()=>{
                   this.$refs.upload2.submit();
                   this.$refs.upload3.submit();
                   this.$refs.upload4.submit();
                 });
+                this.$refs["addSong"].resetFields();
+                this.$refs.upload2.clearFiles();
+                this.$refs.upload3.clearFiles();
+                this.$refs.upload4.clearFiles();
                 this.getAlbumInfo();
                 this.$message({
                   showClose: true,
