@@ -49,7 +49,7 @@
 					</div>
 				</el-col>
 			</el-row>
-			<el-dialog title="编辑歌曲信息" :visible.sync="dialogVisible" width="40%" center="true">
+			<el-dialog title="编辑歌曲信息" :visible.sync="dialogVisible" width="40%" :center="true">
 				<el-form :model="editSong" :rules="rules" ref="editSong" label-width="100px">
 					<el-form-item label="歌名" prop="name">
 						<el-input v-model="editSong.name"></el-input>
@@ -126,7 +126,6 @@
 				id: '',
 				flag: false,
 				img_change: false,
-				uploadSuccess: false,
 				song:{
 					id:'',
 					name:'',
@@ -236,42 +235,35 @@
 				this.editSong.image = this.song.image;
 			},
 			finishEdit: function(_song) {
-				if(this.img_change) {
-					this.$refs.upload.submit();
-					this.img_change = false;
-				}
-				if(this.uploadSuccess) {
-					this.uploadSuccess = false;
-					this.submitForm(_song);
-					if(this.flag) {
-						this.flag = false;
-						if(this.img_change) {
-							this.$refs.upload.submit();
-							this.img_change = false;
-						}
-						this.axios.post(this.$store.state.serverUrl + "/song/modifySong", {
-							id: this.editSong.id,
-							name: this.editSong.name,
-							language: this.editSong.language,
-							style: this.getStyleNumber(this.editSong.style),
-							releaseDate: this.editSong.releaseDate
-						})
-						.then(res => {
-							var tip = res.data;
-							if(tip == true) {
-								alert("修改成功");
-								this.dialogVisible = false;
-								this.getIntro(this.id);
-							}
-							else if(tip == false) {
-								alert("修改失败");
-							}
-						})
-						.catch(function (error) {
-							console.log(error);
-						});
+				this.submitForm(_song);
+				if(this.flag) {
+					this.flag = false;
+					if(this.img_change) {
+						this.$refs.upload.submit();
+						this.img_change = false;
 					}
-				}
+					this.axios.post(this.$store.state.serverUrl + "/song/modifySong", {
+						id: this.editSong.id,
+						name: this.editSong.name,
+						language: this.editSong.language,
+						style: this.getStyleNumber(this.editSong.style),
+						releaseDate: this.editSong.releaseDate
+					})
+					.then(res => {
+						var tip = res.data;
+						if(tip == true) {
+							alert("修改成功");
+							this.dialogVisible = false;
+							this.getIntro(this.id);
+						}
+						else if(tip == false) {
+							alert("修改失败");
+						}
+					})
+					.catch(function (error) {
+						console.log(error);
+					});
+				}			
 			},
 			submitForm:function(formName){
 				this.$refs[formName].validate((valid) => {
@@ -354,7 +346,6 @@
 			// 	this.$refs.upload.submit();
 			// },
 			handleAvatarSuccess: function() {
-				this.uploadSuccess = true;
 				// this.submitForm(_song);
 				// if(this.flag) {
 				// 	this.flag = false;

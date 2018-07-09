@@ -623,10 +623,11 @@
 			// 	this.$refs.upload.submit();
 			// },
 			handleAvatarSuccess: function() {
-				alert("上传成功");
+				
 			},
 			previewImg: function(file) {
 				this.modifyData.image = file.url;
+				this.img_change = true;
 			}
 		},
 		computed: {
