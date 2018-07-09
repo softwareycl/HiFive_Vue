@@ -207,9 +207,6 @@
         { required: true, message: '请输入歌曲名称', trigger: 'blur' },
         { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }
         ],
-        image:[
-        {required: true, message: '请上传歌曲图片', trigger: 'blur'},
-        ],
         language:[
         {required: true, message: '请输入歌曲语种', trigger: 'blur'},
         { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' }
@@ -222,12 +219,6 @@
         ],
         releaseDate:[
         {required: true, message: '请选择歌曲发行时间', trigger: 'blur'},
-        ],
-        filePath:[
-        {required: true, message: '请上传歌曲文件', trigger: 'blur'},
-        ],
-        lyricsPath:[
-        {required: true, message: '请上传歌词文件', trigger: 'blur'},
         ],
         },
         album:{
@@ -442,7 +433,6 @@
         this.$refs.upload4.submit();
       },
       upload4Success:function(){
-        this.addDialogVisible=false;
         this.$message({
           showClose: true,
           message: '上传成功',
@@ -461,6 +451,7 @@
             })
             .then(response =>{
               if(response.data!=-1){
+                this.addDialogVisible=false;
                 this.addSong.id=response.data;
                 this.$nextTick(()=>{
                   this.$refs.upload2.submit();
