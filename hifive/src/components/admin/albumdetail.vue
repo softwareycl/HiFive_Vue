@@ -380,23 +380,23 @@
           message: '歌曲图片上传失败',
           type: 'error'
         });
-        this.addSong.image=require('../../assets/点击添加图片.png');
+        this.$refs.upload2.clearFiles();
       },
-      handleError3:function(filelist){
+      handleError3:function(){
         this.$message({
           showClose: true,
           message: '歌曲文件上传失败',
           type: 'error'
         });
-        filelist=[];
+        this.$refs.upload3.clearFiles();
       },
-      handleError4:function(filelist){
+      handleError4:function(){
         this.$message({
           showClose: true,
           message: '歌词文件上传失败',
           type: 'error'
         });
-        filelist=[];
+        this.$refs.upload4.clearFiles();
       },
       uploadForm1:function(){
         this.$refs["editAlbum"].validate((valid) => {
@@ -450,6 +450,15 @@
           console.log(err);
         });
       },
+      upload2Success:function(){
+          this.$refs.upload2.clearFiles();
+      },
+      upload3Success:function(){
+          this.$refs.upload3.clearFiles();
+      },
+      upload4Success:function(){
+          this.$refs.upload4.clearFiles();
+      },
       submitForm2:function(){
         this.$refs["addSong"].validate((valid) => {
           if (valid) {
@@ -470,9 +479,6 @@
                   this.$refs.upload4.submit();
                 });
                 this.$refs["addSong"].resetFields();
-                this.$refs.upload2.clearFiles();
-                this.$refs.upload3.clearFiles();
-                this.$refs.upload4.clearFiles();
                 this.getAlbumInfo();
                 this.$message({
                   showClose: true,
