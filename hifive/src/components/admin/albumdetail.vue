@@ -437,8 +437,9 @@
         })
         .then(response =>{
           if(response){
-            this.getAlbumInfo();
             this.editDialogVisible=false;
+            this.editAlbum={};
+            this.getAlbumInfo();
             this.$message({
               showClose: true,
               message: '专辑编辑成功',
@@ -484,7 +485,7 @@
                   this.$refs.upload3.submit();
                   this.$refs.upload4.submit();
                 });
-                this.$refs["addSong"].resetFields();
+                this.addSong={};
                 this.getAlbumInfo();
                 this.$message({
                   showClose: true,
