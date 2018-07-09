@@ -270,7 +270,16 @@ export default {
             row.isopen=event;
         },
         playAllSong:function(){
-            this.$store.dispatch("play", [this.allSong, 0, false]);
+            if(this.allSong.length==0){
+                this.$message({
+                  showClose: true,
+                  message: '还未收藏任何歌曲',
+                  type: 'info'
+                });
+            }
+            else{
+                this.$store.dispatch("play", [this.allSong, 0, false]);
+            }
         },
         playSong:function(index){
             this.$store.dispatch("play", [this.songList, index, false]);
@@ -484,6 +493,14 @@ export default {
             })
             .then(response =>{
                 var songs = response.data;
+                if(songs.length==0){
+                    this.$message({
+                      showClose: true,
+                      message: '歌单里还没有任何歌曲',
+                      type: 'info'
+                    });
+                    return false;
+                }
                 for(var i = 0; i < songs.length; i++){
                     songs[i].image = this.serverUrl + songs[i].image;
                     songs[i].filePath = this.serverUrl + songs[i].filePath;
