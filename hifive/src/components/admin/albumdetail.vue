@@ -31,7 +31,7 @@
             <el-input v-model="editAlbum.name" style="width:50%;"></el-input>
           </el-form-item>
           <el-form-item label="专辑封面" prop="image">
-            <el-upload ref="upload1" :auto-upload="false" action="http://192.168.20.99:8080/hifive/upload/uploadAlbumImage" :data={id:album.id} :show-file-list="false" :on-change="editImage" :before-upload="beforeAvatarUpload" :on-success="upload1Success" :on-error="handleError">
+            <el-upload ref="upload1" :auto-upload="false" action="http://192.168.20.99:8080/hifive/upload/uploadAlbumImage" :data={id:album.id} :show-file-list="false" :on-change="editImage" :before-upload="beforeAvatarUpload" :on-success="upload1Success" :on-error="handleError1">
               <img :src="editAlbum.image" class="img">
             </el-upload>
           </el-form-item>
@@ -78,13 +78,13 @@
             <el-input v-model="addSong.name" style="width:50%;"></el-input>
           </el-form-item>
           <el-form-item label="歌曲图片" prop="image">
-            <el-upload ref="upload2" :auto-upload="false" action="http://192.168.20.99:8080/hifive/upload/uploadSongImage" :data={id:addSong.id} :show-file-list="false" :on-change="addImage" :before-upload="beforeAvatarUpload" :on-success="upload2Success" :on-error="handleError">
+            <el-upload ref="upload2" :auto-upload="false" action="http://192.168.20.99:8080/hifive/upload/uploadSongImage" :data={id:addSong.id} :show-file-list="false" :on-change="addImage" :before-upload="beforeAvatarUpload" :on-success="upload2Success" :on-error="handleError2">
               <img :src="addSong.image" class="img">
             </el-upload>
-            <el-upload ref="upload3" :auto-upload="false" action="http://192.168.20.99:8080/hifive/upload/uploadSongFile" :data={id:addSong.id} :on-change="addFilePath" :on-success="upload3Success" :on-error="handleError" style="height:90px;">
+            <el-upload ref="upload3" :auto-upload="false" action="http://192.168.20.99:8080/hifive/upload/uploadSongFile" :data={id:addSong.id} :on-change="addFilePath" :on-success="upload3Success" :on-error="handleError3" style="height:90px;">
               <el-button slot="trigger">选取歌曲文件</el-button>
             </el-upload>
-            <el-upload ref="upload4" :auto-upload="false" action="http://192.168.20.99:8080/hifive/upload/uploadLyrics" :data={id:addSong.id} :on-change="addLyricsPath" :on-success="upload4Success" :on-error="handleError" style="height:90px;">
+            <el-upload ref="upload4" :auto-upload="false" action="http://192.168.20.99:8080/hifive/upload/uploadLyrics" :data={id:addSong.id} :on-change="addLyricsPath" :on-success="upload4Success" :on-error="handleError4" style="height:90px;">
               <el-button slot="trigger">选取歌词文件</el-button>
             </el-upload>
           </el-form-item>
@@ -367,12 +367,36 @@
           filelist.splice(0,1);
         }
       },
-      handleError:function(){
+      handleError1:function(){
         this.$message({
           showClose: true,
-          message: '上传失败',
+          message: '专辑图片上传失败',
           type: 'error'
         });
+      },
+      handleError2:function(){
+        this.$message({
+          showClose: true,
+          message: '歌曲图片上传失败',
+          type: 'error'
+        });
+        this.addSong.image=require('../../assets/点击添加图片.png');
+      },
+      handleError3:function(filelist){
+        this.$message({
+          showClose: true,
+          message: '歌曲文件上传失败',
+          type: 'error'
+        });
+        filelist=[];
+      },
+      handleError4:function(filelist){
+        this.$message({
+          showClose: true,
+          message: '歌词文件上传失败',
+          type: 'error'
+        });
+        filelist=[];
       },
       uploadForm1:function(){
         this.$refs["editAlbum"].validate((valid) => {
@@ -427,27 +451,13 @@
         });
       },
       upload2Success:function(){
-        this.$message({
-          showClose: true,
-          message: '歌曲图片上传成功',
-          type: 'success'
-        });
-        this.$refs.upload3.submit();
+        this.addSong.image=require('../../assets/点击添加图片.png');
       },
-      upload3Success:function(){
-        this.$message({
-          showClose: true,
-          message: '歌曲文件上传成功',
-          type: 'success'
-        });
-        this.$refs.upload4.submit();
+      upload3Success:function(filelist){
+        filelist=[];
       },
-      upload4Success:function(){
-        this.$message({
-          showClose: true,
-          message: '歌词文件上传成功',
-          type: 'success'
-        });
+      upload4Success:function(filelist){
+        filelist=[];
       },
       submitForm2:function(){
         this.$refs["addSong"].validate((valid) => {
@@ -466,6 +476,8 @@
                 this.addSong.id=response.data;
                 this.$nextTick(()=>{
                   this.$refs.upload2.submit();
+                  this.$refs.upload3.submit();
+                  this.$refs.upload4.submit();
                 });
                 this.getAlbumInfo();
                 this.$message({
