@@ -500,11 +500,11 @@ export default {
                 } 
                 else if(index == 5)
                 {
-                    this.list6=rank;
+                    this.list5=rank;
                 } 
                 else if(index == 6)
                 {
-                    this.list5=rank;
+                    this.list6=rank;
                 }
               })
               .catch(function(err){

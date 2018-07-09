@@ -390,9 +390,7 @@
               this.$refs.upload1.submit();
               this.isImgChange=false;
             }
-            else{
-              this.submitForm1();
-            }
+            this.submitForm1();
           }
           else {
             this.$message({
