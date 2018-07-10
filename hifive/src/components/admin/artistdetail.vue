@@ -668,6 +668,7 @@
           D = '0' + D;
         return Y+M+D;
       },
+      
     handleClose(done) {
       this.$confirm('确认关闭？')
       .then(_ => {
