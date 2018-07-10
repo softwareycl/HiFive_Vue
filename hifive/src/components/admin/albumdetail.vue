@@ -8,7 +8,7 @@
             <img align=right style="width:230px;height:230px;margin-top:20px" :src=album.image>
           </div>
         </el-col>
-        <el-col :span="8">
+        <el-col :span="12">
           <div>
             <p class="font_albumName" style="margin-bottom:0px">{{album.name}}</p>
             <i class="el-icon-service"></i>
@@ -132,7 +132,7 @@
           <div>
             <el-table :data="songList" :stripe=true style="width:95%;" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">
               <el-table-column type="index" label=" " :index="indexMethod"></el-table-column>
-              <el-table-column label="歌曲" width=400>
+              <el-table-column label="歌曲" width=450>
                 <template slot-scope="scope">
                   <router-link :to="{ path: '/admin/songdetail', query: { id: scope.row.id }}">
                     <span style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.name}}</span>
@@ -157,7 +157,7 @@
         </el-col>
         <el-col :span="4">
           <div>
-            <p class="font_albumIntro">简介</p>
+            <p v-if="album.intro" class="font_albumIntro">简介</p>
             <p id="albumIntro" style="display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 4;overflow: hidden;" class="font_other">{{album.intro}}</p>
             <el-popover v-if="isOverflow" placement="left" title="专辑简介" trigger="click" width=500>
               <p class="font_other">{{album.intro}}</p>
