@@ -5,7 +5,7 @@
         <el-row>
           <el-col :span="4" :offset="4">
             <div>
-              <img align=right style="float:left;margin-top:30px; border-radius:100%; width:230px; height: 230px; overflow:hidden;" :src=artist.image>
+              <img align=right style="float:left;margin-top:30px; border-radius:100%; width:200px; height: 200px; overflow:hidden;" :src=artist.image>
             </div>
           </el-col>
           <el-col :span="8">
@@ -32,11 +32,11 @@
             </div>
           </el-col>
         </el-row>
-        <div style="width: 1000px;margin-left: 300px; margin-top:40px; margin-bottom: 10px">
+        <div style="width: 1000px;margin-left: 250px; margin-top:40px; margin-bottom: 10px">
           <p style="font-family:'Microsoft YaHei'; font-size:x-large; display: inline; margin-right: 750px">专辑</p>
           <el-button icon="el-icon-plus" v-on:click="addDialogVisible=true" style="">添加专辑</el-button>
         </div>
-        <el-row v-for="i in 1" :key="i" style="width:1100px; height: 200px; margin: auto; margin-left: 250px;">
+        <el-row v-for="i in 1" :key="i" style="width:1100px; height: 200px; margin: auto; margin-left: 190px;">
           <ul id="albumlist" data="albumView">
             <li v-for="item in albumView" class="albumli" style="list-style: none;">
               <div class="album" style="float: left; margin-left: 20px; margin-right: 20px">
@@ -257,16 +257,6 @@
         },
         artist:{},
         editArtist:{},
-        album:{
-          id:'',
-          name:'',
-          image:'',
-          artistId:'',
-          region:'',
-          style:'',
-          releaseDate:'',
-          intro:'',
-        },
         albumView:[],
         addAlbum:{id:''},
         regionOptions: [{
@@ -423,6 +413,9 @@
         if(_albums[((this.albumPage - 1)*8)+i] != null){
           var album = _albums[((this.albumPage - 1)*8)+i];
           this.albumView.push(album);
+        }
+        if(this.albumView[0].id == 0){
+          this.albumView.splice(0,this.albumView.length);
         }
       } 
     },
@@ -653,6 +646,7 @@
           this.artist.birthday = this.timestampToTime(this.artist.birthday);
           
           for (var i = 0; i < this.artist.albumList.length; i++) {
+
             if(this.artist.albumList[i].image == null){
               this.artist.albumList[i].image = emptyImage;
             } else {
