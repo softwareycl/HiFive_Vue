@@ -504,6 +504,9 @@
 						else if(tip == 3) {
 							alert("账号密码不正确");
 						}
+						else if(tip == 4) {
+							alert("账号未激活");
+						}
 					})
 					.catch(function (error) {
 						console.log(error);
@@ -525,12 +528,15 @@
 					.then(res => {
 						var tip = res.data;
 						if(tip == true) {
-							alert("注册成功");
+							this.$message({
+								message: '注册成功，请前往邮箱激活账号',
+								type: 'success'
+							});
 							// this.dialogFormVisible = false;
 							this.activeName = 'first';
 						}
 						else if(tip == false) {
-							alert("注册失败，请重新注册");
+							this.$message.error('注册失败，请重新注册');
 						}
 					})
 					.catch(function (error) {

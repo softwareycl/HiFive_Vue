@@ -83,6 +83,32 @@
 	import vFoot from '../common/footer.vue'
 
 	export default {
+		mounted() {
+			var str = location.href.split('/');
+			var par = str[str.length-1];
+			if(par != '') {
+				this.axios.post(this.$store.state.serverUrl + "/user/active", {
+					id: par,
+				})
+				.then(res => {
+					var tip = res.data;
+					if(tip == true) {
+						this.$message({
+							message: '激活成功',
+							type: 'success'
+						});
+						this.dialogFormVisible = false;
+						this.$router.push('/');
+					}
+					else if(tip == false) {
+						this.$message.error('激活失败');
+					}
+				})
+				.catch(function (error) {
+					console.log(error);
+				});
+			}
+		},
 		components: {
 			vHead,
 			vFoot
@@ -271,6 +297,9 @@
 						else if(tip == 3) {
 							alert("账号密码不正确");
 						}
+						else if(tip == 4) {
+							alert("账号未激活");
+						}
 					})
 					.catch(function (error) {
 						console.log(error);
@@ -292,12 +321,15 @@
 					.then(res => {
 						var tip = res.data;
 						if(tip == true) {
-							alert("注册成功");
+							this.$message({
+								message: '注册成功，请前往邮箱激活账号',
+								type: 'success'
+							});
 							this.dialogFormVisible = false;
 							this.$router.push('/');
 						}
 						else if(tip == false) {
-							alert("注册失败，请重新注册");
+							this.$message.error('注册失败，请重新注册');
 						}
 					})
 					.catch(function (error) {
