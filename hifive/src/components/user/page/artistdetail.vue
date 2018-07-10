@@ -9,28 +9,43 @@
       				<img align=right style="float:left;margin-top:30px; border-radius:100%; width:230px; height: 230px; overflow:hidden;" :src=artist.image>
       			</div>
       		</el-col>
-      		<el-col :span="8" style="margin-left: 30px; margin-top: 25px">
-      			<div style="width: 300px;">
+      		<el-col :span="12" style="margin-left: 30px; ">
+      			<div style="width: 500px;">
       				<p class="font_artistName">{{artist.name}}</p>
       			</div>
       			<div style=" width: 800px; height: 5px;">
-      				<p class="font_other" style="float: left; margin-right: 10px;">国籍:{{artist.country}}</p>
+ <!--      				<p class="font_other" style="float: left; margin-right: 10px;">国籍:{{artist.country}}</p>
       				<p class="font_other" style="float: left; margin-right: 10px;">出生地:{{artist.birthplace}}</p>
       				<p class="font_other" style="float: left; margin-right: 10px;">生日:{{artist.birthday}}</p>
-      				<p class="font_other" style="float: left; margin-right: 10px;">职业:{{artist.occupation}}</p>
+      				<p class="font_other" style="float: left; margin-right: 10px;">职业:{{artist.occupation}}</p> -->
       			</div>
-      			<div style=" width: 900px; margin-top: 5px;">
-      				<p class="font_rep" style="float: left; margin-right: 10px; margin-bottom: 20px;">代表作:{{artist.representative}}</p>
-      				<p style="width: 100px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 1;overflow: hidden; float: left;" class="font_des">简介:{{artist.intro}}</p>
-      				<el-popover placement="left" title="歌手简介" trigger="click" style="float: left;">
-      					<p class="font_des" style="width: 600px">{{artist.intro}}</p>
-      					<el-button type="text" slot="reference" style="color: black; margin-left: 20px; padding-top: 8px;" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">[更多]</el-button>
-      				</el-popover>
-      			</div>
-      			<el-button type="primary" icon="el-icon-caret-right" style="background-color:#31C27C" onmouseover="this.style.backgroundColor='#2CAF6F';" onmouseout="this.style.backgroundColor='#31C27C';" v-on:click="playAllSong">播放全部</el-button>
+ <!--      			<div style=" width: 500px; margin-top: 5px">
+      				<p class="font_rep" style="margin-right: 10px; margin-bottom: 20px; float: left;">代表作:{{artist.representative}}</p>
+      			</div> -->
+            <div style=" width: 700px; margin-top: 5px;">
+              <p style="width: 600px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 1;overflow: hidden; float: left; " class="font_des"><span v-if="artist.country != null">国籍：</span>{{artist.country}}
+                    <span v-if="artist.birthplace != null"> 出生地：</span>{{artist.birthplace}}
+                    <span v-if="artist.birthday != null"> 生日：</span>{{artist.birthday}}
+                    <span v-if="artist.occupation != null"> 职业：</span>{{artist.occupation}}
+                    <span v-if="artist.representative != null"> 代表作：</span>{{artist.representative}}
+                    <span v-if="artist.intro != null"> 简介：</span>{{artist.intro}}</p>
+              <el-popover placement="left" title="歌手简介" trigger="click">
+                
+                <p class="font_des" style="width: 600px"><span v-if="artist.country != null">国籍：</span>{{artist.country}}<br>
+                    <span v-if="artist.birthplace != null"> 出生地：</span>{{artist.birthplace}}<br>
+                    <span v-if="artist.birthday != null"> 生日：</span>{{artist.birthday}}<br>
+                    <span v-if="artist.occupation != null"> 职业：</span>{{artist.occupation}}<br>
+                    <span v-if="artist.representative != null"> 代表作：</span>{{artist.representative}}<br>
+                    <span v-if="artist.intro != null"> 简介：</span>{{artist.intro}}</p>
+                <el-button type="text" slot="reference" style="color: black;  padding-top: 8px; float: left;" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">[更多]</el-button>
+              </el-popover>
+            </div>
+            <div style="margin-top: 50px">
+              <el-button type="primary" icon="el-icon-caret-right" style="background-color:#31C27C" onmouseover="this.style.backgroundColor='#2CAF6F';" onmouseout="this.style.backgroundColor='#31C27C';" v-on:click="playAllSong">播放全部</el-button>
+            </div>
       		</el-col>
       	</el-row>
-        <div style="width:900px; margin: auto;">
+        <div style="width:900px; margin: auto; margin-top: 50px">
           <p style="font-family:'Microsoft YaHei'; font-size:x-large; margin-left: 50px">热门歌曲</p>
         </div>
       	<el-row>
