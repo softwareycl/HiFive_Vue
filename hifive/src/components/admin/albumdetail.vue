@@ -438,7 +438,6 @@
         .then(response =>{
           if(response){
             this.editDialogVisible=false;
-            this.editAlbum={};
             this.getAlbumInfo();
             this.$message({
               showClose: true,
@@ -462,6 +461,7 @@
       },
       upload3Success:function(){
           this.$refs.upload3.clearFiles();
+          this.getAlbumInfo();
       },
       upload4Success:function(){
           this.$refs.upload4.clearFiles();
@@ -485,7 +485,6 @@
                   this.$refs.upload3.submit();
                   this.$refs.upload4.submit();
                 });
-                this.addSong={};
                 this.getAlbumInfo();
                 this.$message({
                   showClose: true,
