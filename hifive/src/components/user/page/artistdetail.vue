@@ -9,7 +9,7 @@
       				<img align=right style="float:left;margin-top:30px; border-radius:100%; width:230px; height: 230px; overflow:hidden;" :src=artist.image>
       			</div>
       		</el-col>
-      		<el-col :span="12" style="margin-left: 30px; ">
+      		<el-col :span="12" style="margin-left: 30px; margin-top: 30px">
       			<div style="width: 500px;">
       				<p class="font_artistName">{{artist.name}}</p>
       			</div>
@@ -40,7 +40,7 @@
                 <el-button type="text" slot="reference" style="color: black;  padding-top: 8px; float: left;" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">[更多]</el-button>
               </el-popover>
             </div>
-            <div style="margin-top: 50px">
+            <div style="margin-top: 60px">
               <el-button type="primary" icon="el-icon-caret-right" style="background-color:#31C27C" onmouseover="this.style.backgroundColor='#2CAF6F';" onmouseout="this.style.backgroundColor='#31C27C';" v-on:click="playAllSong">播放全部</el-button>
             </div>
       		</el-col>
@@ -49,18 +49,18 @@
           <p style="font-family:'Microsoft YaHei'; font-size:x-large; margin-left: 50px">热门歌曲</p>
         </div>
       	<el-row>
-      		<el-col :span="15" :offset="4">
+      		<el-col :span="16" :offset="3">
       			<div style="margin: auto; ">
       				<el-table :data="songListView" style="height: 100%; width: 100%; margin-left:50px;" stripe="true" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">
       					<el-table-column type="index" label= " " :index="indexMethod"></el-table-column>
-      					<el-table-column label="歌曲">
+      					<el-table-column label="歌曲" width="300px" >
       						<template slot-scope="scope">
                     <router-link :to="{path:'/user/songdetail',query:{id:scope.row.id}}">
-      							<a href="" style="color: black; cursor:  pointer; text-decoration:none" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.name}}</a>
+      							<a href="" style="color: black; cursor:  pointer; text-decoration:none; width=100px" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.name}}</a>
                     </router-link>   
       						</template>
       					</el-table-column>
-      					<el-table-column label=" ">
+      					<el-table-column label=" " width="200px" >
       						<template slot-scope="scope">
       							<span v-if="scope.row.Flag">
       								<el-button icon="el-icon-caret-right" circle v-on:click="playSong(scope.$index)"></el-button>
@@ -81,14 +81,14 @@
                  		 		<span v-if="scope.row.Flag"> <el-button icon="el-icon-download" circle v-on:click="downloadSong(scope.row)"></el-button> </span>
                 		</template>
               </el-table-column>
-       					<el-table-column label="专辑" width=300>
+       					<el-table-column label="专辑" width=250>
       						<template slot-scope="scope">
                     <router-link :to="{path:'/user/albumdetail',query:{id:scope.row.albumId}}">
       							<a href="" style="margin-right: 50px; color:black;cursor:pointer;text-decoration:none" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.albumName}}</a>
                   </router-link>
       						</template>
       					</el-table-column>
-      					<el-table-column prop= "duration" label="时长"></el-table-column>
+      					<el-table-column prop= "duration" label="时长" width=100></el-table-column>
       				</el-table>
       			</div>
       		</el-col>
@@ -184,6 +184,7 @@
     },
 
     created() {
+      window.scrollTo(0,0);
       this.artist.id = this.$route.query.id;
     },
 
