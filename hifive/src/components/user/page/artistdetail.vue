@@ -99,10 +99,10 @@
         <el-row style="width:1100px; height: 200px; margin: auto; margin-left: 240px;">
           <ul id="albumlist" data="albumView">
             <li v-for="item in albumView" class="albumli" style="list-style: none;">
-              <div class="album">
+              <div class="album" style="margin-bottom: 500px">
                 <router-link :to="{path:'/user/albumdetail',query:{id:item.id}}">
                   <img class="albumImage" :src=item.image alt=""  @click="setAlbum(item)">
-                  <p style="color: black; width: 150px;" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';" @click="setAlbum(item)">{{item.name}}</p>
+                  <p style="color: black; width: 180px;" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';" @click="setAlbum(item)">{{item.name}}</p>
                 </router-link>
               </div>
             </li>
@@ -259,6 +259,7 @@
 		},
 
 		playSong:function(index){
+      index = (this.songPage - 1) * 10 + index;
 		  this.$store.dispatch("play", [this.artist.songList,index,false]);
 	},
     handleSongCommand:function(command){

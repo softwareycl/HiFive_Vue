@@ -306,7 +306,7 @@ a {text-decoration: none; color: black}
     .singer {
       background-color: rgb(251,251,253);
       margin-top: 0px;
-      height: 250px;
+      height: 260px;
       width: 210px;
       margin-left: 12px;
     }
@@ -320,8 +320,6 @@ a {text-decoration: none; color: black}
       }
     }
     p {
-      margin-left: 60px;
-      margin-right: 60px;
       margin-top: 0px;
       font-size: 16px;
       text-align: center;

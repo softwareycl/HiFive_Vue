@@ -36,13 +36,13 @@
           <p style="font-family:'Microsoft YaHei'; font-size:x-large; display: inline; margin-right: 750px">专辑</p>
           <el-button icon="el-icon-plus" v-on:click="addDialogVisible=true" style="">添加专辑</el-button>
         </div>
-        <el-row v-for="i in 1" :key="i" style="width:1100px; height: 200px; margin: auto; margin-left: 190px;">
+        <el-row v-for="i in 1" :key="i" style="width:1100px; height: 20px; margin: auto; margin-left: 190px;">
           <ul id="albumlist" data="albumView">
             <li v-for="item in albumView" class="albumli" style="list-style: none;">
-              <div class="album" style="float: left; margin-left: 20px; margin-right: 20px">
+              <div class="album" style="float: left; margin-left: 20px; margin-right: 20px; height: 300px;">
                 <router-link :to="{path:'/admin/albumdetail',query:{id:item.id}}">
                   <img class="albumImage" :src=item.image alt=""  @click="setAlbum(item)">
-                  <p style="color: black; width: 150px;" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';" @click="setAlbum(item)">{{item.name}}</p>
+                  <p style="color: black; width: 200px;" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';" @click="setAlbum(item)">{{item.name}}</p>
                 </router-link>
               </div>
             </li>
