@@ -72,7 +72,7 @@
                 @cell-mouse-enter="handleMouseEnter" 
                 @cell-mouse-leave="handleMouseOut">
                     <el-table-column prop="index" width="50" type="index" :index="indexMethod"></el-table-column>
-                    <el-table-column prop="name" label="歌曲" width="250">
+                    <el-table-column prop="name" label="歌曲" width="300">
                         <template slot-scope="scope">
                             <router-link :to="{path:'/user/songdetail',query:{id:songs[scope.$index+20*(page-1)].id}}">
                                 <el-button type="text" style="color:black;cursor:pointer;text-decoration: none" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.name}}</el-button>
@@ -80,7 +80,7 @@
                         </template>
                     </el-table-column>
                     
-                    <el-table-column label=" " width="230" type="index">
+                    <el-table-column label=" " width="150" type="index">
                             <template slot-scope="scope">
                                 <span v-if="scope.row.Flag">
                                     <el-button icon="el-icon-caret-right" circle @click.native ="playSong(scope.$index)"></el-button>

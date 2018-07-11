@@ -74,7 +74,7 @@
                 style="width: 100%"
                 max-height="455" min-height="455"
                 @row-dblclick="clickSongRow">
-              <el-table-column prop="index" width="30" type="index">
+              <el-table-column prop="index" width="50" type="index">
               </el-table-column>
               <el-table-column
                 label="歌曲"
