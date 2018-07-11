@@ -60,7 +60,7 @@
           <el-form-item label="图片：" prop="image">
             <img :src="editArtist.image" class="avatar" style=" width: 150px; height: 150px; margin-right: 20px;">
             <el-upload class="avatar-uploader" ref="upload1" :on-change="editImage"
-            action="http://192.168.20.99:8080/hifive/upload/uploadArtistImage" :data={id:artist.id} :show-file-list="false" :on-success="upload1Success" :before-upload="beforeAvatarUpload" accept=".jpg, .jpeg, png" :auto-upload="false" >
+            action="/hifive/upload/uploadArtistImage" :data={id:artist.id} :show-file-list="false" :on-success="upload1Success" :before-upload="beforeAvatarUpload" accept=".jpg, .jpeg, png" :auto-upload="false" >
             <el-button slot="trigger" size="small" type="primary" style="margin-top: 20px;" @click="ischanged=true">点击选择图片</el-button>
             <div style="margin-top: 10px;">
               <div>图片大小不超过2M</div>        
@@ -139,15 +139,25 @@
             <el-input v-model="addAlbum.name" clearable></el-input>
           </el-form-item>
           <el-form-item label="封面：" prop="image">
-            <el-upload class="avatar-uploader" ref="upload2" :on-change="addImage" :data={id:addAlbum.id}
-            action="http://192.168.20.99:8080/hifive/upload/uploadAlbumImage" :show-file-list="false" :on-success="upload2Success" :before-upload="beforeAvatarUpload" accept=".jpg, .jpeg, .png" :auto-upload="false" >
-            <img :src="addAlbum.image" class="avatar" style=" width: 150px; height: 150px; margin-right: 20px;">
-            <el-button slot="trigger" size="small" type="primary" @click="isadded=true">点击选择图片</el-button>
-            <div style="margin-top: 10px;">
+            <div style="width: 200px; float: left; ">
+              <el-upload 
+                class="avatar-uploader" 
+                ref="upload2" 
+                :on-change="addImage" 
+                :data={id:addAlbum.id}
+                action="/hifive/upload/uploadAlbumImage" 
+                :show-file-list="false" 
+                :on-success="upload2Success" 
+                accept=".jpg, .jpeg, .png" 
+                :auto-upload="false" >
+              <img v-if="addAlbum.image" :src="addAlbum.image" class="avatar" style=" width: 150px; height: 150px; margin-right: 20px;"><i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            <!-- <el-button slot="trigger" size="small" type="primary" @click="isadded=true">点击选择图片</el-button> -->
+              </el-upload>
+            </div>
+          <div style="margin-top: 10px; ">
               <div>图片大小不超过2M</div>        
               <div>上传图片格式为:jpg/jpeg/png</div>
             </div>
-          </el-upload>
           <div style="clear:both"></div>
           </el-form-item>
           <div style="height: 50px; margin-bottom: 0;">
@@ -258,7 +268,7 @@
         artist:{},
         editArtist:{},
         albumView:[],
-        addAlbum:{id:''},
+        addAlbum:{id:'',image:''},
         regionOptions: [{
           value: '内地',
           label: '内地',
@@ -555,8 +565,9 @@
           if(this.isadded){
             this.$nextTick(() => {
             this.$refs.upload2.submit();
-          });
             this.isadded = false;
+          });
+
           } else {
             this.getArtistInfo(this.artist.id);
           }
@@ -595,9 +606,11 @@
     },
     /* 修改歌手图片*/
     editImage:function(file,filelist){
+      if(this.beforeAvatarUpload(file)){
         this.editArtist.image = file.url;
         if(filelist.length>1){
           filelist.splice(0,1);
+        }
       }
     },
     /* 歌手图片上传成功事件*/
@@ -606,10 +619,13 @@
     },
     /* 添加专辑图片*/
     addImage: function(file,filelist) {
+      if(this.beforeAvatarUpload(file)){
+        this.isadded = true;
         this.addAlbum.image = file.url;
         if(filelist.length>1){
           filelist.splice(0,1);
         }
+      }
     },
     /* 判断图片格式及大小*/
     beforeAvatarUpload: function(file) {
@@ -770,5 +786,16 @@
     height: 140px;
     float: left;
     display: block;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 150px;
+    height: 150px;
+    line-height: 150px;
+    text-align: center;
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    margin-right: 15px;
   }
   </style>
