@@ -303,20 +303,23 @@
     },
 
     computed: {
+      //获取用户的serverurl
       serverUrl() {
         return this.$store.state.serverUrl
       }
     },
-
+    //在模板渲染成html后调用，获取按以下规则筛选的歌手分类显示
     mounted() {
       this.singerDisplay(0,'@',0,1);
     
     },
    
     methods: {
+      //控制分页后的歌手显示
       handleCurrentChange: function(val){
         this.singerDisplay(0,'!',0,val);
       },
+      //时间戳转换为日期格式
       timeStampToTime: function(timestamp) {
         var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
         var Y = date.getFullYear() + '-';
@@ -326,6 +329,7 @@
           D = '0' + D;
         return Y+M+D;
       },
+      //从mounted获取的serverurl请求歌手有关数据
       singerDisplay: function(_region, _initial, _gender, _page){
         if(_page != 0){
           _region = this.region;
@@ -386,7 +390,7 @@
           console.log(error);
         });
       },
-
+      //选择地区标签，背景颜色相应变化
       region_change_bg: function(obj){
         var a=document.getElementById("region").getElementsByTagName("li");
         a[1].className="current";
@@ -399,7 +403,7 @@
           }
         }
       },
-
+      //选择首字母标签，背景颜色相应变化
       initial_change_bg: function(obj){
         var a=document.getElementById("initial").getElementsByTagName("li");
         for(var i=0;i<a.length;i++){
@@ -411,7 +415,7 @@
           }
         }
       },
-
+      //选择性别标签，背景颜色相应变化
       gender_change_bg: function(obj){
         var a=document.getElementById("gender").getElementsByTagName("li");
         for(var i=0;i<a.length;i++){
@@ -428,10 +432,12 @@
         this.hasChangeImage = true;
         this.ruleForm.image=file.url;
       },
+      //上传成功提示
       handleAvatarSuccess: function() {
         alert("上传成功");
         this.singerDisplay(0,'@',0,1);
       },
+      //对用户上传的图片进行大小及格式验证
       beforeAvatarUpload(file) {
         const isType = file.type === 'image/jpg'||'image/jpeg'||'image/png';
         //image大小2M以内
@@ -444,10 +450,7 @@
         }
         return (isType && isLt2M);
       },
-
-      addArtist: function(){
-        //添加上传歌手信息 
-      },
+      //提交新增歌手相关信息到对应url
       submitForm:function(){
         this.$refs["ruleForm"].validate((valid) => {
           if (valid) {
