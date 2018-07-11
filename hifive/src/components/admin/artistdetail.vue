@@ -402,7 +402,8 @@
     setAlbum: function(item){
       this.$store.state.albums = item;
     },
-
+    /* 专辑分页*/
+    /* 每页2行，每行4张专辑*/
     A_pagination: function(_albums,_albumPage){
       this.albumPageCount = Math.ceil(parseFloat(_albums.length) / 8);
       if(_albumPage != this.albumPage){
@@ -419,7 +420,7 @@
         }
       } 
     },
-
+    /* 删除歌手*/
     deleteArtist: function(){
     	this.$confirm('确认删除？')
     	.then(_ => {
@@ -448,10 +449,10 @@
     	.catch(function(err){
             console.log(err);
         });
-        })
-        .catch(_ => {});
+      })
+      .catch(_ => {});
     },
-
+    /* 上传歌手图片*/
     uploadForm: function() {
       this.$refs["editArtist"].validate((valid) => {
         if(valid) {
@@ -471,56 +472,55 @@
       }
     });
   },
+    /* 提交歌手编辑信息*/
+    submitForm: function() {
+        
+      if(this.editArtist.region == '内地') {this.editArtist.region = '1';}
+      else if(this.editArtist.region == '港台') {this.editArtist.region = '2';}
+      else if(this.editArtist.region == '欧美') {this.editArtist.region = '3';}
+      else if(this.editArtist.region == '日韩') {this.editArtist.region = '4';}
+      else if(this.editArtist.region == '其他') {this.editArtist.region = '5';}
 
-  submitForm: function() {
-      
-    if(this.editArtist.region == '内地') {this.editArtist.region = '1';}
-    else if(this.editArtist.region == '港台') {this.editArtist.region = '2';}
-    else if(this.editArtist.region == '欧美') {this.editArtist.region = '3';}
-    else if(this.editArtist.region == '日韩') {this.editArtist.region = '4';}
-    else if(this.editArtist.region == '其他') {this.editArtist.region = '5';}
 
-
-    this.axios.post(this.serverUrl+'/artist/modifyArtist',{
-      id:this.editArtist.id,
-      name:this.editArtist.name,
-      image:this.editArtist.image,
-      initial:this.editArtist.initial,
-      region:this.editArtist.region,
-      gender:this.editArtist.gender,
-      country:this.editArtist.country,
-      intro:this.editArtist.intro,
-      birthplace:this.editArtist.birthplace,
-      occupation:this.editArtist.occupation,
-      birthday:this.editArtist.birthday,
-      representative:this.editArtist.representative,
-    })
-    .then(response => {
-      if(response) {
-        this.albumView.splice(0,this.albumView.length);
-        this.getArtistInfo(this.editArtist.id);
-        this.editDialogVisible = false;
-        this.$message({
-          showClose:true,
-          message:'歌手信息编辑成功',
-          type:'success'
-        });
-      }
-      else{
-        this.$message({
-          showClose:true,
-          message:'会话超时',
-          type:'error'
-        });
-      }
-        // this.$router.go(0);
+      this.axios.post(this.serverUrl+'/artist/modifyArtist',{
+        id:this.editArtist.id,
+        name:this.editArtist.name,
+        image:this.editArtist.image,
+        initial:this.editArtist.initial,
+        region:this.editArtist.region,
+        gender:this.editArtist.gender,
+        country:this.editArtist.country,
+        intro:this.editArtist.intro,
+        birthplace:this.editArtist.birthplace,
+        occupation:this.editArtist.occupation,
+        birthday:this.editArtist.birthday,
+        representative:this.editArtist.representative,
       })
-      .catch(function(err){
-        console.log(err);
-      });
-  },
-
-
+      .then(response => {
+        if(response) {
+          this.albumView.splice(0,this.albumView.length);
+          this.getArtistInfo(this.editArtist.id);
+          this.editDialogVisible = false;
+          this.$message({
+            showClose:true,
+            message:'歌手信息编辑成功',
+            type:'success'
+          });
+        }
+        else{
+          this.$message({
+            showClose:true,
+            message:'会话超时',
+            type:'error'
+          });
+        }
+          // this.$router.go(0);
+        })
+        .catch(function(err){
+          console.log(err);
+        });
+    },
+    /* 提交专辑详细信息*/
     submitForm1: function() {
       this.$refs["addAlbum"].validate((valid) => {
         if(valid) {
@@ -593,25 +593,25 @@
       }
       });
     },
-
+    /* 修改歌手图片*/
     editImage:function(file,filelist){
         this.editArtist.image = file.url;
         if(filelist.length>1){
           filelist.splice(0,1);
       }
     },
-
+    /* 歌手图片上传成功事件*/
     upload1Success:function(){
       this.submitForm();
     },
-
+    /* 添加专辑图片*/
     addImage: function(file,filelist) {
         this.addAlbum.image = file.url;
         if(filelist.length>1){
           filelist.splice(0,1);
         }
     },
-
+    /* 判断图片格式及大小*/
     beforeAvatarUpload: function(file) {
       const isJPG = file.type === 'image/jpg'||'image/jpeg'||'image/png';
       const isLt2M = file.size / 1024 / 1024 < 2;
@@ -624,11 +624,11 @@
 
       return isJPG && isLt2M;
     },
-
+    /* 专辑图片上传成功事件*/
     upload2Success: function() {
         this.getArtistInfo(this.artist.id);
     },
-
+    /* 获取歌手信息*/
     getArtistInfo: function(artistId){
       this.axios.get(this.serverUrl+'/artist/getInfo',{
         params:{
@@ -646,7 +646,6 @@
           this.artist.birthday = this.timestampToTime(this.artist.birthday);
           
           for (var i = 0; i < this.artist.albumList.length; i++) {
-
             if(this.artist.albumList[i].image == null){
               this.artist.albumList[i].image = emptyImage;
             } else {
@@ -659,6 +658,7 @@
           console.log(err);
       });
     },
+    /* 修改日期格式*/
     timestampToTime: function(timestamp) {
         var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
         var Y = date.getFullYear() + '-';
@@ -668,7 +668,7 @@
           D = '0' + D;
         return Y+M+D;
       },
-      
+    /* 确认关闭事件*/
     handleClose(done) {
       this.$confirm('确认关闭？')
       .then(_ => {
@@ -676,9 +676,11 @@
       })
       .catch(_ => {});
       },
+    /* 处理页码变化*/
     handleCurrentChange: function(val){
         this.A_pagination(this.artist.albumList,val);
       },
+    /* 点击编辑事件*/
     clickOnEdit: function(){
       this.editDialogVisible = true;
       var temp = {
