@@ -165,8 +165,26 @@ export default {
         }
           
       },
+      serverUrl() {
+        return this.$store.state.serverUrl;
+      },
     },
-    mounted() {
+    watch: {
+      // 如果 `currentSong` 发生改变，这个函数就会运行
+      currentSong: function (newSong, oldSong) {
+        if(newSong != null && newSong.id != null){
+          this.axios.get(this.serverUrl + "/song/play", {
+            params: {
+              id: newSong.id
+            }
+          })
+          .then(res => {
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+        }
+      }
     },
 
    methods: {
