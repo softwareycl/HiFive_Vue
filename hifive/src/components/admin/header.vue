@@ -56,7 +56,7 @@
 			//退出登录，返回用户界面
 			exit: function() {
 				this.$store.state.isLogin0 = false;
-				this.$router.push('/');
+				this.$router.push('/user/unlogin');
 				sessionStorage.removeItem('user');
 				sessionStorage.removeItem('isLogin0');
 			},

@@ -84,6 +84,9 @@
 
 	export default {
 		mounted() {
+			if(this.$store.state.isLogin == true) {
+				this.$router.push('/user/mymusic');
+			}
 			var str = location.href.split('/');
 			var par = str[str.length-1];
 			if(par != '') {
@@ -98,7 +101,7 @@
 							type: 'success'
 						});
 						this.dialogFormVisible = false;
-						this.$router.push('/');
+						this.$router.push('/user/unlogin');
 					}
 					else if(tip == false) {
 						this.$message.error('激活失败');
@@ -329,7 +332,7 @@
 								type: 'success'
 							});
 							this.dialogFormVisible = false;
-							this.$router.push('/');
+							this.$router.push('/user/unlogin');
 						}
 						else if(tip == false) {
 							this.$message.error('注册失败，请重新注册');

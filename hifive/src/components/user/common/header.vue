@@ -180,6 +180,9 @@
 				this.curTitle = '音乐馆';
 		},
 		data () {
+			if(this.$store.state.isLogin0 == true) {
+				this.$router.push('/admin/artist');
+			}
 			var checkOldPwd = (rule, value, callback) => {
 				if (!value) {
 					return callback(new Error('旧密码不能为空'));
@@ -361,7 +364,7 @@
 						if(this.isLogin == true)
 							this.$router.push('/user/mymusic')
 						else
-							this.$router.push('/')
+							this.$router.push('/user/unlogin')
 					} 
 					break
 				}
@@ -421,7 +424,7 @@
 					sessionStorage.removeItem('likeAlbums');
 					sessionStorage.removeItem('playlistList');
 					if(this.$route.name == '我的音乐') {
-						this.$router.push('/');
+						this.$router.push('/user/unlogin');
 					}
 					else {
 						this.$router.push('/user/black_login');

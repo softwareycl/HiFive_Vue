@@ -15,7 +15,7 @@ export default new Router({
     //以下方式为懒加载，即开始时不会加载全部组件，用户访问时才加载相应的组件。
     //以下为用户页面的跳转
     {
-      path: '/',
+      path: '/user/unlogin',
       name: '我的音乐',
       component: resolve => require(['../components/user/page/unlogin.vue'], resolve)
     },
@@ -43,6 +43,11 @@ export default new Router({
     },
     {
       path: '/user/home',
+      name: '首页',
+      component: resolve => require(['../components/user/page/home.vue'], resolve)
+    },
+    {
+      path: '/',
       name: '首页',
       component: resolve => require(['../components/user/page/home.vue'], resolve)
     },
