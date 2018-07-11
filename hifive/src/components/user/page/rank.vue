@@ -184,11 +184,13 @@ export default{
         vHeader,
         vFoot,
     },
+    //在模板渲染成html前调用，显示对应榜单名称
     created(){
         var index=this.$route.query.rankType;
         if(index != undefined)
             this.index = index.toString();
     },
+    //获取用户登录情况及serverurl
     computed: {
       serverUrl() {
         return this.$store.state.serverUrl;
@@ -197,14 +199,17 @@ export default{
         return this.$store.state.isLogin;
       }
     },
+    //在模板渲染成html后调用，获取排行榜及用户歌单列表
     mounted() {
       this.rankDisplay(this.index);
       this.getPlaylistList(this.userID);
     },
     methods:{
+        //计算索引，避免因为分页后索引总是从1开始的情况
         indexMethod: function(index){
             return (this.page - 1)* 20 + index + 1;
         },
+        //按顺序分页显示歌曲排名，一页展示20首，避免因为分页后索引总是从1开始的情况
         pagination: function(_page){
             this.page = _page;
             this.songsView.splice(0,this.songsView.length);
@@ -217,14 +222,17 @@ export default{
             }
             
         },
+        //根据歌曲量动态显示分页总数
         computePageCount: function(){
             this.pageCount = Math.ceil(parseFloat(this.songs.length) / 20);
         },
+        //控制分页操作
         handleChange: function(val){
             if(val != this.page){
                 this.pagination(val);
             }
         },
+        //从mounted获取的serverurl请求排行榜有关数据
         rankDisplay: function(_rankType){
             this.rankType = _rankType;
             //get排行榜展示内容数据
@@ -257,9 +265,8 @@ export default{
                 console.log(error);
             });
         },
-
-        submitForm:function(formname){
         //提交playlist对象，包括歌单名称和简介，返回-1用户会话超时
+        submitForm:function(formname){        
             this.$refs[formname].validate((valid) => {
                 if (valid) {
                     alert('submit!');
@@ -271,6 +278,7 @@ export default{
                 }
             });
         },
+        //下载歌曲，先决条件为用户已登录
         downloadSong:function(row){
             if(this.isLogin){
                 window.location.href = this.serverUrl + "/download/downloadSong?id=" + row.id;
@@ -285,6 +293,7 @@ export default{
                 });
             }
         },
+        //歌曲添加到：若未登录则只显示添加到播放队列，若已登录则显示添加到用户歌单
         handleSongCommand:function(command){
             if(command=="login"){
                 window.location.href='/';
@@ -296,11 +305,12 @@ export default{
           //传递歌曲ID给player.vue
             }
             else{
-              //提交歌曲ID和歌单ID，返回false则用户会话超时
+            //提交歌曲ID和歌单ID，返回false则用户会话超时
              console.log(command.param1);
              console.log(command.param2.ID)
             }
         },
+        //取消操作时的确认框
         handleClose(done) {
             this.$confirm('确认关闭？')
                 .then(_ => {
@@ -308,10 +318,12 @@ export default{
                 })
                 .catch(_ => {});
         },
+        //实现鼠标移入时当前行出现播放，添加到，下载按钮的效果
         handleMouseEnter:function(row, column, cell, event){
             // alert(row.id);
             row.Flag=true;
         },
+        //实现鼠标移出时当前行播放，添加到，下载按钮的效果失效
         handleMouseOut:function(row, column, cell, event){
             if(!row.isopen){
                 row.Flag=false;
@@ -320,14 +332,12 @@ export default{
                 return false;
             }
         },
+        //点击事件触发对应歌曲的事件
         handle:function(row,event){
             row.Flag=event;
             row.isopen=event;
         },
-
-        getPlaylistList:function(){
-        //无提交，返回歌单列表
-        },
+        //专辑添加到：若未登录则只显示添加到播放队列，若已登录则显示添加到用户歌单
         handleAlbumCommand:function(command){
             if(command=="login"){
                 window.location.href='/';
@@ -343,22 +353,24 @@ export default{
             console.log(command.params);
             }
         },
+        //歌曲添加到播放队列，调用公共函数addToSongList
         addToSongList: function(index){
             index = (this.page - 1) * 20 + index;
             var song = this.songs[index];
             var songs = [song];
             this.$store.dispatch("addToSongList", songs);
         },
-
+        //添加榜单所有歌曲到播放列表，调用公共函数addToSongList
         addAllToSongList: function(){
             this.$store.dispatch("addToSongList", this.songs);
         },
-
+        //播放歌曲，调用公共函数play
         playSong:function(index){
             //传递歌曲ID给player.vue
             var startIndex = (this.page - 1) * 20 + index;
             this.$store.dispatch("play", [this.songs, startIndex, false]);
         },
+        //播放榜单所有歌曲，调用公共函数play
         playAllSong:function(){
             //传递所有歌曲ID给player.vue
             this.$store.dispatch("play", [this.songs, 0, false]);

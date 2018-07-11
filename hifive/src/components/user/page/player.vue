@@ -74,21 +74,33 @@
                 style="width: 100%"
                 max-height="455" min-height="455"
                 @row-dblclick="clickSongRow">
-              <el-table-column prop="index" width="50" type="index">
+              <el-table-column prop="index" width="30" type="index">
               </el-table-column>
               <el-table-column
                 label="歌曲"
                 width="350">
                 <template slot-scope="scope">
-                  <i v-if="scope.$index == currentIndex" class="el-icon-caret-right"></i>
-                  <span style="margin-left: 5px">{{ scope.row.name }}</span>
+                  <div id="nameTable">
+                    <i v-if="scope.$index == currentIndex" class="el-icon-caret-right"></i>
+                    <el-tooltip class="item" effect="light" placement="top-start" open-delay="500">
+                      <div slot="content">{{scope.row.name}}</div>
+                      <span >{{ scope.row.name }}</span>
+                    </el-tooltip>
+                  </div>
                 </template>
               </el-table-column>
               <el-table-column
-                prop="artistName"
                 label="歌手"
                 width="170">
-              </el-table-column>            
+                <template slot-scope="scope">
+                  <div id="artistTable">
+                    <el-tooltip class="item" effect="light" placement="top-start" open-delay="500">
+                      <div slot="content">{{scope.row.artistName}}</div>
+                      <span >{{ scope.row.artistName }}</span>
+                    </el-tooltip>
+                  </div>
+                </template>
+              </el-table-column>          
               <el-table-column
                 prop="duration"
                 label="时长"
@@ -100,7 +112,10 @@
           </el-main>
           <el-aside width="40%">
             <div class="lyrics">
-              <h2 id="lyricsTitle">{{currentSong.name}}</h2>
+               <el-tooltip class="item" effect="light" placement="top">
+                  <div slot="content">{{currentSong.name}}</div>
+                  <h2 id="lyricsTitle">{{currentSong.name}}</h2>
+               </el-tooltip>
               <div>
                 <textarea id="lyrics" disabled="disabled" ></textarea>
               </div>
@@ -116,7 +131,7 @@
 
 </template>
 <script>
-import {mapState} from 'vuex';//引入mapstate
+import {mapState} from 'vuex';
 
   //音频显示时间,将整数转换成 时：分：秒的格式
 function realFormatSecond(second) {
@@ -150,9 +165,11 @@ export default {
         }
     },
     computed: {
+      //引入公共变量
       ...mapState([
         'songList','currentIndex'
       ]),
+      //player若没有正在播放的歌曲则显示默认内容
       currentSong() {
         var song = this.$store.state.currentSong;
         if(song.id != null)
@@ -165,6 +182,7 @@ export default {
         }
           
       },
+      //获取当前用户的serverurl
       serverUrl() {
         return this.$store.state.serverUrl;
       },
@@ -255,10 +273,12 @@ export default {
         this.$store.state.currentSong = this.$store.state.songList[this.$store.state.currentIndex]
       }
     },
+    // 当前歌曲结束播放时调用nextSong函数
     end: function () {
       if(this.$store.state.currentIndex < this.$store.state.songList.length - 1)
         this.nextSong()
     },
+    //点击按钮跳出弹出框，显示播放列表及歌词
     clickPopOver: function(){
       if(this.currentSong.name != undefined){
         this.$refs.songListTable.setCurrentRow(this.$store.state.songList[this.$store.state.currentIndex]);
@@ -271,7 +291,7 @@ export default {
       }
       this.showLyrics();
     },
-
+    //显示歌词
     showLyrics: function(){
       if(this.currentSong.name === undefined){
         document.getElementById("lyricsTitle").innerHTML="无播放歌曲";
@@ -289,6 +309,7 @@ export default {
         });
       }
     },
+    //点击歌曲名称或者歌曲图片跳转至歌曲详情
     clickSongName: function(){
       if(this.currentSong.id == null) return;
       this.$router.push({
@@ -296,6 +317,7 @@ export default {
         query:{id:this.currentSong.id}
       })
     },
+    //点击歌手名称跳转至歌曲详情
     clickArtistName: function(){
       if(this.currentSong.id == null) return;
       this.$router.push({
@@ -303,6 +325,7 @@ export default {
         query:{id:this.currentSong.artistId}
       })
     },
+    //在播放列表点击任一行播放对应歌曲
     clickSongRow: function(row, event){
       var songId = row.id;
       var index;
@@ -317,6 +340,7 @@ export default {
       this.showLyrics();
       this.play();
     },
+    //清空播放列表
     deleteAll: function(){
       this.onPause();
       document.getElementById("audio").src="";
@@ -331,6 +355,7 @@ export default {
       document.getElementById("lyrics").innerHTML = "暂无歌词";
     },
   },
+  //改变播放状态按钮函数
   filters: {
     // 使用组件过滤器来动态改变按钮的显示
     transPlayPause(value) {
@@ -437,6 +462,9 @@ export default {
   margin-right:20px;
   margin-top:28px;
   margin-bottom:5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .tooltip{
   margin-top:-20px;
@@ -456,5 +484,16 @@ word-wrap: break-word;
 word-break: normal; 
 overflow:hidden;
 margin-top: 0px;
+}
+#nameTable{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-left: 2px;
+}
+#artistTable{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>
