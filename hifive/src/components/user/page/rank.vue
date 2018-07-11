@@ -55,7 +55,6 @@
                 <el-dropdown-menu slot="dropdown" :data="playlistList">
                     <el-dropdown-item command="playqueue" @click.native ="addAllToSongList()">播放队列</el-dropdown-item>
                     <div v-if="isLogin">
-                      <el-dropdown-item disabled divided>我喜欢</el-dropdown-item>
                       <el-dropdown-item v-for="playlist in playlistList" :key="playlist.id" :command='{type:"playlist",params:playlist.id}'>{{playlist.name}}</el-dropdown-item>
                       <el-dropdown-item command="newplaylist" divided>添加到新歌单</el-dropdown-item>
                     </div>
@@ -205,6 +204,15 @@ export default{
       this.getPlaylistList(this.userID);
     },
     methods:{
+        /* 获取用户播放列表*/
+        getPlaylistList:function(){
+            if(this.isLogin){
+            this.playlistList=this.$store.state.playlistList;
+          }
+          else{
+            return false;
+          }
+        },
         //计算索引，避免因为分页后索引总是从1开始的情况
         indexMethod: function(index){
             return (this.page - 1)* 20 + index + 1;

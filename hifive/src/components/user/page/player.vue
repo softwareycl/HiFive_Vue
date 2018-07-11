@@ -368,7 +368,7 @@ export default {
   }
 }
 </script>
-<style>
+<style scoped>
 .wholeBody,.info{
   height:100%;
   width:100%;
