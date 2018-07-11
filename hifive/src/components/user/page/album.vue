@@ -95,14 +95,15 @@
     },
 
     methods: {
+      /*绑定album*/
       setAlbum: function(item){
         this.$store.state.album = item
       },
-      
+      /* 处理页码变化*/
       handleCurrentChange: function(val){
         this.albumDisplay(0,-1,val);
       },
-
+      /* 修改日期格式*/
       timestampToTime: function(timestamp) {
         var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
         var Y = date.getFullYear() + '-';
@@ -110,7 +111,7 @@
         var D = date.getDate();
         return Y+M+D;
       },
-
+      /* 专辑导航栏分类*/
       albumDisplay: function(_region, _style, _page){
         if(_page != this.page){
           _region = this.region;
@@ -166,7 +167,7 @@
           console.log(error);
         });
       },
-
+      /* 更改导航栏中当前地区*/
       region_change_bg: function(obj){
         var a=document.getElementById("region").getElementsByTagName("li");
         a[1].className="current";
@@ -179,7 +180,7 @@
           }
         }
       },
-
+      /* 更改导航栏中当前风格*/
       style_change_bg: function(obj){
         var a=document.getElementById("style").getElementsByTagName("li");
         for(var i=0;i<a.length;i++){
@@ -190,11 +191,9 @@
             a[i].className="";
           }
         }
-        
-     }
-      
-     }
-     }
+      }
+   }
+  }
 </script>
 
 <style lang="scss" scoped>
