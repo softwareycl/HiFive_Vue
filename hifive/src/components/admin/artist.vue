@@ -157,12 +157,11 @@
                     class="avatar-uploader"
                     ref="uploadImage"
                     :auto-upload="false"
-                    action="http://192.168.20.99:8080/hifive/upload/uploadArtistImage"
+                    action="/hifive/upload/uploadArtistImage"
                     :show-file-list="false"
                     :data={id:ruleForm.id} 
                     :on-change="addImage"  
-                    :on-success="handleAvatarSuccess"                  
-                    :before-upload="beforeAvatarUpload"
+                    :on-success="handleAvatarSuccess"
                     accept=".jpg, .jpeg, .png">
                     <!--<img v-if="ruleForm.image" :src="ruleForm.image" class="avatar">
                     <el-button type="primary" v-else class="el-icon-plus avatar-uploader-icon">点击上传</el-button>-->
@@ -217,6 +216,7 @@
 <script>
   import vHead from '../admin/header.vue'
   import vFoot from '../user/common/footer.vue'
+  import emptyImage from '../../assets/暂无图片.png'
     
     export default {
      data() {
@@ -364,7 +364,11 @@
           this.singers = res.data;
           console.log(this.singers);
           for(var i = 0; i < res.data.length; i++){
+            if(this.singer[i].image == null){
+              this.singer[i].image = emptyImage;
+            }else{
             this.singers[i].image = this.serverUrl + this.singers[i].image;
+            }
           }
           
           console.log(this.singers)
@@ -429,13 +433,16 @@
       },
       //上传歌手图片
       addImage:function(file){
-        this.hasChangeImage = true;
-        this.ruleForm.image=file.url;
+        if(this.beforeAvatarUpload(file)){
+          this.hasChangeImage = true;
+          this.ruleForm.image=file.url;
+        }
       },
       //上传成功提示
       handleAvatarSuccess: function() {
         alert("上传成功");
         this.singerDisplay(0,'@',0,1);
+        this.hasChangeImage = false;
       },
       //对用户上传的图片进行大小及格式验证
       beforeAvatarUpload(file) {
@@ -485,7 +492,7 @@
                 if(!hasChangeImage){
                   this.singerDisplay(0,'@',0,1);
                 }
-                
+                this.hasChangeImage = false;
               }
               else{
                 this.$message({

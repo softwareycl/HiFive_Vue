@@ -39,13 +39,12 @@
                                     <el-upload
                                     class="avatar-uploader"
                                     ref="uploadImage"
-                                    action="http://192.168.20.99:8080/hifive/upload/uploadPlaylistImage"
+                                    action="/hifive/upload/uploadPlaylistImage"
                                     :auto-upload="false"
                                     list-type="picture-card"
                                     :show-file-list="false"
                                     :data={id:ruleForm.id} 
                                     :on-change="editImage"
-                                    :before-upload="beforeAvatarUpload"
                                     :on-success="handleAvatarSuccess"
                                     :on-error="uploadFail"
                                     accept=".jpg, .jpeg, .png">
@@ -223,6 +222,7 @@ export default {
                 image:'',
             },
             playlistList:[],
+            hasChangeImage: false,
         }
     },
     //获取用户登录情况及serverurl
@@ -447,7 +447,11 @@ export default {
         submitForm:function(){
             this.$refs["ruleForm"].validate((valid) => {
               if (valid) {
-                this.$refs.uploadImage.submit();
+                if(this.hasChangeImage){
+                  this.$nextTick(() => {
+                    this.$refs.uploadImage.submit(); 
+                  });
+                }
                 this.axios.post(this.serverUrl+'/playlist/modifyInfo',{
                   id:this.ruleForm.id,
                   name:this.ruleForm.name,
@@ -456,7 +460,9 @@ export default {
                 .then(response =>{
                   if(response){
                     this.$refs["ruleForm"].resetFields();
-                    this.getPlaylistIntro();
+                    if(!this.hasChangeImage){
+                        this.getPlaylistIntro();
+                    }
                     this.handleOverflow();
                     this.editDialogVisible=false;
                     this.$message({
@@ -464,6 +470,7 @@ export default {
                       message: '歌单编辑成功',
                       type: 'success'
                     });
+                    this.hasChangeImage = false;
                   }
                   else{
                     this.$message({
@@ -559,12 +566,17 @@ export default {
 
         },
         //上传图片
-        editImage:function(file,){
-            this.ruleForm.image=file.url;
+        editImage:function(file){
+            if(beforeAvatarUpload(file)){
+                this.ruleForm.image=file.url;
+                this.hasChangeImage = true;
+            }
         },
         //提示上传成功
         handleAvatarSuccess: function() {
+            this.getPlaylistIntro();
             alert("上传成功");
+            this.hasChangeImage = false;
         },
         //对用户上传的图片进行大小及格式验证
         beforeAvatarUpload(file) {
