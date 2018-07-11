@@ -301,11 +301,13 @@ export default {
 
     },
     methods:{
+        //鼠标移入歌曲图片调用，出现动画
         enterSongImage:function(event){
             event.target.style.transform='scale(1.1)';
             event.target.parentNode.parentNode.children[1].style.transform='scale(1.1)';
             event.target.parentNode.parentNode.children[1].style.opacity=1;
         },
+        //鼠标移出歌曲图片调用，出现动画
         leaveSongImage:function(event){
             if(event.toElement==event.target.parentNode.parentNode.children[1]){
                 return false;
@@ -316,11 +318,13 @@ export default {
                 event.target.parentNode.parentNode.children[1].style.opacity=0;
             }
         },
+        //鼠标移入专辑图片调用，出现动画
         enterAlbumImage:function(event){
             event.target.style.transform='scale(1.1)';
             event.target.parentNode.parentNode.children[1].style.transform='scale(1.5)';
             event.target.parentNode.parentNode.children[1].style.opacity=1;
         },
+        //鼠标移出专辑图片调用，出现动画
         leaveAlbumImage:function(event){
             if(event.toElement==event.target.parentNode.parentNode.children[1]){
                 return false;
@@ -331,14 +335,17 @@ export default {
                 event.target.parentNode.parentNode.children[1].style.opacity=0;
             }
         },
+        //鼠标移入排行榜调用，出现动画
         enterList:function(button){  
             document.getElementById(button).style.transform='scale(1.4)';
             document.getElementById(button).style.opacity=1;
         },
+        //鼠标移出排行榜调用，出现动画
         leaveList:function(button){
             document.getElementById(button).style.transform='scale(1)';
             document.getElementById(button).style.opacity=0;
         },
+        //点击播放全部按钮调用，播放新歌首发所有歌曲
         playAllSong:function(){
             var songs = [];
             for(var i = 0; i < this.songList.length; i++){
@@ -347,9 +354,11 @@ export default {
             }
             this.$store.dispatch("play", [songs, 0, false]);
         },
+        //切换歌曲上方标签调用，切换歌曲
         switchSong(tab) {
             this.getSongList(tab.name);
         },
+        //点击歌曲播放按钮，播放歌曲
         clickOnSongButton:function(index){
             if(this.songList[index].id != ""){
                 var songs = [];
@@ -360,9 +369,11 @@ export default {
                 this.$store.dispatch("play", [songs, index, false]);
             }
         },
+        //切换专辑上方标签调用，切换专辑
         switchAlbum(tab) {
             this.getAlbumList(tab.name);
         },
+        //点击专辑播放按钮，播放专辑
         clickOnAlbumButton:function(index){
             if(this.albumList[index].id == "") return;
 
@@ -387,7 +398,7 @@ export default {
             });
             
         },
-
+        //点击排行榜播放按钮调用，播放排行榜
         playList:function(index){
             var rank;
             if(index == 1) rank = this.list1;
@@ -403,6 +414,7 @@ export default {
             }
             this.$store.dispatch("play", [songs, 0, false]);
         },
+        //从后台获取歌曲列表
         getSongList: function(index){
             var song={id:'',name:'暂无数据',artistName:'',duration:'',image:emptyImage};
             this.songList=[];
@@ -432,6 +444,7 @@ export default {
                 console.log(err);
             });
         },
+        //从后台获取专辑列表
         getAlbumList: function(index){
             var album={id:'',name:'暂无数据',artistName:'',image:emptyImage};
             this.albumList=[];
@@ -459,6 +472,7 @@ export default {
                 console.log(err);
             });
         },
+        //从后台获取排行榜列表
         getRank: function(index){
             var song={id:'',name:'暂无数据',artistName:''};
             this.axios.get(this.serverUrl+'/song/rank',{
@@ -512,11 +526,13 @@ export default {
               });
         },
     },
+    //从state.js获取常用参数
     computed:{
         serverUrl(){
           return this.$store.state.serverUrl;
         }
     },
+    //vue的mounted生命周期，获取首页信息
     mounted(){
         this.getSongList(1);
         this.getAlbumList(1);

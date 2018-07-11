@@ -248,6 +248,7 @@ export default {
         }
     },
     methods:{
+        //对话框关闭前调用，询问确认关闭
         handleClose(done) {
         this.$confirm('确认关闭？')
         .then(_ => {
@@ -255,9 +256,11 @@ export default {
         })
         .catch(_ => {});
         },
+        //鼠标移入列表单元格调用，修改那一行的标志
         handleMouseEnter:function(row, column, cell, event){
             row.Flag=true;
         },
+        //鼠标移出列表单元格调用，修改那一行的标志
         handleMouseOut:function(row, column, cell, event){
             if(!row.isopen){
                 row.Flag=false;}
@@ -265,10 +268,12 @@ export default {
                 return false;
             }
         },
+        //列表里的添加到下拉框显示状态改变调用，修改那一行的标志
         handle:function(row,event){
             row.Flag=event;
             row.isopen=event;
         },
+        //点击播放全部按钮调用，播放收藏的歌曲
         playAllSong:function(){
             if(this.allSong.length==0){
                 this.$message({
@@ -281,9 +286,11 @@ export default {
                 this.$store.dispatch("play", [this.allSong, 0, false]);
             }
         },
+        //点击歌曲播放按钮调用，播放歌曲
         playSong:function(index){
             this.$store.dispatch("play", [this.songList, index, false]);
         },
+        //点击歌曲列表里添加到中的一项调用，处理添加到按钮的不同请求
         handleSongCommand:function(command){
           if(command.type=="playqueue"){
             var song=this.songList[command.params];
@@ -299,6 +306,7 @@ export default {
             this.addSongToPlaylist(command.param2.id,command.param1);
           }
         },
+        //把歌曲添加到歌单
         addSongToPlaylist:function(songId,playlistId){
           this.axios.get(this.serverUrl+'/playlist/addSong',{
               params:{
@@ -327,9 +335,11 @@ export default {
               console.log(err);
             });
         },
+        //点击歌曲下载按钮调用，下载歌曲
         downloadSong:function(row){
             window.location.href = this.serverUrl + "/download/downloadSong?id=" + row.id;
         },
+        //点击歌曲删除按钮调用，删除歌曲
         deleteSong:function(row,index){
             this.$confirm('确认删除？')
             .then(_ => {
@@ -369,6 +379,7 @@ export default {
             })
             .catch(_ => {});
         },
+        //点击专辑播放按钮调用，播放专辑
         playAlbum:function(row){
             this.axios.get(this.serverUrl+'/album/getSongsFromAlbum',{
               params:{
@@ -388,6 +399,7 @@ export default {
               console.log(err);
             });
         },
+        //点击专辑添加到按钮中的一项调用，处理添加到按钮的不同请求
         handleAlbumCommand:function(command){
           if(command.type=="playqueue"){
             this.axios.get(this.serverUrl+'/album/getSongsFromAlbum',{
@@ -417,6 +429,7 @@ export default {
             this.addAlbumToPlaylist(command.param2.id,command.param1);
           }
         },
+        //把专辑添加到歌单
         addAlbumToPlaylist:function(albumId,playlistId){
           this.axios.get(this.serverUrl+'/playlist/addAlbum',{
               params:{
@@ -445,6 +458,7 @@ export default {
               console.log(err);
             });
         },
+        //点击专辑删除按钮调用，删除专辑
         deleteAlbum:function(row,index){
             this.$confirm('确认删除？')
             .then(_ => {
@@ -485,6 +499,7 @@ export default {
             })
             .catch(_ => {});
         },
+        //点击歌单播放按钮调用，播放歌单
         playPlaylist:function(row){
           this.axios.get(this.serverUrl+'/playlist/getSongs',{
               params:{
@@ -512,6 +527,7 @@ export default {
               console.log(err);
             });
         },
+        //点击歌单列表里的添加到按钮中的一项调用，处理添加到按钮的不同请求
         handlePlaylistCommand:function(command){
           if(command.type=="playqueue"){
             this.axios.get(this.serverUrl+'/playlist/getSongs',{
@@ -541,6 +557,7 @@ export default {
             this.addPlaylistToPlaylist(command.param2.id,command.param1);
           }
         },
+        //把歌单添加到歌单
         addPlaylistToPlaylist:function(fromId,toId){
             this.axios.get(this.serverUrl+'/playlist/addPlaylistToPlaylist',{
               params:{
@@ -568,6 +585,7 @@ export default {
               console.log(err);
             });
         },
+        //点击歌单删除按钮调用，删除歌单
         deletePlaylist:function(row,index){
             this.$confirm('确认删除？')
             .then(_ => {
@@ -607,6 +625,7 @@ export default {
             })
             .catch(_ => {});
         },
+        //点击表单完成按钮调用，提交新建歌单的表单
         submitForm:function(){
           this.$refs["newPlaylist"].validate((valid) => {
             if (valid) {
@@ -663,6 +682,7 @@ export default {
             }
           });
         },
+        //将时间戳变成固定格式时间
         timestampToTime: function(timestamp) {
           var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
           var Y = date.getFullYear() + '-';
@@ -671,6 +691,7 @@ export default {
           if(D < 10) D = '0' + D;
           return Y+M+D;
         },
+        //从后台获取用户歌单
         getMyPlaylist:function(page){
             this.axios.get(this.serverUrl + "/user/showMyMusic", {
                 params: {
@@ -704,6 +725,7 @@ export default {
                 console.log(error);
             });
         },
+        //从后台获取用户我的音乐里的所有信息
         getMyMusic:function(){
             this.axios.get(this.serverUrl + "/user/showMyMusic", {
                 params: {
@@ -768,6 +790,7 @@ export default {
                 console.log(error);
             });
         },
+        //收藏歌曲页码变动调用，换页
         songPaginationChange:function(page){
             this.songList=[];
             if(this.allSong.length==0){
@@ -787,6 +810,7 @@ export default {
                 }
             }
         },
+        //收藏专辑页码变动调用，换页
         albumPaginationChange:function(page){
             this.albumList=[];
             if(this.allAlbum.length==0){
@@ -806,6 +830,7 @@ export default {
                 }
             }
         },
+        //歌单页码变动调用，换页
         playlistPaginationChange:function(page){
             this.playlistList=[];
             if(this.allPlaylist.length==0){
@@ -826,9 +851,11 @@ export default {
             }
         },
     },
+    //vue的created生命周期
     created(){
         window.scrollTo(0,0);
     },
+    //从state.js获取常用参数
     computed:{
         serverUrl(){
           return this.$store.state.serverUrl;
@@ -837,6 +864,7 @@ export default {
           return this.$store.state;
         }
     },
+    //vue的mounted生命周期，获取用户信息
     mounted(){
         this.user.id=this.state.user.id;
         this.getMyMusic();

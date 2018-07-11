@@ -153,9 +153,11 @@
     }
   },
   methods: {
+    //生成列表里的序号
     indexMethod(index) {
       return index+1;
     },
+    //对话框关闭前调用，询问确认关闭
     handleClose(done) {
       this.$confirm('确认关闭？')
       .then(_ => {
@@ -163,20 +165,24 @@
       })
       .catch(_ => {});
     },
+    //鼠标移入列表单元格调用，修改那一行的标志
     handleMouseEnter:function(row, column, cell, event){
       row.Flag=true;
     },
+    //鼠标移出列表单元格调用，修改那一行的标志
     handleMouseOut:function(row, column, cell, event){
       if(!row.isopen){
         row.Flag=false;}
-        else{
-          return false;
-        }
-      },
+      else{
+        return false;
+      }
+    },
+    //列表里的添加到下拉框显示状态改变调用，修改那一行的标志
     handle:function(row,event){
-        row.Flag=event;
-        row.isopen=event;
-      },
+      row.Flag=event;
+      row.isopen=event;
+    },
+    //判断文本是否溢出div框
     handleOverflow:function(){
       var offsetHeight = document.getElementById("albumIntro").offsetHeight;  
       var scrollHeight = document.getElementById("albumIntro").scrollHeight;
@@ -187,9 +193,11 @@
         this.isOverflow=false;
       }
     },
+    //点击播放全部按钮调用，播放专辑所有歌曲
     playAllSong:function(){
       this.$store.dispatch("play", [this.songList, 0, false]);
     },
+    //点击收藏按钮调用，如果用户登录，收藏专辑，否则询问是否登录
     collect:function(){
       if(this.isLogin){
         this.axios.get(this.serverUrl+'/user/likeAlbum',{
@@ -230,6 +238,7 @@
         });
       }
     },
+    //点击已收藏按钮调用，取消专辑收藏
     cancelCollect:function(){ 
       this.axios.get(this.serverUrl+'/user/unlikeAlbum',{
         params:{
@@ -264,6 +273,7 @@
         console.log(err);
       });
     },
+    //点击专辑添加到按钮中的一项调用，处理添加到按钮的不同请求
     handleAlbumCommand:function(command){
       if(command=="login"){
         window.location.href='/';
@@ -280,6 +290,7 @@
         this.addAlbumToPlaylist(command.params);
       }
     },
+    //把专辑添加到歌单
     addAlbumToPlaylist:function(playlistId){
       this.axios.get(this.serverUrl+'/playlist/addAlbum',{
         params:{
@@ -307,9 +318,11 @@
         console.log(err);
       });
     },
+    //点击歌曲播放按钮调用，播放歌曲
     playSong:function(index){
       this.$store.dispatch("play", [this.songList, index, false]);
     },
+    //收藏歌曲
     collectSong:function(index){
       this.axios.get(this.serverUrl+'/user/likeSong',{
         params:{
@@ -338,6 +351,7 @@
         console.log(err);
       });
     },
+    //点击歌曲列表里添加到中的一项调用，处理添加到按钮的不同请求
     handleSongCommand:function(command){
       if(command=="login"){
         window.location.href='/';
@@ -359,6 +373,7 @@
         this.addSongToPlaylist(command.param2.id,command.param1);
       }
     },
+    //把歌曲添加到歌单
     addSongToPlaylist:function(songId,playlistId){
       this.axios.get(this.serverUrl+'/playlist/addSong',{
         params:{
@@ -386,6 +401,7 @@
         console.log(err);
       });
     },
+    //点击表单完成按钮调用，提交表单
     submitForm:function(){
       this.$refs["newPlaylist"].validate((valid) => {
         if (valid) {
@@ -434,6 +450,7 @@
         }
       });
     },
+    //点击歌曲下载按钮调用，下载歌曲
     downloadSong:function(row){
       if(this.isLogin){
         window.location.href = this.serverUrl + "/download/downloadSong?id=" + row.id;
@@ -448,6 +465,7 @@
         });
       }
     },
+    //将时间戳变成固定格式时间
     timestampToTime: function(timestamp) {
       var date = new Date(timestamp);
       var Y = date.getFullYear() + '-';
@@ -456,6 +474,7 @@
       if(D < 10) D = '0' + D;
       return Y+M+D;
     },
+    //从后台获取专辑信息
     getAlbumInfo:function(){
       this.axios.get(this.serverUrl+'/album/getInfo',{
         params:{
@@ -495,6 +514,7 @@
         console.log(err);
       });
     },
+    //得到用户歌单列表
     getPlaylistList:function(){
       if(this.isLogin){
         this.playlistList=this.state.playlistList;
@@ -503,6 +523,7 @@
         return false;
       }
     },
+    //得到专辑是否收藏
     getIsCollected:function(){
       var flag=false;
       for(var i=0;i<this.state.likeAlbums.length;i++){
@@ -514,10 +535,12 @@
       this.album.isCollected=flag;
     },
   },
+  //vue的created生命周期，从路由信息里获取专辑id
   created(){
     this.album.id=this.$route.query.id;
     window.scrollTo(0,0);
   },
+  //从state.js获取常用参数
   computed:{
     serverUrl(){
       return this.$store.state.serverUrl;
@@ -526,10 +549,12 @@
       return this.$store.state;
     }
   },
+  //vue的mounted生命周期，获取专辑信息
   mounted(){
     this.isLogin=this.state.isLogin;
     this.getAlbumInfo();
   },
+  //vue的updated生命周期，判断文本是否溢出div框
   updated: function (){
     this.handleOverflow();
   }

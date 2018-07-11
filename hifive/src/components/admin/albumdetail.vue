@@ -78,7 +78,7 @@
             <el-input v-model="addSong.name" style="width:50%;"></el-input>
           </el-form-item>
           <el-form-item label="歌曲图片" prop="image">
-            <el-upload ref="upload2" :auto-upload="false" action="http://192.168.20.99:8080/hifive/upload/uploadSongImage" :data={id:addSong.id} :show-file-list="false" :on-change="addImage" :before-upload="beforeAvatarUpload" :on-success="upload2Success" :on-error="handleError2">
+            <el-upload ref="upload2" :auto-upload="false" action="http://192.168.20.99:8080/hifive/upload/uploadSongImage" :data={id:addSong.id} :show-file-list="false" :on-change="addImage" :before-upload="beforeAvatarUpload" :on-error="handleError2">
               <img :src="addSong.image" class="img">
             </el-upload>
             <el-upload ref="upload3" :auto-upload="false" action="http://192.168.20.99:8080/hifive/upload/uploadSongFile" :data={id:addSong.id} :on-change="addFilePath" :on-success="upload3Success" :on-error="handleError3" style="height:90px;">
@@ -289,9 +289,11 @@
       }
     },
     methods: {
+      //生成列表里的序号
       indexMethod(index) {
         return index+1;
       },
+      //判断文本是否溢出div框
       handleOverflow:function(){
         var offsetHeight = document.getElementById("albumIntro").offsetHeight;  
         var scrollHeight = document.getElementById("albumIntro").scrollHeight;
@@ -302,6 +304,7 @@
           this.isOverflow=false;
         }
       },
+      //对话框关闭前调用，询问确认关闭
       handleClose(done) {
         this.$confirm('确认关闭？')
         .then(_ => {
@@ -309,12 +312,15 @@
         })
         .catch(_ => {});
       },
+      //鼠标移入列表单元格调用，修改那一行的标志
       handleMouseEnter:function(row, column, cell, event){
         row.Flag=true;
       },
+      //鼠标移出列表单元格调用，修改那一行的标志
       handleMouseOut:function(row, column, cell, event){
          row.Flag=false;
       },
+      //点击编辑专辑按钮调用，显示对话框和表单
       clickOnEdit:function(){
         this.editDialogVisible=true;
         var temp={
@@ -330,6 +336,7 @@
           intro:this.album.intro,}
         this.editAlbum=temp;
       },
+      //点击添加歌曲按钮调用，显示对话框和表单
       clickOnAdd:function(){
         this.addDialogVisible=true;
         var temp={
@@ -347,6 +354,7 @@
           releaseDate:'',}
         this.addSong=temp;
       },
+      //添加更改专辑图片调用，替换原来准备上传的文件
       editImage:function(file,filelist){
         this.isImgChange=true;
         this.editAlbum.image=file.url;
@@ -354,24 +362,28 @@
           filelist.splice(0,1);
         }
       },
+      //添加更改歌曲图片调用，替换原来准备上传的文件
       addImage:function(file,filelist){
         this.addSong.image=file.url;
         if(filelist.length>1){
           filelist.splice(0,1);
         }
       },
+      //添加更改歌曲文件调用，替换原来准备上传的文件
       addFilePath:function(file,filelist){
         this.addSong.filePath=file.url;
         if(filelist.length>1){
           filelist.splice(0,1);
         }
       },
+      //添加更改歌词文件调用，替换原来准备上传的文件
       addLyricsPath:function(file,filelist){
         this.addSong.lyricsPath=file.url;
         if(filelist.length>1){
           filelist.splice(0,1);
         }
       },
+      //上传专辑图片失败时调用，提示错误信息
       handleError1:function(){
         this.$message({
           showClose: true,
@@ -379,14 +391,15 @@
           type: 'error'
         });
       },
+      //上传歌曲图片失败时调用，提示错误信息
       handleError2:function(){
         this.$message({
           showClose: true,
           message: '歌曲图片上传失败',
           type: 'error'
         });
-        this.addSong.image=require('../../assets/点击添加图片.png');
       },
+      //上传歌曲文件失败时调用，提示错误信息，清空上传文件列表
       handleError3:function(){
         this.$message({
           showClose: true,
@@ -395,6 +408,7 @@
         });
         this.$refs.upload3.clearFiles();
       },
+      //上传歌词文件失败时调用，提示错误信息，清空上传文件列表
       handleError4:function(){
         this.$message({
           showClose: true,
@@ -403,6 +417,7 @@
         });
         this.$refs.upload4.clearFiles();
       },
+      //点击编辑专辑表单的完成按钮调用，上传专辑图片
       uploadForm1:function(){
         this.$refs["editAlbum"].validate((valid) => {
           if (valid) {
@@ -423,9 +438,11 @@
           }
         });
       },
+      //上传专辑图片成功调用，调用提交表单函数
       upload1Success:function(){
         this.submitForm1();
       },
+      //点击表单完成按钮调用，提交编辑专辑表单
       submitForm1:function(){
         this.axios.post(this.serverUrl+'/album/modifyAlbum',{
           id:this.editAlbum.id,
@@ -457,15 +474,16 @@
           console.log(err);
         });
       },
-      upload2Success:function(){     
-      },
+      //上传歌曲文件成功调用，清空已上传文件列表
       upload3Success:function(){
           this.$refs.upload3.clearFiles();
           this.getAlbumInfo();
       },
+      //上传歌词文件成功调用，清空已上传文件列表
       upload4Success:function(){
           this.$refs.upload4.clearFiles();
       },
+      //点击表单完成按钮调用，提交添加歌曲的表单
       submitForm2:function(){
         this.$refs["addSong"].validate((valid) => {
           if (valid) {
@@ -513,6 +531,7 @@
           }
         });
       },
+      //点击删除专辑按钮调用，删除专辑
       deleteAlbum:function(){
         this.$confirm('确认删除？')
         .then(_ => {
@@ -544,6 +563,7 @@
         })
         .catch(_ => {});
       },
+      //点击删除歌曲的按钮调用，删除专辑中的一首歌
       deleteSong:function(row,index){
         this.$confirm('确认删除？')
         .then(_ => {
@@ -575,6 +595,7 @@
         })
         .catch(_ => {});
       },
+      //上传文件前调用，判断文件类型格式是否合法
       beforeAvatarUpload(file) {
         const isType = file.type === 'image/jpg'||'image/jpeg'||'image/png';
         const isLt2M = file.size / 1024 / 1024 < 2;
@@ -587,6 +608,7 @@
         }
         return isType && isLt2M;
       },
+      //将时间戳变成固定格式时间
       timestampToTime: function(timestamp) {
         var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
         var Y = date.getFullYear() + '-';
@@ -595,6 +617,7 @@
         if(D < 10) D = '0' + D;
         return Y+M+D;
       },
+      //从后台获取专辑信息
       getAlbumInfo:function(){
         this.axios.get(this.serverUrl+'/album/getInfo',{
           params:{
@@ -621,6 +644,7 @@
           console.log(err);
         });
       },
+      //将风格从文字变成序号
       getStyleNumber:function(style){
         var number=-1;
         for(var i=0;i<this.style.length;i++){
@@ -630,6 +654,7 @@
         }
         return number;
       },
+      //将地区从文字变成序号
       getRegionNumber:function(region){
         var number=-1;
         for(var i=0;i<this.region.length;i++){
@@ -640,10 +665,12 @@
         return number;
       },
     },
+    //vue的created生命周期，从路由信息里获取专辑id
     created(){
       this.album.id=this.$route.query.id;
       window.scrollTo(0,0);
     },
+    //从state.js获取常用参数
     computed:{
       serverUrl(){
         return this.$store.state.serverUrl;
@@ -652,9 +679,11 @@
         return this.$store.state;
       }
     },
+    //vue的mounted生命周期，获取专辑信息
     mounted(){
       this.getAlbumInfo();
     },
+    //vue的updated生命周期，判断文本是否溢出div框
     updated:function(){
       this.handleOverflow();
     }
