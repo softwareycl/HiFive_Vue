@@ -130,34 +130,36 @@
     },
 
     methods: {
+    	/* 点击下一步按钮实现步骤切换*/
       next() {
       	if(this.active == 0) this.checkUserExisted(this.email.id);
       	if(this.active == 1) this.checkAnswer(this.email.id, this.security.securityAnswer);
       	if(this.active == 2) this.resetPassword(this.password.newPwd);    	
       },
+      /* 点击上一步按钮实现步骤切换*/
       last() {
       	if (this.active-- < 1) this.active = 0;
       	this.hidden(this.active);
       },
+      /* 隐藏div使当前展示的div与步骤条同步*/
       hidden: function(_active){
-      	//alert(111111);
-      	if(_active == 0) {
+      	if(_active == 0) { //对应步骤条第一步
         	document.getElementById('div1').style.display = 'block';
         	document.getElementById('div2').style.display = 'none';
         	document.getElementById('div3').style.display = 'none';
-      	} else if(_active == 1) {
+      	} else if(_active == 1) { //对应步骤条第二步
         	document.getElementById('div2').style.display = 'block';
         	document.getElementById('div1').style.display = 'none';
         	document.getElementById('div3').style.display = 'none';
-        } else if(_active == 2) {
+        } else if(_active == 2) { //对应步骤条第三步
         	document.getElementById('div3').style.display = 'block';
         	document.getElementById('div1').style.display = 'none';
         	document.getElementById('div2').style.display = 'none';
-        } else if(_active == 3) {
+        } else if(_active == 3) { //页面跳转
         	setTimeout(function () { this.location.href = "../../unlogin.vue" }, 4000);
         }
       },
-
+      /* 判断用户是否存在*/
       checkUserExisted: function(_email){
       	this.checkInput('email')
       	// if(_email != '') {
@@ -191,7 +193,7 @@
       			this.active = 0;
       			}
       },
-
+      /* 获取用户密保问题*/
       getQuestion: function(_email){
       	this.axios.get(this.serverUrl+'/user/getQuestion',{
                 params:{
@@ -208,7 +210,7 @@
 				console.log(error);
 			});
       },
-
+      /* 判断用户密保答案是否正确*/
       checkAnswer: function(_id, _answer){
       	this.checkInput('security');
       	// if(_answer != ''){
@@ -239,7 +241,7 @@
       		this.active = 1;
       		}
       },
-
+      /* 重置密码*/
       resetPassword: function(_newPwd){
       	this.checkInput('password');
       	if(this.flag){
@@ -273,6 +275,7 @@
       		}
       },
 
+      /* 判断用户输入是否合法*/
       checkInput: function(formName){
       	this.$refs[formName].validate((valid) => {
       		if(valid) {

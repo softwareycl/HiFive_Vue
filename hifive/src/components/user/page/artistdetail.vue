@@ -188,32 +188,32 @@
       this.artist.id = this.$route.query.id;
     },
 
-      mounted(){
-        this.isLogin = this.$store.state.isLogin;
-        this.getArtistInfo(this.artist.id);
-        this.getPlaylistList();
-      },
+    mounted(){
+      this.isLogin = this.$store.state.isLogin;
+      this.getArtistInfo(this.artist.id);
+      this.getPlaylistList();
+    },
 
     methods: {
-      /*每页显示十行*/
+      /* 歌曲分页*/
+      /* 每页显示十行*/
       S_pagination: function(_page, _songList){
         this.songPageCount = Math.ceil(parseFloat(_songList.length) / 10);
         if(_page != this.songPage){
           this.songPage = _page;
           this.songListView.splice(0,this.songListView.length);
         } 
-  
         var len = _songList.length < 10 ? _songList.length : 10;
         for(var i = 0; i < len; i++){
           if(_songList[((this.songPage - 1)*10) + i] != null){
             //var list = [];
-            
             var song = _songList[((_page - 1)*10) + i];
             this.songListView.push(song);
           }
         }
-
       },
+      /* 专辑分页*/
+      /* 每页显示4张专辑*/
       A_pagination: function(_albums,_albumPage){
         this.albumPageCount = Math.ceil(parseFloat(_albums.length) / 4);
         if(_albumPage != this.albumPage){
@@ -227,15 +227,15 @@
           }
         } 
       },
+
       setAlbum: function(item){
         this.$store.state.albums = item
       },
+      /* 修改当前页的index*/
     	indexMethod(index) {
-        
           return (this.songPage - 1)*10 + index + 1;
     	},
-
-
+      /* 确认是否关闭*/
     	handleClose(done) {
         this.$confirm('确认关闭？')
         .then(_ => {
@@ -243,21 +243,19 @@
         })
         .catch(_ => {});
         },
-
-      albumDisplay: function(){
-          this.axios.get(this.serverUrl + "/artist/getInfo",{
-
-          })
-        },
+      /* 处理歌曲页码变化*/
       handleCurrentChange: function(val){
         this.S_pagination(val,this.artist.songList);
       },
+      /* 处理专辑页码变化*/
       handleCurrentChange2: function(val){
         this.A_pagination(this.artist.albumList,val);
       },
+      /* 绑定鼠标Enter事件*/
       handleMouseEnter:function(row, column, cell, event){
         row.Flag=true;
         },
+      /* 绑定鼠标Leave事件*/
       handleMouseOut:function(row, column, cell, event){
         if(!row.isopen){
           row.Flag=false;}
@@ -265,175 +263,178 @@
             return false;
           }
         },
-
-    handle:function(row,event){
-          row.Flag=event;
-          row.isopen=event;
-        },
-    playAllSong:function(){
-		  this.$store.dispatch("play", [this.artist.songList,0,false]);
-		},
-
-		playSong:function(index){
-      index = (this.songPage - 1) * 10 + index;
-		  this.$store.dispatch("play", [this.artist.songList,index,false]);
-	},
-    handleSongCommand:function(command){
-      if(command=="login"){
-        window.location.href='/';
-      }
-      else if(command=="newplaylist"){
-        this.dialogVisible=true;
-      }
-      else if(command.type=="playqueue"){
-        var index = command.params;
-        var song = this.artist.songList[index];
-        var songs = [song];
-        this.$store.dispatch("addToSongList", songs);
-      }
-      else{
-        this.axios.get(this.serverUrl + '/playlist/addSong',{
-          params:{
-              songId:command.param2.id,
-              playlistId:command.param1
-          }
-        })
-        .then(response =>{
-          if(response){
-            this.$message({
-              showClose: true,
-              message: '已成功添加到歌单',
-              type: 'success'
-            });
-          }
-          else{
-            this.$message({
-              showClose: true,
-              message: '会话超时',
-              type: 'error'
-            });
-          }
-        })
-        .catch(function(err){
-          console.log(err);
-        });
-      }
-    },
-		submitForm:function(){
-			this.$refs["playlist"].validate((valid) => {
-            if (valid) {
-              this.axios.get(this.serverUrl+'/playlist/create',{
-                params:{
-                  name:this.playlist.name,
-                  intro:this.playlist.intro
-                }
-              })
-              .then(response =>{
-                if(response!=-1){
-                  this.playlist.id=response.data;
-                  this.$store.state.playlistList.push(this.playlist);
-                  this.getPlaylistList();
-                  this.$message({
-                    showClose: true,
-                    message: '已成功添加到新歌单',
-                    type: 'success'
-                  });
-                  this.dialogVisible=false;
-                  this.$refs["playlist"].resetFields();
-                }
-                else{
-                  this.$message({
-                    showClose: true,
-                    message: '会话超时',
-                    type: 'error'
-                  });
-                }
-              })
-              .catch(function(err){
-                console.log(err);
-              });
-            } 
-            else {
-              this.$message({
-                showClose: true,
-                message: '格式不正确',
-                type: 'error'
-              });
-              return false;
-            }
-          });
-	},
-    downloadSong:function(row){
-            if(this.isLogin){
-                window.location.href = this.serverUrl + "/download/downloadSong?id=" + row.id;
-            } else {
-                //询问要不要登录
-                this.$confirm('还未登录,是否现在登录?', '提示', {
-                  confirmButtonText: '确定',
-                  cancelButtonText: '取消',
-                }).then(() => {
-                  window.location.href='/';
-                }).catch(() => {
-                });
-            }
-        },
-
-
-    timestampToTime: function(timestamp) {
-        var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
-        var Y = date.getFullYear() + '-';
-        var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
-        var D = date.getDate();
-        if(D < 10)
-          D = '0' + D;
-        return Y+M+D;
+      /* handle事件*/
+      handle:function(row,event){
+            row.Flag=event;
+            row.isopen=event;
       },
-
-		getArtistInfo:function(artistId){
-          this.axios.get(this.serverUrl+'/artist/getInfo',{
-                params:{
-                  id:this.artist.id
-                }
-              })
-              .then(response => {
-                //console.log(response.data);
-                this.artist = response.data;
-                console.log(this.artist);
-                if(this.artist.image == null){
-                  this.artist.image = emptyImage;
-                } else {
-                  this.artist.image = this.serverUrl + this.artist.image;
-                }
-                this.artist.birthday = this.timestampToTime(this.artist.birthday);
-                for (var i = 0; i < this.artist.albumList.length; i++) {
-                  this.artist.albumList[i].image = this.serverUrl + this.artist.albumList[i].image;
-                 }
-                // this.artist.songList = response.data.songList
-                // this.artist.albumList = response.data.albumList;
-                for(var i = 0; i < this.artist.songList.length; i++){
-                  this.artist.songList[i].image = this.serverUrl + this.artist.songList[i].image;
-                  this.artist.songList[i].filePath = this.serverUrl + this.artist.songList[i].filePath;
-                  this.artist.songList[i].lyricsPath = this.serverUrl + this.artist.songList[i].lyricsPath;
-                  this.$set(this.artist.songList[i],'Flag',false);
-                  this.$set(this.artist.songList[i],'isopen',false);
-                 }
-                this.$set(this.artist,'isCollected',false);
-                this.S_pagination(this.songPage,this.artist.songList);
-                this.A_pagination(this.artist.albumList,this.albumPage);
-              })
-              .catch(function(err){
-                console.log(err);
-              });
-        },
-
-		getPlaylistList:function(){
-  		if(this.isLogin){
-          this.playlistList=this.$store.state.playlistList;
+      /* 播放全部歌曲*/
+      playAllSong:function(){
+    	  this.$store.dispatch("play", [this.artist.songList,0,false]);
+    	},
+      /* 播放当前歌曲*/
+    	playSong:function(index){
+        index = (this.songPage - 1) * 10 + index;
+    	  this.$store.dispatch("play", [this.artist.songList,index,false]);
+      },
+      /* 添加歌曲到播放列表或歌单*/
+      handleSongCommand:function(command){
+        if(command=="login"){
+          window.location.href='/';
+        }
+        else if(command=="newplaylist"){
+          this.dialogVisible=true;
+        }
+        else if(command.type=="playqueue"){
+          var index = command.params;
+          var song = this.artist.songList[index];
+          var songs = [song];
+          this.$store.dispatch("addToSongList", songs);
         }
         else{
-          return false;
+          this.axios.get(this.serverUrl + '/playlist/addSong',{
+            params:{
+                songId:command.param2.id,
+                playlistId:command.param1
+            }
+          })
+          .then(response =>{
+            if(response){
+              this.$message({
+                showClose: true,
+                message: '已成功添加到歌单',
+                type: 'success'
+              });
+            }
+            else{
+              this.$message({
+                showClose: true,
+                message: '会话超时',
+                type: 'error'
+              });
+            }
+          })
+          .catch(function(err){
+            console.log(err);
+          });
         }
-  		},
+      },
+      /* 提交新歌单表单信息*/
+    	submitForm:function(){
+    		this.$refs["playlist"].validate((valid) => {
+              if (valid) {
+                this.axios.get(this.serverUrl+'/playlist/create',{
+                  params:{
+                    name:this.playlist.name,
+                    intro:this.playlist.intro
+                  }
+                })
+                .then(response =>{
+                  if(response!=-1){
+                    this.playlist.id=response.data;
+                    this.$store.state.playlistList.push(this.playlist);
+                    this.getPlaylistList();
+                    this.$message({
+                      showClose: true,
+                      message: '已成功添加到新歌单',
+                      type: 'success'
+                    });
+                    this.dialogVisible=false;
+                    this.$refs["playlist"].resetFields();
+                  }
+                  else{
+                    this.$message({
+                      showClose: true,
+                      message: '会话超时',
+                      type: 'error'
+                    });
+                  }
+                })
+                .catch(function(err){
+                  console.log(err);
+                });
+              } 
+              else {
+                this.$message({
+                  showClose: true,
+                  message: '格式不正确',
+                  type: 'error'
+                });
+                return false;
+              }
+            });
+      },
+      /* 下载歌曲*/
+      downloadSong:function(row){
+              if(this.isLogin){
+                  window.location.href = this.serverUrl + "/download/downloadSong?id=" + row.id;
+              } else {
+                  //询问要不要登录
+                  this.$confirm('还未登录,是否现在登录?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                  }).then(() => {
+                    window.location.href='/';
+                  }).catch(() => {
+                  });
+              }
+          },
+      /* 修改日期为指定格式*/
+      timestampToTime: function(timestamp) {
+          var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+          var Y = date.getFullYear() + '-';
+          var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+          var D = date.getDate();
+          if(D < 10)
+            D = '0' + D;
+          return Y+M+D;
+        },
+      /* 获取歌手信息*/
+    	getArtistInfo:function(artistId){
+            this.axios.get(this.serverUrl+'/artist/getInfo',{
+                  params:{
+                    id:this.artist.id
+                  }
+                })
+                .then(response => {
+                  //console.log(response.data);
+                  this.artist = response.data;
+                  console.log(this.artist);
+                  if(this.artist.image == null){
+                    this.artist.image = emptyImage;
+                  } else {
+                    this.artist.image = this.serverUrl + this.artist.image;
+                  }
+                  this.artist.birthday = this.timestampToTime(this.artist.birthday);
+                  for (var i = 0; i < this.artist.albumList.length; i++) {
+                    this.artist.albumList[i].image = this.serverUrl + this.artist.albumList[i].image;
+                   }
+                  // this.artist.songList = response.data.songList
+                  // this.artist.albumList = response.data.albumList;
+                  for(var i = 0; i < this.artist.songList.length; i++){
+                    this.artist.songList[i].image = this.serverUrl + this.artist.songList[i].image;
+                    this.artist.songList[i].filePath = this.serverUrl + this.artist.songList[i].filePath;
+                    this.artist.songList[i].lyricsPath = this.serverUrl + this.artist.songList[i].lyricsPath;
+                    this.$set(this.artist.songList[i],'Flag',false);
+                    this.$set(this.artist.songList[i],'isopen',false);
+                   }
+                  this.$set(this.artist,'isCollected',false);
+                  this.S_pagination(this.songPage,this.artist.songList);
+                  this.A_pagination(this.artist.albumList,this.albumPage);
+                })
+                .catch(function(err){
+                  console.log(err);
+                });
+          },
+      /* 获取用户播放列表*/
+    	getPlaylistList:function(){
+    		if(this.isLogin){
+            this.playlistList=this.$store.state.playlistList;
+          }
+          else{
+            return false;
+          }
+    	},
 	},
 }
 </script>

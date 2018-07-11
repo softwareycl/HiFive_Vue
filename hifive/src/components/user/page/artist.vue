@@ -105,35 +105,37 @@
     },
    
     methods: {
+      /* 处理页码变化*/
       handleCurrentChange: function(val){
         this.singerDisplay(0,'!',0,val);
       },
-
+      /* 歌手导航栏分类*/
       singerDisplay: function(_region, _initial, _gender, _page){
-        if(_page != 0){
+        if(_page != 0){ //确定页码
           _region = this.region;
           _initial = this.initial;
           _gender = this.gender;
           this.page = _page;
-        } else if(_initial != "!"){
+        } else if(_initial != "!"){ //获取当前首字母
           _region = this.region;
           _gender = this.gender;
           this.initial = _initial;
           _page = 1;
           this.page = 1;
-        } else if(_region != -1){
+        } else if(_region != -1){ //获取当前地区
           _initial = this.initial;
           _gender = this.gender;
           this.region = _region;
           _page = 1;
           this.page = 1;
-        } else {
+        } else { //获取当前性别
           _region = this.region;
           _initial = this.initial;
           this.gender = _gender;
           _page = 1;
           this.page = 1;
         }
+        //获取当前导航下的歌手列表
         this.axios.get(this.serverUrl + "/artist/filterArtist", {
           params: {
             region: _region,
@@ -150,33 +152,30 @@
               this.singers[i].image = emptyImage;
             } else {
             this.singers[i].image = this.serverUrl + this.singers[i].image;
+            }
           }
-        }
-          
           console.log(this.singers)
 
-            this.axios.get(this.serverUrl + "/artist/filterArtistCount", {
-              params: {
-                region: _region,
-                initial: _initial,
-                gender: _gender,
-              }
-            })
-            .then(res => {
-              this.pageCount = Math.ceil(parseFloat(res.data) / 10);
-              
+          this.axios.get(this.serverUrl + "/artist/filterArtistCount", {
+            params: {
+              region: _region,
+              initial: _initial,
+              gender: _gender,
+            }
+          })
+         .then(res => {
+            this.pageCount = Math.ceil(parseFloat(res.data) / 10);       
               console.log(this.singers)
             })
             .catch(function (error) {
               console.log(error);
             });
-
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
       },
-
+      /* 更改导航栏中当前地区*/
       region_change_bg: function(obj){
         var a=document.getElementById("region").getElementsByTagName("li");
         a[1].className="current";
@@ -189,7 +188,7 @@
           }
         }
       },
-
+      /* 更改导航栏中当前首字母*/
       initial_change_bg: function(obj){
         var a=document.getElementById("initial").getElementsByTagName("li");
         for(var i=0;i<a.length;i++){
@@ -201,7 +200,7 @@
           }
         }
       },
-
+      /* 更改导航栏中当前性别*/
       gender_change_bg: function(obj){
         var a=document.getElementById("gender").getElementsByTagName("li");
         for(var i=0;i<a.length;i++){
