@@ -233,7 +233,7 @@
           confirmButtonText: '确定',
           cancelButtonText: '取消',
         }).then(() => {
-          window.location.href='/';
+          window.location.href='/user/unlogin';
         }).catch(() => {
         });
       }
@@ -276,7 +276,7 @@
     //点击专辑添加到按钮中的一项调用，处理添加到按钮的不同请求
     handleAlbumCommand:function(command){
       if(command=="login"){
-        window.location.href='/';
+        window.location.href='/user/unlogin';
       }
       else if(command=="newplaylist"){
         this.dialogVisible=true;
@@ -354,7 +354,7 @@
     //点击歌曲列表里添加到中的一项调用，处理添加到按钮的不同请求
     handleSongCommand:function(command){
       if(command=="login"){
-        window.location.href='/';
+        window.location.href='/user/unlogin';
       }
       else if(command.type=="playqueue"){
         var song=this.songList[command.params];
@@ -460,7 +460,7 @@
           confirmButtonText: '确定',
           cancelButtonText: '取消',
         }).then(() => {
-          window.location.href='/';
+          window.location.href='/user/unlogin';
         }).catch(() => {
         });
       }
