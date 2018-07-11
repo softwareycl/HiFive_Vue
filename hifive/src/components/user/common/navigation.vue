@@ -38,6 +38,7 @@
 			}
 		},
 		methods: {
+			//获取当前导航栏头部
 			cur_title: function(title) {
 				// this.curTitle = title;
 				// sessionStorage.setItem('navTitle', this.curTitle);

@@ -346,9 +346,11 @@
 			}
 		},
 		methods: {
+			//返回主页
 			home: function() {
 				this.$router.push('/user/home')
 			},
+			//头部导航跳转
 			cur_title: function(title) {
 				this.curTitle = title;
 				// sessionStorage.setItem('curTitle', this.curTitle);
@@ -365,6 +367,7 @@
 				}
 
 			},
+			//搜索功能
 			onSearch: function() {
 				if(this.inputTxt == '') {
 					this.$notify.info({
@@ -393,6 +396,8 @@
 			// 		console.log(error);
 			// 	});
 			// },
+
+			//登录状态时把鼠标滑到头像处可进行的操作
 			handleCommand: function(command) {
 				if(command == 'a') {
 
@@ -423,6 +428,8 @@
 					}
 				}
 			},
+
+			//登录
 			login: function(_loginUser) {
 				this.submitForm(_loginUser);
 				if(this.flag) {
@@ -513,6 +520,8 @@
 					});
 				}
 			},
+
+			// 注册
 			register: function(_registerUser) {
 				this.submitForm(_registerUser);
 				if(this.flag) {
@@ -544,6 +553,8 @@
 					});
 				}
 			},
+
+			//点击完成修改密码操作
 			finishModifyPwd: function(_modifyPwd) {
 				this.submitForm(_modifyPwd);
 				if(this.flag) {
@@ -575,6 +586,8 @@
 					});
 				}
 			},
+
+			//完成修改个人资料操作
 			finishModifyData: function(_modifyData) {
 				this.submitForm(_modifyData);
 				if(this.flag) {
@@ -617,6 +630,8 @@
 					});
 				}
 			},
+
+			//验证表单
 			submitForm(formName) {
 				this.$refs[formName].validate((valid) => {
 					if (valid) {
@@ -630,6 +645,8 @@
 					}
 				});
 			},
+
+			//转换时间格式
 			timestampToTime: function(timestamp) {
 				var date = new Date(timestamp);
 				var Y = date.getFullYear() + '-';
@@ -638,6 +655,8 @@
 				if(D < 10) D = '0' + D;
 				return Y+M+D;
 			},
+
+			//图片上传前的操作
 			beforeAvatarUpload: function(file) {
 				const isLt2M = file.size / 1024 / 1024 < 2;
 				if (!isLt2M) {
@@ -648,9 +667,13 @@
 			// submitUpload: function() {
 			// 	this.$refs.upload.submit();
 			// },
+
+			//图片上传成功后的操作
 			handleAvatarSuccess: function() {
 				
 			},
+
+			//选择图片时候的操作
 			previewImg: function(file) {
 				this.modifyData.image = file.url;
 				this.img_change = true;

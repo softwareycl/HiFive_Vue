@@ -186,6 +186,7 @@
 			}
 		},
 		methods: {
+			//删除歌曲操作
 			deleteSong:function(){ 
 				this.$confirm('确认删除？')
 				.then(_ => {
@@ -217,6 +218,8 @@
 				})
 				.catch(_ => {});
 			},
+
+			//编辑歌曲信息
 			edit: function() {
 				this.dialogVisible = true;
 				this.img_change = false;
@@ -234,6 +237,8 @@
 				this.editSong.filePath = this.song.filePath;
 				this.editSong.image = this.song.image;
 			},
+
+			//完成编辑歌曲操作
 			finishEdit: function(_song) {
 				this.submitForm(_song);
 				if(this.flag) {
@@ -265,6 +270,8 @@
 					});
 				}			
 			},
+
+			//验证表单
 			submitForm:function(formName){
 				this.$refs[formName].validate((valid) => {
 					if (valid) {
@@ -279,6 +286,7 @@
 				});
 			},
 
+			//获取歌曲详细信息
 			getIntro: function(_id) {
 				this.axios.get(this.$store.state.serverUrl + "/song/getInfo", {
 					params: {
@@ -326,6 +334,8 @@
 					console.log(error);
 				});
 			},
+
+			// 转换时间格式
 			timestampToTime: function(timestamp) {
 		        var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
 		        var Y = date.getFullYear() + '-';
@@ -335,6 +345,8 @@
 		        	D = '0' + D;
 		        return Y+M+D;
 	      	},
+
+	      	//图片上传前的操作
 	      	beforeAvatarUpload: function(file) {
 				const isLt2M = file.size / 1024 / 1024 < 2;
 				if (!isLt2M) {
@@ -345,6 +357,8 @@
 			// submitUpload: function() {
 			// 	this.$refs.upload.submit();
 			// },
+
+			//图片上传成功时候的操作
 			handleAvatarSuccess: function() {
 				// this.submitForm(_song);
 				// if(this.flag) {
@@ -372,6 +386,8 @@
 				// 	});
 				// }
 			},
+
+			//图片发生变化时候的操作
 			previewImg: function(file,fileList) {
 				this.editSong.image = file.url;
 				this.img_change = true;
@@ -379,11 +395,15 @@
 					fileList.splice(0, 1);
 				}
 			},
+
+			//图片上传失败时候的操作
 			handleError: function(err) {
 				console.log(err);
 				alert('上传失败');
 				return;
 			},
+
+			//歌词上传成功时候的操作
 			handleLyrSuccess: function() {
 				this.$refs.uploadLyr.clearFiles();
 				this.axios.get(this.$store.state.serverUrl + "/song/getInfo", {
@@ -412,6 +432,8 @@
 					console.log(error);
 				});
 			},
+
+			//歌曲文件上传成功时候的操作
 			uploadSongSuccess: function() {
 				this.$refs.uploadSong.clearFiles();
 				this.axios.get(this.$store.state.serverUrl + "/song/getInfo", {
@@ -428,6 +450,8 @@
 					console.log(error);
 				});
 			},
+
+			//转化风格
 			getStyleNumber:function(style){
 				var number=-1;
 				for(var i=0;i<this.style.length;i++){

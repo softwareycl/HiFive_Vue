@@ -48,15 +48,20 @@
 			}
 		},
 		methods: {
+			//返回系统管理界面首页
 			home: function() {
 				this.$router.push('/admin/artist')
 			},
+
+			//退出登录，返回用户界面
 			exit: function() {
 				this.$store.state.isLogin0 = false;
 				this.$router.push('/');
 				sessionStorage.removeItem('user');
 				sessionStorage.removeItem('isLogin0');
 			},
+
+			//搜索
 			onSearch: function() {
 				if(this.inputTxt == '') {
 					this.$notify.info({

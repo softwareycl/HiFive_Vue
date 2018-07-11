@@ -216,6 +216,7 @@
 			}
 		},
 		methods: {
+			//登录
 			login: function(_loginUser) {
 				this.submitForm(_loginUser);
 				if(this.flag) {
@@ -306,6 +307,8 @@
 					});
 				}
 			},
+
+			//注册
 			register: function(_registerUser) {
 				this.submitForm(_registerUser);
 				if(this.flag) {
@@ -337,10 +340,14 @@
 					});
 				}
 			},
+
+			//点击弹出登录/注册框
 			change_dialogFormVisible: function() {
 				this.dialogFormVisible = true;
 				this.activeName = 'first';
 			},
+
+			//验证表单
 			submitForm(formName) {
 				this.$refs[formName].validate((valid) => {
 					if (valid) {
@@ -354,6 +361,8 @@
 					}
 				});
 			},
+
+			// 转换时间格式
 			timestampToTime: function(timestamp) {
 				var date = new Date(timestamp);
 				var Y = date.getFullYear() + '-';

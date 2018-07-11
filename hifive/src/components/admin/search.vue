@@ -151,6 +151,7 @@
 			}
 		},
 		methods: {
+			//根据当前导航，搜索歌曲、歌手或者专辑
 			cur_title: function(title) {
 				this.curTitle = title;
 				this.page.cur = 1;
@@ -168,6 +169,7 @@
 				}
 			},
 
+			//当导航选择改变时获取相对应的列表
 			handleCurrentChange: function(c){
 				this.page.cur = c;
 				if(this.curTitle == '歌曲')
@@ -178,6 +180,7 @@
 					this.getAlbumList(this.$store.state.search.name,this.page.cur)
 			},
 
+			//获取歌曲列表
 			getSongList: function(_name, _page) {      //获取一页歌曲
 				this.axios.get(this.serverUrl + "/song/searchSong", {
 					params: {
@@ -196,6 +199,8 @@
 					console.log(error);
 				});
 			},
+
+			//获取歌手列表
 			getArtistList: function(_name, _page) {      //获取一页歌手
 				this.axios.get(this.serverUrl + "/artist/searchArtist", {
 					params: {
@@ -213,6 +218,8 @@
 					console.log(error);
 				});
 			},
+
+			//获取专辑列表
 			getAlbumList: function(_name, _page) {      //获取一页专辑
 				this.axios.get(this.serverUrl + "/album/searchAlbum", {
 					params: {
@@ -230,6 +237,8 @@
 					console.log(error);
 				});
 			},
+
+			//获取歌曲总数
 			getSongTotal: function(_name) {
 				this.axios.get(this.serverUrl + "/song/searchSongCount", {
 					params: {
@@ -243,6 +252,8 @@
 					console.log(error);
 				});
 			},
+
+			//获取歌手总数
 			getArtistTotal: function(_name) {
 				this.axios.get(this.serverUrl + "/artist/searchArtistCount", {
 					params: {
@@ -256,6 +267,8 @@
 					console.log(error);
 				});
 			},
+
+			//获取专辑总数
 			getAlbumTotal: function(_name) {
 				this.axios.get(this.serverUrl + "/album/searchAlbumCount", {
 					params: {

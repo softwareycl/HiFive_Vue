@@ -205,9 +205,12 @@
 			}
 		},
 		methods: {
+			//播放音乐
 			playSong: function(index) {
 				this.$store.dispatch("play", [this.songList, index, false]);
 			},
+
+			//根据当前选择搜索歌曲、歌手或者专辑
 			cur_title: function(title) {
 				this.curTitle = title;
 				this.page.cur = 1;
@@ -225,9 +228,12 @@
 				}
 			},
 
+			//处理鼠标进入事件
 			handleMouseEnter:function(row, column, cell, event){				
 				row.Flag=true;
 			},
+
+			//处理鼠标滑出事件
 			handleMouseOut:function(row, column, cell, event){
 				if(!row.isopen){
 					row.Flag=false;
@@ -236,10 +242,14 @@
 					return false;
 				}
 			},
+
+			//处理鼠标停留事件
 			handle:function(row,event){
 				row.Flag=event;
 				row.isopen=event;
 			},
+
+			//处理弹出框关闭事件
 			handleClose(done) {
 				this.$confirm('确认关闭？')
 				.then(_ => {
@@ -247,6 +257,8 @@
 				})
 				.catch(_ => {});
 			},
+
+			// 处理点击添加到后的事件
 			handleSongCommand:function(command){
 				if(command=="login"){
 					window.location.href='/';
@@ -266,6 +278,7 @@
 				}
 			},
 
+			//验证表单
 			submitForm:function(){
 				this.$refs["newPlaylist"].validate((valid) => {
 
@@ -313,6 +326,7 @@
 				});
 			},
 
+			//下载歌曲
 			downloadSong:function(row){
 				if(this.isLogin){
 					window.location.href = this.serverUrl + "/download/downloadSong?id=" + row.id;
@@ -327,6 +341,7 @@
 				}
 			},
 
+			//获取歌单列表
 			getPlaylistList:function(){
 	      		if(this.isLogin){
 	      			this.playlistList=this.state.playlistList;
@@ -335,6 +350,8 @@
 	      			return false;
 	      		}
 	      	},
+
+	      	//添加歌曲到已有歌单
 	      	addSongToPlaylist:function(songId,playlistId){
 	      		this.axios.get(this.serverUrl+'/playlist/addSong',{
 	      			params:{
@@ -363,6 +380,7 @@
 	      		});
 	      	},
 
+	      	//根据选择的标签搜索不同歌曲、歌手或者专辑
 			handleCurrentChange: function(c){
 				this.page.cur = c;
 				if(this.curTitle == '歌曲')
@@ -373,6 +391,7 @@
 					this.getAlbumList(this.$store.state.search.name,this.page.cur)
 			},
 
+			//获取搜索的歌曲内容
 			getSongList: function(_name, _page) {      //获取一页歌曲
 				this.axios.get(this.serverUrl + "/song/searchSong", {
 					params: {
@@ -394,6 +413,8 @@
 					console.log(error);
 				});
 			},
+
+			//获取搜索的歌手列表
 			getArtistList: function(_name, _page) {      //获取一页歌手
 				this.axios.get(this.serverUrl + "/artist/searchArtist", {
 					params: {
@@ -411,6 +432,8 @@
 					console.log(error);
 				});
 			},
+
+			//获取搜索的专辑列表
 			getAlbumList: function(_name, _page) {      //获取一页专辑
 				this.axios.get(this.serverUrl + "/album/searchAlbum", {
 					params: {
@@ -428,6 +451,8 @@
 					console.log(error);
 				});
 			},
+
+			// 获取搜索的歌曲总数
 			getSongTotal: function(_name) {
 				this.axios.get(this.serverUrl + "/song/searchSongCount", {
 					params: {
@@ -441,6 +466,8 @@
 					console.log(error);
 				});
 			},
+
+			//获取搜索到的歌手总数
 			getArtistTotal: function(_name) {
 				this.axios.get(this.serverUrl + "/artist/searchArtistCount", {
 					params: {
@@ -454,6 +481,8 @@
 					console.log(error);
 				});
 			},
+
+			//获取搜索到的专辑总数
 			getAlbumTotal: function(_name) {
 				this.axios.get(this.serverUrl + "/album/searchAlbumCount", {
 					params: {

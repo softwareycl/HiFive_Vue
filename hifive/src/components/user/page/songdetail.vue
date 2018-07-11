@@ -151,9 +151,12 @@
 			}
 		},
 		methods: {
+			//播放歌曲
 			playSong: function() {
 				this.$store.dispatch("play", [this.song, 0, true]);
 			},
+
+			//收藏歌曲到我喜欢
 			collect:function(){
 				if(this.isLogin){
 					this.axios.get(this.serverUrl+'/user/likeSong',{
@@ -194,6 +197,8 @@
 					});
 				}
 			},
+
+			//取消收藏
 			cancelCollect:function(){ 
 				this.axios.get(this.serverUrl+'/user/unlikeSong',{
 					params:{
@@ -227,6 +232,8 @@
 					console.log(err);
 				});
 			},
+
+			//处理点击添加到时候的事件
 			handleSongCommand:function(command){
 				if(command=="login"){
 					window.location.href='/';
@@ -243,6 +250,8 @@
 					this.addSongToPlaylist(command.params);
 				}
 			},
+
+			//处理取消弹出框时候的操作
 			handleClose(done) {
 				this.$confirm('确认关闭？')
 				.then(_ => {
@@ -250,6 +259,8 @@
 				})
 				.catch(_ => {});
 			},
+
+			//验证表单
 			submitForm:function(formname){
 				this.$refs["newPlaylist"].validate((valid) => {
 					if (valid) {
@@ -295,6 +306,7 @@
 				});
 			},
 
+			//获取歌曲详细信息
 			getIntro: function(_id) {
 				this.axios.get(this.serverUrl + "/song/getInfo", {
 					params: {
@@ -341,6 +353,8 @@
 					console.log(error);
 				});
 			},
+
+			//转换时间格式
 			timestampToTime: function(timestamp) {
 		        var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
 		        var Y = date.getFullYear() + '-';
@@ -350,6 +364,8 @@
 		        	D = '0' + D;
 		        return Y+M+D;
 	      	},
+
+	      	//下载歌曲
 	      	downloadSong: function(){
 	      		if(this.isLogin){
 					window.location.href = this.serverUrl + "/download/downloadSong?id=" + this.song.id;
@@ -363,6 +379,8 @@
 					});
 				}
 	      	},
+
+	      	//获取我的歌单
 	      	getPlaylistList:function(){
 	      		if(this.isLogin){
 	      			this.playlistList=this.state.playlistList;
@@ -371,6 +389,8 @@
 	      			return false;
 	      		}
 	      	},
+
+	      	//获取歌曲是否已经被收藏
 	      	getIsCollected:function(){
 	      		var flag=false;
 	      		for(var i=0;i<this.state.likeSongs.length;i++){
@@ -381,6 +401,8 @@
 	      		}
 	      		this.song.isCollected=flag;
 	      	},
+
+	      	// 添加歌曲到已有歌单
 	      	addSongToPlaylist:function(playlistId){
 	      		this.axios.get(this.serverUrl+'/playlist/addSong',{
 	      			params:{
