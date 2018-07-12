@@ -156,7 +156,8 @@
         	document.getElementById('div1').style.display = 'none';
         	document.getElementById('div2').style.display = 'none';
         } else if(_active == 3) { //页面跳转
-        	setTimeout(function () { this.location.href = "../../unlogin.vue" }, 4000);
+        	setTimeout(function () { this.$router.push({
+            path: '/user/unlogin'}); }, 4000);
         }
       },
       /* 判断用户是否存在*/
