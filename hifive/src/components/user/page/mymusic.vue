@@ -3,7 +3,7 @@
         <v-head></v-head>
             <div :data="user" class="background" :style="background">
                 <div style="width:100%;height:315px;">
-                    <img :src="user.image" class="userImage">
+                    <img :src="state.user.image" class="userImage">
                     <p align=center style="font-size: x-large;color:white;">{{user.name}}</p>
                 </div>
                 <el-dialog title="创建歌单" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
@@ -212,6 +212,7 @@ export default {
     },
     data(){
         return{
+            user:{},
             background:{
             backgroundImage: "url(" + require("../../../assets/我的音乐.jpg") + ")",
             backgroundRepeat: "no-repeat",
@@ -860,9 +861,7 @@ export default {
         state(){
           return this.$store.state;
         },
-        user(){
-            return this.$store.state.user;
-        }
+
     },
     //vue的mounted生命周期，获取用户信息
     mounted(){
