@@ -566,10 +566,18 @@ export default {
 
         },
         //上传图片
-        editImage:function(file){
-            if(beforeAvatarUpload(file)){
-                this.ruleForm.image=file.url;
-                this.hasChangeImage = true;
+        editImage:function(file, filelist){
+            if(this.beforeAvatarUpload(file))
+            {
+              this.ruleForm.image=file.url;
+              this.hasChangeImage = true;
+              if(filelist.length>1)
+              {
+                filelist.splice(0,1);
+              }
+            }
+            else{
+              filelist.splice(filelist.length-1,1);
             }
         },
         //提示上传成功

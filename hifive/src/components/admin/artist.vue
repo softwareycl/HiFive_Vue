@@ -364,8 +364,8 @@
           this.singers = res.data;
           console.log(this.singers);
           for(var i = 0; i < res.data.length; i++){
-            if(this.singer[i].image == null){
-              this.singer[i].image = emptyImage;
+            if(this.singers[i].image == null){
+              this.singers[i].image = emptyImage;
             }else{
             this.singers[i].image = this.serverUrl + this.singers[i].image;
             }
@@ -432,10 +432,13 @@
         }
       },
       //上传歌手图片
-      addImage:function(file){
+      addImage:function(file, filelist){
         if(this.beforeAvatarUpload(file)){
           this.hasChangeImage = true;
           this.ruleForm.image=file.url;
+          if(filelist.length>1){
+            filelist.splice(0,1);
+          }
         }
       },
       //上传成功提示
@@ -489,7 +492,7 @@
                   message: '歌手添加成功',
                   type: 'success'
                 });
-                if(!hasChangeImage){
+                if(!this.hasChangeImage){
                   this.singerDisplay(0,'@',0,1);
                 }
                 this.hasChangeImage = false;
