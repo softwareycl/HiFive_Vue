@@ -660,7 +660,11 @@
 			},
 
 			//图片上传前的操作
-			beforeAvatarUpload: function(file) {
+			beforeAvatarUpload: function(file, fileList) {
+				if(fileList.length>1){
+					fileList.splice(0,1);
+					return false;
+				}
 				const isLt2M = file.size / 1024 / 1024 < 2;
 				if (!isLt2M) {
 					this.$message.error('上传头像图片大小不能超过 2MB!');
@@ -677,8 +681,8 @@
 			},
 
 			//选择图片时候的操作
-			previewImg: function(file) {
-				if(this.beforeAvatarUpload(file)){
+			previewImg: function(file, fileList) {
+				if(this.beforeAvatarUpload(file, fileList)){
 					this.modifyData.image = file.url;
 					this.img_change = true;
 				}
