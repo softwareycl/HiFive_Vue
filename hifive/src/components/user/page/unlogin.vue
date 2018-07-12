@@ -83,16 +83,17 @@
 	import vFoot from '../common/footer.vue'
 
 	export default {
+		created() {
+			window.scrollTo(0,0);
+		},
 		mounted() {
 			if(this.$store.state.isLogin == true) {
 				this.$router.push('/user/mymusic');
 			}
-			var str = location.href.split('/');
-			var par = str[str.length-1];
-			if(par != '') {
-				this.axios.post(this.$store.state.serverUrl + "/user/active", {
-					id: par,
-				})
+			var str = location.href.split('?');
+			var par = str[1];
+			if(par != undefined || null) {
+				this.axios.get(this.$store.state.serverUrl + "/user/active/" + par )
 				.then(res => {
 					var tip = res.data;
 					if(tip == true) {

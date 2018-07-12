@@ -157,12 +157,11 @@
                     class="avatar-uploader"
                     ref="uploadImage"
                     :auto-upload="false"
-                    action="http://192.168.20.99:8080/hifive/upload/uploadArtistImage"
+                    action="/hifive/upload/uploadArtistImage"
                     :show-file-list="false"
                     :data={id:ruleForm.id} 
                     :on-change="addImage"  
-                    :on-success="handleAvatarSuccess"                  
-                    :before-upload="beforeAvatarUpload"
+                    :on-success="handleAvatarSuccess"
                     accept=".jpg, .jpeg, .png">
                     <!--<img v-if="ruleForm.image" :src="ruleForm.image" class="avatar">
                     <el-button type="primary" v-else class="el-icon-plus avatar-uploader-icon">点击上传</el-button>-->
@@ -217,6 +216,7 @@
 <script>
   import vHead from '../admin/header.vue'
   import vFoot from '../user/common/footer.vue'
+  import emptyImage from '../../assets/暂无图片.png'
     
     export default {
      data() {
@@ -303,20 +303,23 @@
     },
 
     computed: {
+      //获取用户的serverurl
       serverUrl() {
         return this.$store.state.serverUrl
       }
     },
-
+    //在模板渲染成html后调用，获取按以下规则筛选的歌手分类显示
     mounted() {
       this.singerDisplay(0,'@',0,1);
     
     },
    
     methods: {
+      //控制分页后的歌手显示
       handleCurrentChange: function(val){
         this.singerDisplay(0,'!',0,val);
       },
+      //时间戳转换为日期格式
       timeStampToTime: function(timestamp) {
         var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
         var Y = date.getFullYear() + '-';
@@ -326,6 +329,7 @@
           D = '0' + D;
         return Y+M+D;
       },
+      //从mounted获取的serverurl请求歌手有关数据
       singerDisplay: function(_region, _initial, _gender, _page){
         if(_page != 0){
           _region = this.region;
@@ -360,7 +364,11 @@
           this.singers = res.data;
           console.log(this.singers);
           for(var i = 0; i < res.data.length; i++){
+            if(this.singers[i].image == null){
+              this.singers[i].image = emptyImage;
+            }else{
             this.singers[i].image = this.serverUrl + this.singers[i].image;
+            }
           }
           
           console.log(this.singers)
@@ -386,7 +394,7 @@
           console.log(error);
         });
       },
-
+      //选择地区标签，背景颜色相应变化
       region_change_bg: function(obj){
         var a=document.getElementById("region").getElementsByTagName("li");
         a[1].className="current";
@@ -399,7 +407,7 @@
           }
         }
       },
-
+      //选择首字母标签，背景颜色相应变化
       initial_change_bg: function(obj){
         var a=document.getElementById("initial").getElementsByTagName("li");
         for(var i=0;i<a.length;i++){
@@ -411,7 +419,7 @@
           }
         }
       },
-
+      //选择性别标签，背景颜色相应变化
       gender_change_bg: function(obj){
         var a=document.getElementById("gender").getElementsByTagName("li");
         for(var i=0;i<a.length;i++){
@@ -424,14 +432,22 @@
         }
       },
       //上传歌手图片
-      addImage:function(file){
-        this.hasChangeImage = true;
-        this.ruleForm.image=file.url;
+      addImage:function(file, filelist){
+        if(this.beforeAvatarUpload(file)){
+          this.hasChangeImage = true;
+          this.ruleForm.image=file.url;
+          if(filelist.length>1){
+            filelist.splice(0,1);
+          }
+        }
       },
+      //上传成功提示
       handleAvatarSuccess: function() {
         alert("上传成功");
         this.singerDisplay(0,'@',0,1);
+        this.hasChangeImage = false;
       },
+      //对用户上传的图片进行大小及格式验证
       beforeAvatarUpload(file) {
         const isType = file.type === 'image/jpg'||'image/jpeg'||'image/png';
         //image大小2M以内
@@ -444,10 +460,7 @@
         }
         return (isType && isLt2M);
       },
-
-      addArtist: function(){
-        //添加上传歌手信息 
-      },
+      //提交新增歌手相关信息到对应url
       submitForm:function(){
         this.$refs["ruleForm"].validate((valid) => {
           if (valid) {
@@ -479,10 +492,10 @@
                   message: '歌手添加成功',
                   type: 'success'
                 });
-                if(!hasChangeImage){
+                if(!this.hasChangeImage){
                   this.singerDisplay(0,'@',0,1);
                 }
-                
+                this.hasChangeImage = false;
               }
               else{
                 this.$message({

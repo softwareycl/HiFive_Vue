@@ -12,8 +12,9 @@ export default{
 			var songs = params[0];
 			var startIndex = params[1];
 			
+			var audio = player.methods.getAudio();
 			if(state.currentSong.id == songs[startIndex].id){
-				var audio = player.methods.getAudio();
+				
 				audio.currentTime = 0;
 			}
 
@@ -24,6 +25,7 @@ export default{
 	        }
 	        state.currentSong = state.songList[startIndex];
 	        state.currentIndex = startIndex;
+	        audio.play();
 		} else {
 			var song = params[0];
 			if(state.currentSong.id == song.id){

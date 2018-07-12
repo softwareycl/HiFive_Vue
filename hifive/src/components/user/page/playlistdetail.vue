@@ -39,13 +39,12 @@
                                     <el-upload
                                     class="avatar-uploader"
                                     ref="uploadImage"
-                                    action="http://192.168.20.99:8080/hifive/upload/uploadPlaylistImage"
+                                    action="/hifive/upload/uploadPlaylistImage"
                                     :auto-upload="false"
                                     list-type="picture-card"
                                     :show-file-list="false"
                                     :data={id:ruleForm.id} 
                                     :on-change="editImage"
-                                    :before-upload="beforeAvatarUpload"
                                     :on-success="handleAvatarSuccess"
                                     :on-error="uploadFail"
                                     accept=".jpg, .jpeg, .png">
@@ -223,8 +222,10 @@ export default {
                 image:'',
             },
             playlistList:[],
+            hasChangeImage: false,
         }
     },
+    //获取用户登录情况及serverurl
     computed: {
       serverUrl() {
         return this.$store.state.serverUrl;
@@ -233,23 +234,28 @@ export default {
         return this.$store.state.isLogin;
       }
     },
+    //在模板渲染成html前调用，获取歌单简介实际长度及当前用户id
     created() {
       window.scrollTo(0,0);
       this.id = this.$route.query.id;
     },
+    //在模板渲染成html后调用，获取用户歌单信息，分页，歌单列表
     mounted() {
         this.getPlaylistIntro();
         this.pagination(1);
         this.computePageCount();
         this.getPlaylistList();       
     },
+    //由于数据更改导致虚拟 DOM 重新渲染，在这之后调用。在这里是编辑歌单后数据更改，调用handleOverflow函数
     updated(){
         this.handleOverflow();
     },
     methods: {
+        //计算索引，避免因为分页后索引总是从1开始的情况
         indexMethod(index) {
             return (this.page - 1)* 20 + index + 1;
         },
+        //判断歌单简介是否过长超出限制高度
         handleOverflow:function(){
             var offsetWidth = document.getElementById("playlistIntro").offsetWidth;  
             var scrollWidth = document.getElementById("playlistIntro").scrollWidth;
@@ -260,10 +266,12 @@ export default {
                 this.isOverflow=false;
             }
         },
+        //播放歌单所有歌曲，调用公共函数play
         playAllSong:function(){
             //传递歌曲id给player
             this.$store.dispatch("play", [this.playlistSongList, 0, false]);
         },
+        //歌单添加到：若未登录则只显示添加到播放队列，若已登录则显示添加到用户歌单
         handlePlaylistCommand:function(command){
           if(command.type=="login"){
             window.location.href='/';
@@ -280,8 +288,8 @@ export default {
             this.addPlaylistToPlaylist(command.param1);
           }
         },
-        addPlaylistToPlaylist:function(toId){
-            alert(123);
+        //歌单所有歌曲添加到歌单
+        addPlaylistToPlaylist:function(toId){           
             this.axios.get(this.serverUrl+'/playlist/addPlaylistToPlaylist',{
               params:{
                 fromId:this.playlist.id,
@@ -309,9 +317,11 @@ export default {
               console.log(err);
             });
         },
+        //实现鼠标移入时当前行出现播放，添加到，下载，删除按钮的效果
         handleMouseEnter:function(row, column, cell, event){
             row.Flag=true;
         },
+        //实现鼠标移出时当前行播放，添加到，下载，删除按钮的效果失效
         handleMouseOut:function(row, column, cell, event){
             if(!row.isopen){
             row.Flag=false;}
@@ -319,10 +329,12 @@ export default {
                 return false;
             }
         },
+        //点击事件触发对应歌曲的事件
         handle:function(row,event){
           row.Flag=event;
           row.isopen=event;
         },
+        //歌曲添加到：若未登录则只显示添加到播放队列，若已登录则显示添加到用户歌单
         handleSongCommand:function(command){
             if(command.type=="login"){
                 window.location.href='/';
@@ -339,6 +351,7 @@ export default {
                 this.addSongToPlaylist(command.param2.id,command.param1);
             }
         },
+        //歌曲添加到歌单
         addSongToPlaylist:function(songId,playlistId){
           this.axios.get(this.serverUrl+'/playlist/addSong',{
               params:{
@@ -366,6 +379,7 @@ export default {
               console.log(err);
             });
         },
+        //取消时的确认框
         handleClose(done) {
             this.$confirm('确认关闭？')
             .then(_ => {
@@ -373,6 +387,7 @@ export default {
             })
             .catch(_ => {});
         },
+        //下载歌曲，先决条件为用户已登录
         downloadSong:function(row){
             if(this.isLogin){
                 window.location.href = this.serverUrl + "/download/downloadSong?id=" + row.id;
@@ -387,6 +402,7 @@ export default {
                 });
             }
         },
+        //获取用户歌单列表
         getPlaylistList:function(){
             if(this.isLogin){
                 this.playlistList=this.$store.state.playlistList;
@@ -395,6 +411,7 @@ export default {
                 return false;
             }
         },
+        //获取歌单信息
         getPlaylistIntro: function(){
           this.axios.get(this.serverUrl+'/playlist/getInfo',{
                 params:{
@@ -426,10 +443,15 @@ export default {
                 console.log(err);
               });
         },
+        //提交编辑后的歌单
         submitForm:function(){
             this.$refs["ruleForm"].validate((valid) => {
               if (valid) {
-                this.$refs.uploadImage.submit();
+                if(this.hasChangeImage){
+                  this.$nextTick(() => {
+                    this.$refs.uploadImage.submit(); 
+                  });
+                }
                 this.axios.post(this.serverUrl+'/playlist/modifyInfo',{
                   id:this.ruleForm.id,
                   name:this.ruleForm.name,
@@ -438,7 +460,9 @@ export default {
                 .then(response =>{
                   if(response){
                     this.$refs["ruleForm"].resetFields();
-                    this.getPlaylistIntro();
+                    if(!this.hasChangeImage){
+                        this.getPlaylistIntro();
+                    }
                     this.handleOverflow();
                     this.editDialogVisible=false;
                     this.$message({
@@ -446,6 +470,7 @@ export default {
                       message: '歌单编辑成功',
                       type: 'success'
                     });
+                    this.hasChangeImage = false;
                   }
                   else{
                     this.$message({
@@ -469,11 +494,13 @@ export default {
               }
             });
         },
+        //控制分页操作
         handleChange: function(val){
             if(val != this.page){
                 this.pagination(val);
             }
         },
+        //按顺序分页展示歌曲，一页展示20首，避免因为分页后索引总是从1开始的情况
         pagination: function(_page){
             this.page = _page;
             this.songsView.splice(0,this.songsView.length);
@@ -486,23 +513,28 @@ export default {
             }
             
         },
+        //根据歌曲量动态显示分页总数
         computePageCount: function(){
             this.pageCount = Math.ceil(parseFloat(this.playlistSongList.length) / 20);
         },
+        //添加歌单所有歌曲到播放列表，调用公共函数addToSongList
         addAllToSongList: function(){
             this.$store.dispatch("addToSongList", this.playlistSongList);
         },
+        //歌曲添加到播放队列，调用公共函数addToSongList
         addToSongList: function(index){
             index = (this.page - 1) * 20 + index;
             var song = this.playlistSongList[index];
             var songs = [song];
             this.$store.dispatch("addToSongList", songs);
         },
+        //播放歌曲，调用公共函数play
         playSong:function(index){
             //传递歌曲ID给player.vue
             var startIndex = (this.page - 1) * 20 + index;
             this.$store.dispatch("play", [this.playlistSongList, startIndex, false]);
         },
+        //删除对应行的歌曲
         deleteSong:function(row, index){
             this.axios.get(this.serverUrl+'/playlist/removeSong',{
                 params:{
@@ -534,12 +566,27 @@ export default {
 
         },
         //上传图片
-        editImage:function(file,){
-            this.ruleForm.image=file.url;
+        editImage:function(file, filelist){
+            if(this.beforeAvatarUpload(file))
+            {
+              this.ruleForm.image=file.url;
+              this.hasChangeImage = true;
+              if(filelist.length>1)
+              {
+                filelist.splice(0,1);
+              }
+            }
+            else{
+              filelist.splice(filelist.length-1,1);
+            }
         },
+        //提示上传成功
         handleAvatarSuccess: function() {
+            this.getPlaylistIntro();
             alert("上传成功");
+            this.hasChangeImage = false;
         },
+        //对用户上传的图片进行大小及格式验证
         beforeAvatarUpload(file) {
             const isType = file.type === 'image/jpg'||'image/jpeg'||'image/png';
             const isLt2M = file.size / 1024 / 1024 < 2;
@@ -551,6 +598,7 @@ export default {
             }
             return isType && isLt2M;
         },
+        //新建歌单，提交相关数据到对应url
         createPlaylist: function(){
             this.$refs["newPlaylist"].validate((valid) => {
                 if (valid) {
@@ -602,6 +650,7 @@ export default {
                 }
             });
         },
+        //在编辑歌单表单中显示未修改的歌单信息
         clickOnEdit: function(){
             this.ruleForm.id = this.playlist.id;
             this.ruleForm.name = this.playlist.name;
@@ -610,6 +659,7 @@ export default {
                 this.ruleForm.image = this.playlist.image;
             }
         },
+        //取消编辑操作
         cancelEdit: function(done){
             this.$confirm('确认关闭？')
             .then(_ => {
@@ -620,6 +670,7 @@ export default {
             .catch(_ => { });
 
         },
+        //提示上传失败
         uploadFail: function(err, file, fileList){
             alert("上传失败");
         }

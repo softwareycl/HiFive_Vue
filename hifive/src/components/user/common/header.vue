@@ -64,7 +64,7 @@
 				<el-form-item label="头像" prop="image">
 					<img :src="modifyData.image" class="avatar" style="margin-right:20px">
 					<el-upload class="avatar-uploader" ref="upload" :on-change="previewImg"
-					action="http://192.168.20.99:8080/hifive/upload/uploadUserImage" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload" accept=".jpg, .jpeg, .png" :auto-upload="false">
+					action="/hifive/upload/uploadUserImage" :show-file-list="false" :on-success="handleAvatarSuccess" accept=".jpg, .jpeg, .png" :auto-upload="false">
 						<el-button slot="trigger" size="small" type="primary">点击更改头像</el-button>
 						<!-- <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传</el-button> -->
 						<div>
@@ -660,10 +660,11 @@
 			},
 
 			//图片上传前的操作
-			beforeAvatarUpload: function(file) {
+			beforeAvatarUpload: function(file, fileList) {
 				const isLt2M = file.size / 1024 / 1024 < 2;
 				if (!isLt2M) {
 					this.$message.error('上传头像图片大小不能超过 2MB!');
+					
 				}
 				return isLt2M;
 			},
@@ -677,9 +678,20 @@
 			},
 
 			//选择图片时候的操作
-			previewImg: function(file) {
-				this.modifyData.image = file.url;
-				this.img_change = true;
+			previewImg: function(file, fileList) {
+				if(this.beforeAvatarUpload(file,fileList))
+				{
+					this.modifyData.image = file.url;
+					this.img_change = true;
+					if(fileList.length>1)
+					{
+						fileList.splice(0,1);
+					}
+				}
+				else{
+					fileList.splice(fileList.length-1,1);
+				}
+				
 			}
 		},
 		computed: {
