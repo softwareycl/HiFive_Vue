@@ -245,7 +245,7 @@
 					this.flag = false;
 					if(this.img_change) {
 						this.$refs.upload.submit();
-						this.img_change = false;
+						
 					}
 					this.axios.post(this.$store.state.serverUrl + "/song/modifySong", {
 						id: this.editSong.id,
@@ -259,7 +259,10 @@
 						if(tip == true) {
 							alert("修改成功");
 							this.dialogVisible = false;
-							this.getIntro(this.id);
+							if(!this.img_change){
+								this.getIntro(this.id);
+							}
+							this.img_change = false;
 						}
 						else if(tip == false) {
 							alert("修改失败");
@@ -360,6 +363,7 @@
 
 			//图片上传成功时候的操作
 			handleAvatarSuccess: function() {
+				this.getIntro(this.id);
 				// this.submitForm(_song);
 				// if(this.flag) {
 				// 	this.flag = false;
