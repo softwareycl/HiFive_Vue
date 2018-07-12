@@ -13,10 +13,10 @@
               <p class="font_artistName">{{artist.name}}</p>
             </div>
             <div style=" width: 800px; height: 5px;">
-              <p class="font_other" style="float: left; margin-right: 10px;">国籍:{{artist.country}}</p>
-              <p class="font_other" style="float: left; margin-right: 10px;">出生地:{{artist.birthplace}}</p>
-              <p class="font_other" style="float: left; margin-right: 10px;">生日:{{artist.birthday}}</p>
-              <p class="font_other" style="float: left; margin-right: 10px;">职业:{{artist.occupation}}</p>
+              <p v-if="artist.country != null" class="font_other" style="float: left; margin-right: 10px;">国籍:{{artist.country}}</p>
+              <p v-if="artist.birthplace != null" class="font_other" style="float: left; margin-right: 10px;">出生地:{{artist.birthplace}}</p>
+              <p v-if="artist.birthday != null" class="font_other" style="float: left; margin-right: 10px;">生日:{{artist.birthday}}</p>
+              <p v-if="artist.occupation != null" class="font_other" style="float: left; margin-right: 10px;">职业:{{artist.occupation}}</p>
             </div>
             <div style=" width: 900px; margin-top: 5px;">
               <p v-if="artist.representative != null && artist.representative != ''" class="font_rep" style="float: left; margin-right: 10px; margin-bottom: 20px;">代表作:{{artist.representative}}</p>
