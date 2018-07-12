@@ -71,7 +71,7 @@
                   <span v-if="scope.row.Flag"> <el-button icon="el-icon-download" circle v-on:click="downloadSong(scope.row)"></el-button> </span>
                 </template>
               </el-table-column>
-              <el-table-column label="歌手" width=200>
+              <el-table-column label="歌手" width=150>
                 <template slot-scope="scope">
                   <router-link :to="{ path: '/user/artistdetail', query: { id: scope.row.artistId }}">
                     <span style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{scope.row.artistName}}</span>
@@ -276,7 +276,9 @@
     //点击专辑添加到按钮中的一项调用，处理添加到按钮的不同请求
     handleAlbumCommand:function(command){
       if(command=="login"){
-        window.location.href='/user/unlogin';
+        this.$router.push({
+          path: "/user/unlogin"
+        })
       }
       else if(command=="newplaylist"){
         this.dialogVisible=true;
@@ -354,7 +356,9 @@
     //点击歌曲列表里添加到中的一项调用，处理添加到按钮的不同请求
     handleSongCommand:function(command){
       if(command=="login"){
-        window.location.href='/user/unlogin';
+        this.$router.push({
+          path: "/user/unlogin"
+        })
       }
       else if(command.type=="playqueue"){
         var song=this.songList[command.params];
@@ -460,7 +464,9 @@
           confirmButtonText: '确定',
           cancelButtonText: '取消',
         }).then(() => {
-          window.location.href='/user/unlogin';
+          this.$router.push({
+            path: "/user/unlogin"
+          })
         }).catch(() => {
         });
       }

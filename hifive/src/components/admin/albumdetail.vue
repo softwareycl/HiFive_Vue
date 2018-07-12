@@ -31,7 +31,7 @@
             <el-input v-model="editAlbum.name" style="width:50%;"></el-input>
           </el-form-item>
           <el-form-item label="专辑封面" prop="image">
-            <el-upload ref="upload1" :auto-upload="false" action="http://192.168.20.99:8080/hifive/upload/uploadAlbumImage" :data={id:album.id} :show-file-list="false" :on-change="editImage" :before-upload="beforeAvatarUpload" :on-success="upload1Success" :on-error="handleError1">
+            <el-upload ref="upload1" :auto-upload="false" action="/hifive/upload/uploadAlbumImage" :data={id:album.id} :show-file-list="false" :on-change="editImage" :before-upload="beforeAvatarUpload" :on-success="upload1Success" :on-error="handleError1">
               <img :src="editAlbum.image" class="img">
             </el-upload>
           </el-form-item>
@@ -78,13 +78,13 @@
             <el-input v-model="addSong.name" style="width:50%;"></el-input>
           </el-form-item>
           <el-form-item label="歌曲图片" prop="image">
-            <el-upload ref="upload2" :auto-upload="false" action="http://192.168.20.99:8080/hifive/upload/uploadSongImage" :data={id:addSong.id} :show-file-list="false" :on-change="addImage" :before-upload="beforeAvatarUpload" :on-error="handleError2">
+            <el-upload ref="upload2" :auto-upload="false" action="/hifive/upload/uploadSongImage" :data={id:addSong.id} :show-file-list="false" :on-change="addImage" :before-upload="beforeAvatarUpload" :on-success="upload2Success" :on-error="handleError2">
               <img :src="addSong.image" class="img">
             </el-upload>
-            <el-upload ref="upload3" :auto-upload="false" action="http://192.168.20.99:8080/hifive/upload/uploadSongFile" :data={id:addSong.id} :on-change="addFilePath" :on-success="upload3Success" :on-error="handleError3" style="height:90px;">
+            <el-upload ref="upload3" :auto-upload="false" action="/hifive/upload/uploadSongFile" :data={id:addSong.id} :on-change="addFilePath" :on-success="upload3Success" :on-error="handleError3" style="height:90px;">
               <el-button slot="trigger">选取歌曲文件</el-button>
             </el-upload>
-            <el-upload ref="upload4" :auto-upload="false" action="http://192.168.20.99:8080/hifive/upload/uploadLyrics" :data={id:addSong.id} :on-change="addLyricsPath" :on-success="upload4Success" :on-error="handleError4" style="height:90px;">
+            <el-upload ref="upload4" :auto-upload="false" action="/hifive/upload/uploadLyrics" :data={id:addSong.id} :on-change="addLyricsPath" :on-success="upload4Success" :on-error="handleError4" style="height:90px;">
               <el-button slot="trigger">选取歌词文件</el-button>
             </el-upload>
           </el-form-item>
@@ -118,11 +118,11 @@
             <el-input v-model="addSong.language" placeholder="请输入歌曲语种" style="width:35%;"></el-input>
           </el-form-item>
           <el-form-item label="发行时间" prop="releaseDate">
-            <el-date-picker v-model="addSong.releaseDate" type="date" placeholder="请选择发行时间" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd">
+            <el-date-picker v-model="addSong.releaseDate" type="date" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd">
             </el-date-picker>
           </el-form-item>
           <el-form-item style="margin-left:25%;">
-            <el-button type="primary" @click="submitForm2">完成</el-button>
+            <el-button type="primary" @click="this.disabled=true;submitForm2">完成</el-button>
             <el-button @click="addDialogVisible=false">取消</el-button>
           </el-form-item>
         </el-form>
@@ -182,6 +182,9 @@
     },
     data(){
       return{
+        isChange2:false,
+        isChange3:false,
+        isChange4:false,
         isOverflow:'',
         isImgChange:false,
         editRules: {
@@ -351,26 +354,43 @@
           lyricsPath:'',
           filePath:'',
           region:'',
-          releaseDate:'',}
+          releaseDate:this.album.releaseDate,}
         this.addSong=temp;
       },
       //添加更改专辑图片调用，替换原来准备上传的文件
       editImage:function(file,filelist){
-        this.isImgChange=true;
-        this.editAlbum.image=file.url;
-        if(filelist.length>1){
-          filelist.splice(0,1);
+        if(this.beforeAvatarUpload(file,filelist))
+        {
+          this.isImgChange=true;
+          this.editAlbum.image=file.url;
+          if(filelist.length>1)
+          {
+            filelist.splice(0,1);
+          }
         }
+        else{
+          filelist.splice(filelist.length-1,1);
+        }
+
       },
       //添加更改歌曲图片调用，替换原来准备上传的文件
       addImage:function(file,filelist){
-        this.addSong.image=file.url;
-        if(filelist.length>1){
-          filelist.splice(0,1);
+        this.isChange2=true;
+        if(this.beforeAvatarUpload(file,filelist))
+        {
+          this.addSong.image=file.url;
+          if(filelist.length>1)
+          {
+            filelist.splice(0,1);
+          }
+        }
+        else{
+          filelist.splice(filelist.length-1,1);
         }
       },
       //添加更改歌曲文件调用，替换原来准备上传的文件
       addFilePath:function(file,filelist){
+        this.isChange3=true;
         this.addSong.filePath=file.url;
         if(filelist.length>1){
           filelist.splice(0,1);
@@ -378,6 +398,7 @@
       },
       //添加更改歌词文件调用，替换原来准备上传的文件
       addLyricsPath:function(file,filelist){
+        this.isChange4=true;
         this.addSong.lyricsPath=file.url;
         if(filelist.length>1){
           filelist.splice(0,1);
@@ -398,6 +419,7 @@
           message: '歌曲图片上传失败',
           type: 'error'
         });
+        this.addDialogVisible=false;
       },
       //上传歌曲文件失败时调用，提示错误信息，清空上传文件列表
       handleError3:function(){
@@ -406,7 +428,7 @@
           message: '歌曲文件上传失败',
           type: 'error'
         });
-        this.$refs.upload3.clearFiles();
+        this.addDialogVisible=false;
       },
       //上传歌词文件失败时调用，提示错误信息，清空上传文件列表
       handleError4:function(){
@@ -416,6 +438,7 @@
           type: 'error'
         });
         this.$refs.upload4.clearFiles();
+        this.addDialogVisible=false;
       },
       //点击编辑专辑表单的完成按钮调用，上传专辑图片
       uploadForm1:function(){
@@ -474,14 +497,29 @@
           console.log(err);
         });
       },
+      //上传歌曲图片成功调用
+      upload2Success:function(){
+        this.isChange2 = false;
+        if(this.isChange2 == false && this.isChange3 == false && this.isChange4 == false){
+          this.addDialogVisible=false;
+        }
+      },
       //上传歌曲文件成功调用，清空已上传文件列表
       upload3Success:function(){
-          this.$refs.upload3.clearFiles();
-          this.getAlbumInfo();
+        this.isChange3 = false;
+        if(this.isChange2 == false && this.isChange3 == false && this.isChange4 == false){
+          this.addDialogVisible=false;
+        }
+        this.$refs.upload3.clearFiles();
+        this.getAlbumInfo();
       },
       //上传歌词文件成功调用，清空已上传文件列表
       upload4Success:function(){
-          this.$refs.upload4.clearFiles();
+        this.isChange4 = false;
+        if(this.isChange2 == false && this.isChange3 == false && this.isChange4 == false){
+          this.addDialogVisible=false;
+        }
+        this.$refs.upload4.clearFiles();
       },
       //点击表单完成按钮调用，提交添加歌曲的表单
       submitForm2:function(){
@@ -496,8 +534,10 @@
             })
             .then(response =>{
               if(response.data!=-1){
-                this.addDialogVisible=false;
                 this.addSong.id=response.data;
+                if(this.isChange2 == false && this.isChange3 == false && this.isChange4 == false){
+                  this.addDialogVisible=false;
+                }
                 this.$nextTick(()=>{
                   this.$refs.upload2.submit();
                   this.$refs.upload3.submit();

@@ -1,7 +1,6 @@
 <template>
     <div class="wrapper">
         <v-head></v-head>
-        <div v-if="this.state.isLogin">
             <div :data="user" class="background" :style="background">
                 <div style="width:100%;height:315px;">
                     <img :src="user.image" class="userImage">
@@ -196,7 +195,6 @@
                 <br style="clear:both;">
                 <br style="clear:both;">
             </div>
-        </div>
         <v-foot></v-foot>
     </div>
 </template>
@@ -238,7 +236,6 @@ export default {
                 { min: 1, max: 680, message: '长度在 680 个字符以内', trigger: 'blur' }
                 ]
             },
-            user:{},
             songList:[],
             albumList:[],
             playlistList:[],
@@ -862,12 +859,20 @@ export default {
         },
         state(){
           return this.$store.state;
+        },
+        user(){
+            return this.$store.state.user;
         }
     },
     //vue的mounted生命周期，获取用户信息
     mounted(){
-        this.user.id=this.state.user.id;
-        this.getMyMusic();
+        if(this.state.isLogin){
+            this.user.id=this.state.user.id;
+            this.getMyMusic();
+        }
+        else{
+            this.$router.push('/user/unlogin');
+        }
     }
 }
 </script>
