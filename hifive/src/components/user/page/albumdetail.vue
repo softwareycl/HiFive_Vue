@@ -233,7 +233,9 @@
           confirmButtonText: '确定',
           cancelButtonText: '取消',
         }).then(() => {
-          window.location.href='/user/unlogin';
+          this.$router.push({
+          path: "/user/unlogin"
+          })
         }).catch(() => {
         });
       }
