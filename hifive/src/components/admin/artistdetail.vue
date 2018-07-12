@@ -611,7 +611,10 @@
         if(filelist.length>1){
           filelist.splice(0,1);
         }
+      } else {
+        filelist.splice(filelist.length-1,1);
       }
+
     },
     /* 歌手图片上传成功事件*/
     upload1Success:function(){
@@ -619,12 +622,17 @@
     },
     /* 添加专辑图片*/
     addImage: function(file,filelist) {
-      if(this.beforeAvatarUpload(file)){
+      if(this.beforeAvatarUpload(file))
+      {
         this.isadded = true;
         this.addAlbum.image = file.url;
-        if(filelist.length>1){
+        if(filelist.length>1)
+        {
           filelist.splice(0,1);
         }
+      }
+      else{
+        filelist.splice(filelist.length-1,1);
       }
     },
     /* 判断图片格式及大小*/
