@@ -128,7 +128,7 @@
           this.region = _region;
           _page = 1;
           this.page = 1;
-        } else { //获取当前性别
+        } else if(_gender != -1){ //获取当前性别
           _region = this.region;
           _initial = this.initial;
           this.gender = _gender;
