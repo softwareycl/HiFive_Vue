@@ -48,7 +48,7 @@
                 onmouseover="this.style.backgroundColor='#2CAF6F';" 
                 onmouseout="this.style.backgroundColor='#31C27C';" 
                 v-on:click="playAllSong">播放全部</el-button>
-                <el-dropdown trigger="click" id="dropdown" @command="handleAlbumCommand">
+                <el-dropdown trigger="click" id="dropdown" @command="handleRankCommand">
                 <el-button icon="el-icon-plus" v-on:click="getPlaylistList" >添加到<i class="el-icon-arrow-down el-icon--right"></i>
                 </el-button>
 
@@ -275,16 +275,108 @@ export default{
         },
         //提交playlist对象，包括歌单名称和简介，返回-1用户会话超时
         submitForm:function(formname){        
-            this.$refs[formname].validate((valid) => {
+            this.$refs["newPlaylist"].validate((valid) => {
                 if (valid) {
-                    alert('submit!');
+                this.axios.post(this.serverUrl+'/playlist/create',{
+                    name:this.newPlaylist.name,
+                    intro:this.newPlaylist.intro
+                })
+                .then(response =>{
+                    if(response.data!=-1){
+                    var thisPlaylist={id:response.data,name:this.newPlaylist.name,intro:this.newPlaylist.intro};
+                    this.state.playlistList.push(thisPlaylist);
+                    sessionStorage.setItem('playlistList', JSON.stringify(this.state.playlistList));
                     this.dialogVisible=false;
-                    this.$refs[formname].resetFields();
-                } else {
-                    alert('error submit!!');
+                    this.$refs["newPlaylist"].resetFields();
+                    this.$message({
+                        showClose: true,
+                        message: '歌单创建成功',
+                        type: 'success'
+                    });
+                    if(this.newPlaylist.type=="rank"){
+                        this.addAllSongToPlaylist(response.data);
+                    }
+                    else{
+                        this.addSongToPlaylist(this.newPlaylist.info,response.data);
+                    }
+                    }
+                    else{
+                    this.$message({
+                        showClose: true,
+                        message: '会话超时',
+                        type: 'error'
+                    });
+                    }
+                })
+                .catch(function(err){
+                    console.log(err);
+                });
+                } 
+                else {
+                this.$message({
+                    showClose: true,
+                    message: '格式不正确',
+                    type: 'error'
+                });
                 return false;
                 }
             });
+        },
+        //把排行榜所有歌曲添加到歌单
+        addAllSongToPlaylist:function(playlistId){
+        this.axios.get(this.serverUrl+'/playlist/addAlbum',{
+            params:{
+            albumId:this.album.id,
+            playlistId:playlistId
+            }
+        })
+        .then(response =>{
+            if(response){
+            this.$message({
+                showClose: true,
+                message: '已成功添加到歌单',
+                type: 'success'
+            });
+            }
+            else{
+            this.$message({
+                showClose: true,
+                message: '会话超时',
+                type: 'error'
+            });
+            }
+        })
+        .catch(function(err){
+            console.log(err);
+        });
+        },
+        //把歌曲添加到歌单
+        addSongToPlaylist:function(songId,playlistId){
+        this.axios.get(this.serverUrl+'/playlist/addSong',{
+            params:{
+            songId:songId,
+            playlistId:playlistId
+            }
+        })
+        .then(response =>{
+            if(response){
+            this.$message({
+                showClose: true,
+                message: '已成功添加到歌单',
+                type: 'success'
+            });
+            }
+            else{
+            this.$message({
+                showClose: true,
+                message: '会话超时',
+                type: 'error'
+            });
+            }
+        })
+        .catch(function(err){
+            console.log(err);
+        });
         },
         //下载歌曲，先决条件为用户已登录
         downloadSong:function(row){
@@ -310,16 +402,18 @@ export default{
                   path: "/user/unlogin"
                 })
             }
-            else if(command=="newplaylist"){
-                this.dialogVisible=true;
+            else if(command.type=="playqueue"){
+                var song=this.songList[command.params];
+                var songs=[song];
+                this.$store.dispatch("addToSongList",songs);
             }
-                else if(command=="playqueue"){
-          //传递歌曲ID给player.vue
+            else if(command.type=="newplaylist"){
+                this.dialogVisible=true;
+                this.newPlaylist.type="song";
+                this.newPlaylist.info=command.params.id;
             }
             else{
-            //提交歌曲ID和歌单ID，返回false则用户会话超时
-             console.log(command.param1);
-             console.log(command.param2.ID)
+                this.addSongToPlaylist(command.param2.id,command.param1);
             }
         },
         //取消操作时的确认框
@@ -349,8 +443,8 @@ export default{
             row.Flag=event;
             row.isopen=event;
         },
-        //专辑添加到：若未登录则只显示添加到播放队列，若已登录则显示添加到用户歌单
-        handleAlbumCommand:function(command){
+        //排行榜添加到：若未登录则只显示添加到播放队列，若已登录则显示添加到用户歌单
+        handleRankCommand:function(command){
             if(command=="login"){
                 this.$router.push({
                   path: "/user/unlogin"
@@ -358,13 +452,13 @@ export default{
             }
             if(command=="newplaylist"){
                 this.dialogVisible=true;
+                this.newPlaylist.type="rank";
             }
             else if(command=="playqueue"){
-            //传递所有歌曲ID给player.vue
+                this.$store.dispatch("addToSongList", this.songList);
             }
             else{
-            //提交专辑ID和歌单ID，返回false则用户会话超时
-            console.log(command.params);
+                this.addAllSongToPlaylist(command.params);
             }
         },
         //歌曲添加到播放队列，调用公共函数addToSongList
@@ -386,7 +480,6 @@ export default{
         },
         //播放榜单所有歌曲，调用公共函数play
         playAllSong:function(){
-            //传递所有歌曲ID给player.vue
             this.$store.dispatch("play", [this.songs, 0, false]);
         },
     },

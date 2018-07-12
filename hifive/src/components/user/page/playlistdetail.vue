@@ -610,6 +610,7 @@ export default {
                         if(response.data != -1){
                             var thisPlaylist={id:response.data,name:this.newPlaylist.name,intro:this.newPlaylist.intro};
                             this.$store.state.playlistList.push(thisPlaylist);
+                            sessionStorage.setItem('playlistList', JSON.stringify(this.state.playlistList));
                             this.getPlaylistList();
                             this.dialogVisible=false;
                             this.$refs["newPlaylist"].resetFields();
