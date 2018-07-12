@@ -23,15 +23,16 @@
       				<p class="font_rep" style="margin-right: 10px; margin-bottom: 20px; float: left;">代表作:{{artist.representative}}</p>
       			</div> -->
             <div style=" width: 700px; margin-top: 5px;">
-              <p style="width: 600px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 1;overflow: hidden; float: left; " class="font_des"><span v-if="artist.country != null">国籍：</span>{{artist.country}}
-                    <span v-if="artist.birthplace != null"> 出生地：</span>{{artist.birthplace}}
-                    <span v-if="artist.birthday != null"> 生日：</span>{{artist.birthday}}
-                    <span v-if="artist.occupation != null"> 职业：</span>{{artist.occupation}}
-                    <span v-if="artist.representative != null"> 代表作：</span>{{artist.representative}}
-                    <span v-if="artist.intro != null"> 简介：</span>{{artist.intro}}</p>
+              <p style="width: 600px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 1;overflow: hidden; float: left; " class="font_des">
+              	<span v-if="artist.country != null">国籍：</span>{{artist.country}}
+                <span v-if="artist.birthplace != null"> 出生地：</span>{{artist.birthplace}}
+                <span v-if="artist.birthday != null"> 生日：</span>{{artist.birthday}}
+                <span v-if="artist.occupation != null"> 职业：</span>{{artist.occupation}}
+                <span v-if="artist.representative != null"> 代表作：</span>{{artist.representative}}
+                <span v-if="artist.intro != null"> 简介：</span>{{artist.intro}}</p>
               <el-popover placement="left" title="歌手简介" trigger="click">
-                
-                <p class="font_des" style="width: 600px"><span v-if="artist.country != null">国籍：</span>{{artist.country}}<br>
+                <p class="font_des" style="width: 560px">
+                	<span v-if="artist.country != null">国籍：</span>{{artist.country}}<br>
                     <span v-if="artist.birthplace != null"> 出生地：</span>{{artist.birthplace}}<br>
                     <span v-if="artist.birthday != null"> 生日：</span>{{artist.birthday}}<br>
                     <span v-if="artist.occupation != null"> 职业：</span>{{artist.occupation}}<br>
@@ -186,7 +187,7 @@
     created() {
       window.scrollTo(0,0);
       this.artist.id = this.$route.query.id;
-      
+
     },
 
     mounted(){
@@ -464,7 +465,7 @@
       margin-bottom: 30px;
       margin-right: 5px;
     }
-  .album {
+  	.album {
       background-color: #f6f6f6;
       height: 180px;
       width: 180px;
@@ -483,27 +484,11 @@
         margin-top: 50px;
         margin-bottom: 5px;
 	}
-  .font_name{
-        font-family: "Microsoft YaHei";
-        font-size:smaller;
-        color: #333333;
-        cursor: pointer;
-  }
-	.font_other{
-        font-family:"Microsoft YaHei";
-        font-size:Medium;
-    }
    	.font_des{
         font-family:"Microsoft YaHei";
         font-size:Medium;
         margin-top: 5px;
     }
-    .font_rep{
-    	font-family:"Microsoft YaHei";
-    	font-size:Medium;
-    	margin-top: 5px;
-    }
-
     .spHeight td{
       height:65px;
     }
