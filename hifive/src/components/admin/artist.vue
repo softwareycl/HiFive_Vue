@@ -433,12 +433,17 @@
       },
       //上传歌手图片
       addImage:function(file, filelist){
-        if(this.beforeAvatarUpload(file)){
-          this.hasChangeImage = true;
+        if(this.beforeAvatarUpload(file))
+        {
           this.ruleForm.image=file.url;
-          if(filelist.length>1){
+          this.hasChangeImage = true;
+          if(filelist.length>1)
+          {
             filelist.splice(0,1);
           }
+        }
+        else{
+          filelist.splice(filelist.length-1,1);
         }
       },
       //上传成功提示

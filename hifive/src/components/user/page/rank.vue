@@ -296,7 +296,9 @@ export default{
                   confirmButtonText: '确定',
                   cancelButtonText: '取消',
                 }).then(() => {
-                  window.location.href='/';
+                  this.$router.push({
+                      path: "/user/unlogin"
+                    })
                 }).catch(() => {
                 });
             }
@@ -304,7 +306,9 @@ export default{
         //歌曲添加到：若未登录则只显示添加到播放队列，若已登录则显示添加到用户歌单
         handleSongCommand:function(command){
             if(command=="login"){
-                window.location.href='/';
+                this.$router.push({
+                  path: "/user/unlogin"
+                })
             }
             else if(command=="newplaylist"){
                 this.dialogVisible=true;
@@ -348,7 +352,9 @@ export default{
         //专辑添加到：若未登录则只显示添加到播放队列，若已登录则显示添加到用户歌单
         handleAlbumCommand:function(command){
             if(command=="login"){
-                window.location.href='/';
+                this.$router.push({
+                  path: "/user/unlogin"
+                })
             }
             if(command=="newplaylist"){
                 this.dialogVisible=true;
