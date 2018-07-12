@@ -192,7 +192,9 @@
 						confirmButtonText: '确定',
 						cancelButtonText: '取消',
 					}).then(() => {
-						window.location.href='/';
+						this.$router.push({
+					        path: '/user/unlogin'
+					    });
 					}).catch(() => {
 					});
 				}
@@ -236,7 +238,9 @@
 			//处理点击添加到时候的事件
 			handleSongCommand:function(command){
 				if(command=="login"){
-					window.location.href='/';
+					this.$router.push({
+				        path: '/user/unlogin'
+				    });
 				}
 				else if(command=="newplaylist"){
 					this.dialogVisible=true;
@@ -374,7 +378,9 @@
 						confirmButtonText: '确定',
 						cancelButtonText: '取消',
 					}).then(() => {
-						window.location.href='/';
+						this.$router.push({
+					        path: '/user/unlogin'
+					    });
 					}).catch(() => {
 					});
 				}
