@@ -191,6 +191,7 @@
       /* 更改导航栏中当前首字母*/
       initial_change_bg: function(obj){
         var a=document.getElementById("initial").getElementsByTagName("li");
+        a[i].className="current";
         for(var i=0;i<a.length;i++){
           if(i == obj){
             a[i].className="current";
@@ -203,6 +204,7 @@
       /* 更改导航栏中当前性别*/
       gender_change_bg: function(obj){
         var a=document.getElementById("gender").getElementsByTagName("li");
+        a[i].className="current";
         for(var i=0;i<a.length;i++){
           if(i == obj){
             a[i].className="current";
