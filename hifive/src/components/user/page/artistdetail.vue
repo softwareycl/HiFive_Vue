@@ -337,6 +337,7 @@
                   if(response!=-1){
                     this.playlist.id=response.data;
                     this.$store.state.playlistList.push(this.playlist);
+                    sessionStorage.setItem('playlistList', JSON.stringify(this.$store.state.playlistList));
                     this.getPlaylistList();
                     this.$message({
                       showClose: true,

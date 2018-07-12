@@ -283,6 +283,7 @@ export default {
         },
         //点击歌曲播放按钮调用，播放歌曲
         playSong:function(index){
+            index = (this.currentPageOfSong - 1) * 10 + index;
             this.$store.dispatch("play", [this.songList, index, false]);
         },
         //点击歌曲列表里添加到中的一项调用，处理添加到按钮的不同请求
@@ -464,7 +465,7 @@ export default {
                 })
                 .then(response =>{
                   if(response){
-                    this.allAlbum.splice((this.currentPageOfPlaylist-1)*10+index,1);
+                    this.allAlbum.splice((this.currentPageOfAlbum-1)*10+index,1);
                     this.state.likeAlbums=this.allAlbum;
                     sessionStorage.setItem('likeAlbums', JSON.stringify(this.state.likeAlbums));
                     if(this.albumList.length==1){

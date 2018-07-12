@@ -184,6 +184,7 @@ export default{
     },
     //在模板渲染成html前调用，显示对应榜单名称
     created(){
+        window.scrollTo(0,0);
         var index=this.$route.query.rankType;
         if(index != undefined)
             this.index = index.toString();

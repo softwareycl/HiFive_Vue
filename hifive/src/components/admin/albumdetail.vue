@@ -122,8 +122,8 @@
             </el-date-picker>
           </el-form-item>
           <el-form-item style="margin-left:25%;">
-            <el-button type="primary" @click="this.disabled=true;submitForm2">完成</el-button>
-            <el-button @click="addDialogVisible=false">取消</el-button>
+            <el-button id="button1" type="primary" @click="submitForm2">完成</el-button>
+            <el-button id="button2" @click="addDialogVisible=false">取消</el-button>
           </el-form-item>
         </el-form>
       </el-dialog>
@@ -523,6 +523,9 @@
       },
       //点击表单完成按钮调用，提交添加歌曲的表单
       submitForm2:function(){
+        document.getElementById("button1").disabled=true;
+        document.getElementById("button2").disabled=true;
+
         this.$refs["addSong"].validate((valid) => {
           if (valid) {
             this.axios.post(this.serverUrl+'/song/addSong',{
