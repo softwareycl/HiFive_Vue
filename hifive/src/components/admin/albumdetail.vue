@@ -122,8 +122,8 @@
             </el-date-picker>
           </el-form-item>
           <el-form-item style="margin-left:25%;">
-            <el-button id="button1" type="primary" @click="submitForm2">完成</el-button>
-            <el-button id="button2" @click="addDialogVisible=false">取消</el-button>
+            <el-button type="primary" @click="submitForm2">完成</el-button>
+            <el-button @click="addDialogVisible=false">取消</el-button>
           </el-form-item>
         </el-form>
       </el-dialog>
@@ -375,7 +375,6 @@
       },
       //添加更改歌曲图片调用，替换原来准备上传的文件
       addImage:function(file,filelist){
-        this.isChange2=true;
         if(this.beforeAvatarUpload(file,filelist))
         {
           this.addSong.image=file.url;
@@ -390,7 +389,6 @@
       },
       //添加更改歌曲文件调用，替换原来准备上传的文件
       addFilePath:function(file,filelist){
-        this.isChange3=true;
         this.addSong.filePath=file.url;
         if(filelist.length>1){
           filelist.splice(0,1);
@@ -398,7 +396,6 @@
       },
       //添加更改歌词文件调用，替换原来准备上传的文件
       addLyricsPath:function(file,filelist){
-        this.isChange4=true;
         this.addSong.lyricsPath=file.url;
         if(filelist.length>1){
           filelist.splice(0,1);
@@ -419,7 +416,6 @@
           message: '歌曲图片上传失败',
           type: 'error'
         });
-        this.addDialogVisible=false;
       },
       //上传歌曲文件失败时调用，提示错误信息，清空上传文件列表
       handleError3:function(){
@@ -428,7 +424,7 @@
           message: '歌曲文件上传失败',
           type: 'error'
         });
-        this.addDialogVisible=false;
+        this.$refs.upload3.clearFiles();
       },
       //上传歌词文件失败时调用，提示错误信息，清空上传文件列表
       handleError4:function(){
@@ -438,7 +434,6 @@
           type: 'error'
         });
         this.$refs.upload4.clearFiles();
-        this.addDialogVisible=false;
       },
       //点击编辑专辑表单的完成按钮调用，上传专辑图片
       uploadForm1:function(){
@@ -499,33 +494,18 @@
       },
       //上传歌曲图片成功调用
       upload2Success:function(){
-        this.isChange2 = false;
-        if(this.isChange2 == false && this.isChange3 == false && this.isChange4 == false){
-          this.addDialogVisible=false;
-        }
       },
       //上传歌曲文件成功调用，清空已上传文件列表
       upload3Success:function(){
-        this.isChange3 = false;
-        if(this.isChange2 == false && this.isChange3 == false && this.isChange4 == false){
-          this.addDialogVisible=false;
-        }
         this.$refs.upload3.clearFiles();
         this.getAlbumInfo();
       },
       //上传歌词文件成功调用，清空已上传文件列表
       upload4Success:function(){
-        this.isChange4 = false;
-        if(this.isChange2 == false && this.isChange3 == false && this.isChange4 == false){
-          this.addDialogVisible=false;
-        }
         this.$refs.upload4.clearFiles();
       },
       //点击表单完成按钮调用，提交添加歌曲的表单
       submitForm2:function(){
-        document.getElementById("button1").disabled=true;
-        document.getElementById("button2").disabled=true;
-
         this.$refs["addSong"].validate((valid) => {
           if (valid) {
             this.axios.post(this.serverUrl+'/song/addSong',{
@@ -538,14 +518,12 @@
             .then(response =>{
               if(response.data!=-1){
                 this.addSong.id=response.data;
-                if(this.isChange2 == false && this.isChange3 == false && this.isChange4 == false){
-                  this.addDialogVisible=false;
-                }
                 this.$nextTick(()=>{
                   this.$refs.upload2.submit();
                   this.$refs.upload3.submit();
                   this.$refs.upload4.submit();
                 });
+                this.addDialogVisible=false;
                 this.getAlbumInfo();
                 this.$message({
                   showClose: true,
