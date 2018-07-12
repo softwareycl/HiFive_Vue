@@ -157,8 +157,7 @@
         	document.getElementById('div2').style.display = 'none';
         } else if(_active == 3) { //页面跳转
         	setTimeout(function () { this.$router.push({
-            path: '/user/unlogin'
-          }); }, 4000);
+            path: '/user/unlogin'}); }, 4000);
         }
       },
       /* 判断用户是否存在*/
