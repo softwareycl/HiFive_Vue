@@ -41,7 +41,6 @@
 								<el-dropdown-menu slot="dropdown" :data="playlistList">
 									<el-dropdown-item command="playqueue">播放队列</el-dropdown-item>
 									<div v-if="isLogin">
-										<el-dropdown-item disabled divided>我喜欢</el-dropdown-item>
 										<el-dropdown-item v-for="playlist in playlistList" :key="playlist.id" :command='{type:"playlist",params:playlist.id}'>{{playlist.name}}</el-dropdown-item>
 										<el-dropdown-item command="newplaylist" divided>添加到新歌单</el-dropdown-item>
 									</div>

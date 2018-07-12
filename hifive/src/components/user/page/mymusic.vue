@@ -51,7 +51,6 @@
                                                         <el-button icon="el-icon-plus" circle></el-button>
                                                         <el-dropdown-menu slot="dropdown" :data="allPlaylist">
                                                             <el-dropdown-item :command='{type:"playqueue",params:scope.$index}'>播放队列</el-dropdown-item>
-                                                            <el-dropdown-item disabled divided>我喜欢</el-dropdown-item>
                                                             <el-dropdown-item v-for="playlist in allPlaylist" :key="playlist.id" :command='{type:"playlist",param1:playlist.id,param2:scope.row}'>{{playlist.name}}</el-dropdown-item>
                                                             <el-dropdown-item :command='{type:"newplaylist",params:scope.row}' divided>添加到新歌单</el-dropdown-item>
                                                         </el-dropdown-menu>
@@ -110,7 +109,6 @@
                                                         <el-button icon="el-icon-plus" circle></el-button>
                                                         <el-dropdown-menu slot="dropdown" :data="allPlaylist">
                                                             <el-dropdown-item :command='{type:"playqueue",params:scope.row}'>播放队列</el-dropdown-item>
-                                                            <el-dropdown-item disabled divided>我喜欢</el-dropdown-item>
                                                             <el-dropdown-item v-for="playlist in allPlaylist" :key="playlist.id" :command='{type:"playlist",param1:playlist.id,param2:scope.row}'>{{playlist.name}}</el-dropdown-item>
                                                             <el-dropdown-item :command='{type:"newplaylist",params:scope.row}' divided>添加到新歌单</el-dropdown-item>
                                                         </el-dropdown-menu>
@@ -169,7 +167,6 @@
                                                 <el-button icon="el-icon-plus" circle></el-button>
                                                 <el-dropdown-menu slot="dropdown" :data="allPlaylist">
                                                     <el-dropdown-item :command='{type:"playqueue",params:scope.row}'>播放队列</el-dropdown-item>
-                                                    <el-dropdown-item disabled divided>我喜欢</el-dropdown-item>
                                                     <el-dropdown-item v-for="playlist in allPlaylist" :key="playlist.id" :command='{type:"playlist",param1:playlist.id,param2:scope.row}'>{{playlist.name}}</el-dropdown-item>
                                                     <el-dropdown-item :command='{type:"newplaylist",params:scope.row}' divided>添加到新歌单</el-dropdown-item>
                                                 </el-dropdown-menu>
@@ -212,7 +209,7 @@ export default {
     },
     data(){
         return{
-            user:{},
+            user:{id:''},
             background:{
             backgroundImage: "url(" + require("../../../assets/我的音乐.jpg") + ")",
             backgroundRepeat: "no-repeat",

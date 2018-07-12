@@ -90,7 +90,6 @@
                                     <el-dropdown-menu slot="dropdown" :data="playlistList">
                                     <el-dropdown-item command="playqueue" @click.native ="addToSongList(scope.$index)">播放队列</el-dropdown-item>
                                     <div v-if="isLogin">
-                                        <el-dropdown-item disabled divided>我喜欢</el-dropdown-item>
                                         <el-dropdown-item v-for="playlist in playlistList" :key="playlist.ID" :command='{type:"playlist",param1:playlist.ID,param2:scope.row}'>{{playlist.name}}</el-dropdown-item>
                                         <el-dropdown-item command="newplaylist" divided>添加到新歌单</el-dropdown-item>
                                     </div>
