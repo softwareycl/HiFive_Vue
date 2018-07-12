@@ -261,7 +261,7 @@
 				});
   			} else {
   				this.$message({
-  					message: '密码修改成功！页面将在5秒后跳转！',
+  					message: '密码修改成功！',
   					type: 'success'
 				});
   			}
