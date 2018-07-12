@@ -186,6 +186,7 @@
     created() {
       window.scrollTo(0,0);
       this.artist.id = this.$route.query.id;
+      
     },
 
     mounted(){
@@ -280,7 +281,9 @@
       /* 添加歌曲到播放列表或歌单*/
       handleSongCommand:function(command){
         if(command=="login"){
-          window.location.href='/';
+          this.$router.push({
+	          path: '/user/unlogin'
+	      });
         }
         else if(command=="newplaylist"){
           this.dialogVisible=true;
@@ -374,7 +377,9 @@
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                   }).then(() => {
-                    window.location.href='/';
+                    this.$router.push({
+				        path: '/user/unlogin'
+				    });
                   }).catch(() => {
                   });
               }
