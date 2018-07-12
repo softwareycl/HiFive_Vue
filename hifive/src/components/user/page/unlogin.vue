@@ -85,7 +85,7 @@
 	export default {
 		created() {
 			window.scrollTo(0,0);
-		}
+		},
 		mounted() {
 			if(this.$store.state.isLogin == true) {
 				this.$router.push('/user/mymusic');
