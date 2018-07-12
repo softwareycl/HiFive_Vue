@@ -660,11 +660,11 @@
 			},
 
 			//图片上传前的操作
-			beforeAvatarUpload: function(file) {
+			beforeAvatarUpload: function(file, fileList) {
 				const isLt2M = file.size / 1024 / 1024 < 2;
 				if (!isLt2M) {
 					this.$message.error('上传头像图片大小不能超过 2MB!');
-					this.$refs.upload.clearFiles();
+					
 				}
 				return isLt2M;
 			},
@@ -679,13 +679,18 @@
 
 			//选择图片时候的操作
 			previewImg: function(file, fileList) {
-				if(this.beforeAvatarUpload(file)){
-					if(fileList.length>1){
-						fileList.splice(0,1);
-					}
+				if(this.beforeAvatarUpload(file,fileList))
+				{
 					this.modifyData.image = file.url;
 					this.img_change = true;
-				} 
+					if(fileList.length>1)
+					{
+						fileList.splice(0,1);
+					}
+				}
+				else{
+					fileList.splice(fileList.length-1,1);
+				}
 				
 			}
 		},
