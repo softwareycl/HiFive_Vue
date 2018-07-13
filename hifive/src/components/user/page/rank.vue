@@ -42,26 +42,28 @@
                 <div class="displayTitle">
                     <h1>{{rankText[rankType - 1]}}</h1>
                 </div>
-                <el-button type="primary" 
-                icon="el-icon-caret-right" 
-                style="background-color:#31C27C" 
-                onmouseover="this.style.backgroundColor='#2CAF6F';" 
-                onmouseout="this.style.backgroundColor='#31C27C';" 
-                v-on:click="playAllSong">播放全部</el-button>
-                <el-dropdown trigger="click" id="dropdown" @command="handleRankCommand">
-                <el-button icon="el-icon-plus" v-on:click="getPlaylistList" >添加到<i class="el-icon-arrow-down el-icon--right"></i>
-                </el-button>
+                <div class="displaybtn">
+                    <el-button type="primary"
+                    icon="el-icon-caret-right" 
+                    style="background-color:#31C27C;float: right;" 
+                    onmouseover="this.style.backgroundColor='#2CAF6F';" 
+                    onmouseout="this.style.backgroundColor='#31C27C';" 
+                    v-on:click="playAllSong">播放全部</el-button>
+                </div>
+                <!-- <el-dropdown trigger="click" id="dropdown" @command="handleRankCommand"> -->
+ <!--                <el-button icon="el-icon-plus" v-on:click="getPlaylistList" >添加到<i class="el-icon-arrow-down el-icon--right"></i>
+                </el-button> -->
 
-                <el-dropdown-menu slot="dropdown" :data="playlistList">
+<!--                 <el-dropdown-menu slot="dropdown" :data="playlistList">
                     <el-dropdown-item command="playqueue" @click.native ="addAllToSongList()">播放队列</el-dropdown-item>
                     <div v-if="isLogin">
                       <el-dropdown-item v-for="playlist in playlistList" :key="playlist.id" :command='{type:"playlist",params:playlist.id}'>{{playlist.name}}</el-dropdown-item>
                       <el-dropdown-item command="newplaylist" divided>添加到新歌单</el-dropdown-item>
                     </div>
                     <el-dropdown-item v-else command="login" divided>登录后添加到歌单</el-dropdown-item>
-                </el-dropdown-menu>
+                </el-dropdown-menu> -->
 
-                </el-dropdown>
+                <!-- </el-dropdown> -->
 
                 <el-table
                 :data="songsView"
@@ -88,25 +90,25 @@
                                     <el-dropdown trigger="click" placement="bottom-start" @visible-change="handle(scope.row,$event)" @command="handleSongCommand">
                                     <el-button icon="el-icon-plus" circle></el-button>
                                     <el-dropdown-menu slot="dropdown" :data="playlistList">
-                                    <el-dropdown-item command="playqueue" @click.native ="addToSongList(scope.$index)">播放队列</el-dropdown-item>
+                                    <el-dropdown-item :command="playqueue" @click.native ="addToSongList(scope.$index)">播放队列</el-dropdown-item>
                                     <div v-if="isLogin">
-                                        <el-dropdown-item v-for="playlist in playlistList" :key="playlist.ID" :command='{type:"playlist",param1:playlist.ID,param2:scope.row}'>{{playlist.name}}</el-dropdown-item>
-                                        <el-dropdown-item command="newplaylist" divided>添加到新歌单</el-dropdown-item>
+                                        <el-dropdown-item v-for="playlist in playlistList" :key="playlist.id" :command='{type:"playlist",param1:playlist.id,param2:scope.row}'>{{playlist.name}}</el-dropdown-item>
+                                        <el-dropdown-item :command='{type:"newplaylist",params:scope.row}' divided>添加到新歌单</el-dropdown-item>
                                     </div>
-                                    <el-dropdown-item v-else command="login" divided>登录后添加到歌单</el-dropdown-item>
+                                    <el-dropdown-item v-else :command="login" divided>登录后添加到歌单</el-dropdown-item>
                                     </el-dropdown-menu>
                                     </el-dropdown>
                                 </span>
                                 <el-dialog title="创建歌单" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
-                                    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
+                                    <el-form :model="newPlaylist" :rules="rules" ref="newPlaylist" label-width="100px">
                                         <el-form-item label="歌单名称" prop="name">
-                                            <el-input v-model="ruleForm.name" placeholder="请输入歌单名称"></el-input>
+                                            <el-input v-model="newPlaylist.name" placeholder="请输入歌单名称"></el-input>
                                         </el-form-item>
-                                        <el-form-item label="歌单简介" prop="des">
-                                            <el-input type="textarea" v-model="ruleForm.des" placeholder="请输入歌单简介"></el-input>
+                                        <el-form-item label="歌单简介" prop="intro">
+                                            <el-input type="textarea" v-model="newPlaylist.intro" placeholder="请输入歌单简介"></el-input>
                                         </el-form-item>
                                         <el-form-item>
-                                            <el-button type="primary" @click="submitForm('ruleForm')">完成</el-button>
+                                            <el-button type="primary" @click="submitForm()">完成</el-button>
                                             <el-button @click="dialogVisible=false">取消</el-button>
                                         </el-form-item>
                                     </el-form>
@@ -151,7 +153,7 @@ import a from "@/../static/images/1.jpg"
 export default{
     data(){
         return {
-            index: "1",
+            index: 1,
             page:1,
             rankType:1,
             rankText: ["新歌榜", "热歌榜", "内地榜", "港台榜", "欧美榜", "日韩榜"],
@@ -159,22 +161,25 @@ export default{
             pageCount: 1,
             songsView: [],
             dialogVisible:false,
-            ruleForm: {
+            newPlaylist: {
+                id:'',
                 name: '',
-                des: ''
+                intro: '',
+                info:''
             },
             rules: {
                 name: [
                 {required: true, message: '请输入歌单名称', trigger: 'blur'},
                 {min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur'}
                 ],
-                des: [
+                intro: [
                 {min: 1, max: 140, message: '长度在 140 个字符以内', trigger: 'blur' }
                 ]
             },
             userID:'',
             state:true,
             playlistList:[],
+
         }
     },
     components: {
@@ -200,8 +205,9 @@ export default{
     },
     //在模板渲染成html后调用，获取排行榜及用户歌单列表
     mounted() {
+      this.userID = this.$store.state.user.Id;
       this.rankDisplay(this.index);
-      this.getPlaylistList(this.userID);
+      this.getPlaylistList();
     },
     methods:{
         /* 获取用户播放列表*/
@@ -274,7 +280,7 @@ export default{
             });
         },
         //提交playlist对象，包括歌单名称和简介，返回-1用户会话超时
-        submitForm:function(formname){        
+        submitForm:function(){        
             this.$refs["newPlaylist"].validate((valid) => {
                 if (valid) {
                 this.axios.post(this.serverUrl+'/playlist/create',{
@@ -284,8 +290,8 @@ export default{
                 .then(response =>{
                     if(response.data!=-1){
                     var thisPlaylist={id:response.data,name:this.newPlaylist.name,intro:this.newPlaylist.intro};
-                    this.state.playlistList.push(thisPlaylist);
-                    sessionStorage.setItem('playlistList', JSON.stringify(this.state.playlistList));
+                    this.$store.state.playlistList.push(thisPlaylist);
+                    sessionStorage.setItem('playlistList', JSON.stringify(this.$store.state.playlistList));
                     this.dialogVisible=false;
                     this.$refs["newPlaylist"].resetFields();
                     this.$message({
@@ -293,12 +299,8 @@ export default{
                         message: '歌单创建成功',
                         type: 'success'
                     });
-                    if(this.newPlaylist.type=="rank"){
-                        this.addAllSongToPlaylist(response.data);
-                    }
-                    else{
-                        this.addSongToPlaylist(this.newPlaylist.info,response.data);
-                    }
+                    this.addSongToPlaylist(this.newPlaylist.info,response.data);
+
                     }
                     else{
                     this.$message({
@@ -403,13 +405,12 @@ export default{
                 })
             }
             else if(command.type=="playqueue"){
-                var song=this.songList[command.params];
-                var songs=[song];
-                this.$store.dispatch("addToSongList",songs);
+                // var song=this.songList[command.params];
+                // var songs=[song];
+                // this.$store.dispatch("addToSongList",songs);
             }
             else if(command.type=="newplaylist"){
                 this.dialogVisible=true;
-                this.newPlaylist.type="song";
                 this.newPlaylist.info=command.params.id;
             }
             else{
@@ -515,6 +516,13 @@ margin:0 auto;
 }
 .displayTitle{
     margin-left:20px;
+    float:left;
+
+}
+.displaybtn{
+    float:right;
+    margin-top:25px;
+    margin-right:70px;
 }
 .songImg{
   width:30px;

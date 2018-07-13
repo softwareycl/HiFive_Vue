@@ -165,7 +165,7 @@
                     accept=".jpg, .jpeg, .png">
                     <!--<img v-if="ruleForm.image" :src="ruleForm.image" class="avatar">
                     <el-button type="primary" v-else class="el-icon-plus avatar-uploader-icon">点击上传</el-button>-->
-                    <img v-if="ruleForm.image" :src="ruleForm.image" class="avatar">
+                    <img v-if="ruleForm.image!=''" :src="ruleForm.image" class="avatar">
                     <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                     </el-upload>
                   </div>
@@ -449,8 +449,13 @@
       //上传成功提示
       handleAvatarSuccess: function() {
         alert("上传成功");
-        this.singerDisplay(0,'@',0,1);
+        
         this.hasChangeImage = false;
+        this.ruleForm.image = '';
+        this.$refs.uploadImage.clearFiles();
+        this.page = 1;
+        this.singerDisplay(0,'@',0,1);
+
       },
       //对用户上传的图片进行大小及格式验证
       beforeAvatarUpload(file) {

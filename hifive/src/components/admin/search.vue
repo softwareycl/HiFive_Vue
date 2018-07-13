@@ -10,8 +10,8 @@
 			<div style="clear: both;"></div>
 		</div>
 		<div class="search_main">
-			<div class="search_song" v-if="curTitle == '歌曲'">
-				<el-table :data="songList" style="width: 100%" :stripe="true" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">
+			<div class="search_song" v-if="curTitle == '歌曲'" style="margin:0 auto; width:82%">
+				<el-table :data="songList" style="width: 100%;" :stripe="true" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="spHeight">
 					<el-table-column label="歌曲">
 						<template slot-scope="scope">
 							<router-link tag="a" :to="{path:'/admin/songdetail',query:{id:scope.row.id}}">
@@ -48,7 +48,7 @@
 				<ul id="singerlist">
 					<li v-for="item in artistList" class="singerli">
 						<div class="singer">
-							<router-link to="/admin/artistdetail">
+							<router-link :to="{path:'/admin/artistdetail',query:{id:item.id}}">
 								<img :src="item.image" alt="" style="border-radius:100%;padding:35px;">
 								<p style="color:black;cursor:pointer" onmouseover="this.style.color='#31C27C';" onmouseout="this.style.color='black';">{{item.name}}</p>
 							</router-link>

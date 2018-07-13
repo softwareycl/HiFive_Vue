@@ -10,7 +10,7 @@
 			<div style="clear: both;"></div>
 		</div>
 		<div class="search_main">
-			<div class="search_song" v-if="curTitle == '歌曲'">
+			<div class="search_song" v-if="curTitle == '歌曲'" style="margin:0 auto; width:82%">
 				<el-table :data="songList" style="width: 100%" :stripe="true" @cell-mouse-enter="handleMouseEnter" @cell-mouse-leave="handleMouseOut" class="search_spHeight">
 					<el-table-column label="歌曲">
 						<template slot-scope="scope">

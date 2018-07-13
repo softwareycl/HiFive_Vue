@@ -246,9 +246,6 @@
         style: ['', 'POP 流行', 'ELECTRONIC 电子','ROCK 摇滚' ,'CLASSIC 古典','FOLK 民谣', 'R&B', '其他'],
         region:['', '内地', '港台', '欧美', '日韩', '其他'],
         styleOptions: [{
-          value: 0,
-          label: '全部',
-        },{
           value: 1,
           label: 'POP 流行',
         }, {
@@ -271,9 +268,6 @@
           label: '其他',
         },],
         regionOptions: [{
-          value: 0,
-          label: '全部',
-        },{
           value: 1,
           label: '内地',
         }, {
